@@ -3681,7 +3681,7 @@ public class GodManager
 					type = Material.BREAD;
 					break;
 				case 7:
-					type = Material.CARROT;
+					type = Material.CARROT_ITEM;
 					break;
 				case 8:
 					type = Material.IRON_PICKAXE;
