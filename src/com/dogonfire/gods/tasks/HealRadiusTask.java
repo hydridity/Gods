@@ -29,7 +29,7 @@ public class HealRadiusTask implements Runnable
 
 	public void run()
 	{
-		this.player.playSound(this.player.getLocation(), Sound.AMBIENCE_CAVE, 1.0F, 0.1F);
+		this.player.playSound(this.player.getLocation(), Sound.AMBIENT_CAVE, 1.0F, 0.1F);
 
 		Entity[] entities = this.plugin.getHolyPowerManager().getNearbyLivingEntities(this.player.getLocation(), 20.0D);
 		int n = 0;

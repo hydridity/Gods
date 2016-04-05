@@ -2,10 +2,10 @@ package com.dogonfire.gods;
 
 import java.util.List;
 
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
 
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class HolyArtifact
@@ -138,7 +138,7 @@ public class HolyArtifact
 
 	public org.bukkit.inventory.ItemStack setCustomFields(int cooldown, int xp, HolyPowerManager.HolyPower holyPower)
 	{
-		net.minecraft.server.v1_8_R3.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
+		net.minecraft.server.v1_9_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
 
 		if (nms.getTag() == null)
 		{
@@ -154,13 +154,13 @@ public class HolyArtifact
 
 	public int getCooldown()
 	{
-		net.minecraft.server.v1_8_R3.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
+		net.minecraft.server.v1_9_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
 		return nms.getTag().getInt("cooldown");
 	}
 
 	public int getXP()
 	{
-		net.minecraft.server.v1_8_R3.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
+		net.minecraft.server.v1_9_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
 		return nms.getTag().getInt("xp");
 	}
 }

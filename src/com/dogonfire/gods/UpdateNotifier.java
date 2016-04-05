@@ -3,6 +3,7 @@ package com.dogonfire.gods;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
+import com.dogonfire.gods.UpdateChecker;
 
 public class UpdateNotifier implements Runnable
 {

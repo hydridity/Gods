@@ -330,12 +330,12 @@ public class HolyPowerManager
 		newLoc.setYaw(start.getYaw());
 		player.teleport(newLoc);
 		world.playEffect(newLoc, Effect.ENDER_SIGNAL, 0);
-		world.playSound(newLoc, Sound.ENDERMAN_TELEPORT, 1.0F, 0.3F);
+		world.playSound(newLoc, Sound.ENTITY_ENDERMEN_AMBIENT, 1.0F, 0.3F);
 	}
 
 	public void magicArrow(Player player, int powerStrength)
 	{
-		player.playSound(player.getLocation(), Sound.SHOOT_ARROW, 1.0F, 1.0F);
+		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1.0F, 1.0F);
 		Arrow arrow = (Arrow) player.launchProjectile(Arrow.class);
 	}
 
@@ -415,13 +415,13 @@ public class HolyPowerManager
 
 	public void fireBall(Player player, int power)
 	{
-		player.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 1.0F, 1.0F);
+		player.playSound(player.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.0F, 1.0F);
 		player.launchProjectile(SmallFireball.class);
 	}
 
 	public void freeze(Player player, int power)
 	{
-		player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 0.1F);
+		player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 0.1F);
 		for (int x = -10 * power; x < 10 * power; x++)
 		{
 			for (int y = -10; y < 2; y++)
@@ -440,7 +440,7 @@ public class HolyPowerManager
 
 	public void growNature(Player player, int power)
 	{
-		player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1.0F, 0.1F);
+		player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1.0F, 0.1F);
 		for (int x = -10 * power; x < 10 * power; x++)
 		{
 			for (int y = -10; y < 20; y++)
@@ -498,7 +498,7 @@ public class HolyPowerManager
 
 	public void ice(final Player player, int power)
 	{
-		player.playSound(player.getLocation(), Sound.FIZZ, 1.0F, 0.1F);
+		player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 0.1F);
 
 		final FallingBlock block = player.getWorld().spawnFallingBlock(player.getLocation().add(0.0D, 1.8D, 0.0D), Material.ICE, (byte) 0);
 		block.setVelocity(player.getLocation().getDirection().multiply(2.0D));
@@ -609,7 +609,7 @@ public class HolyPowerManager
 
 	public void lightningStorm(Player player, int powerValue)
 	{
-		player.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 1.0F, 0.1F);
+		player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 1.0F, 0.1F);
 
 		player.getWorld().setStorm(true);
 
