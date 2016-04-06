@@ -130,6 +130,7 @@ public class GodManager
 		{
 			this.plugin.log("Could not save config to " + this.godsConfigFile + ": " + ex.getMessage());
 		}
+		this.plugin.log("Saved configuration");
 	}
 
 	public void saveTimed()
@@ -1588,10 +1589,11 @@ public class GodManager
 	public List<UUID> getPriestsForGod(String godName)
 	{
 		List<String> names = this.godsConfig.getStringList(godName + ".Priests");
-		List<UUID> list = new ArrayList();
+		List<UUID> list = new ArrayList<UUID>();
 
-		if (names == null)
+		if (names == null || names.isEmpty())
 		{
+			this.plugin.log("No priests for " + godName);
 			return null;
 		}
 
@@ -1610,9 +1612,7 @@ public class GodManager
 				if (diffHours > this.plugin.maxPriestPrayerTime)
 				{
 					this.plugin.getLanguageManager().setPlayerName(name);
-
 					godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversRemovedPriest, 2 + this.random.nextInt(40));
-
 					removePriest(godName, believerId);
 				}
 				else
@@ -1621,7 +1621,6 @@ public class GodManager
 				}
 			}
 		}
-
 		return list;
 	}
 
@@ -2635,13 +2634,20 @@ public class GodManager
 		this.godsConfig.set(godName + ".PendingPriest", null);
 		this.plugin.getBelieverManager().clearPendingPriest(playerId);
 
-		this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
+		//this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
 
-		List<String> priests = this.godsConfig.getStringList(godName + ".Priests");
-
-		priests.add(playerId.toString());
-
-		this.godsConfig.set(godName + ".Priests", priests);
+		List<String> priests = this.godsConfig.getStringList(formatGodName(godName) + ".Priests");
+		
+		if(priests.contains(playerId.toString()))
+		{
+			this.plugin.log(playerId.toString() + " is already a priest of " + godName);
+		} 
+		else
+		{
+			priests.add(playerId.toString());
+		}
+		
+		this.godsConfig.set(formatGodName(godName) + ".Priests", priests);
 
 		this.godsConfig.set(godName + ".PendingPriest", null);
 		this.godsConfig.set(godName + ".PendingPriestTime", null);
