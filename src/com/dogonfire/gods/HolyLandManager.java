@@ -429,7 +429,7 @@ public class HolyLandManager implements Listener
 		}
 		if (this.plugin.getLandManager().isNeutralLandLocation(event.getLocation()))
 		{
-			this.plugin.logDebug("Prevented " + event.getCreatureType() + " from spawning in Neutral land");
+			this.plugin.logDebug("Prevented " + event.getEntityType() + " from spawning in Neutral land");
 			return;
 		}
 		String godName = this.plugin.getLandManager().getGodAtHolyLandLocation(event.getLocation());
@@ -449,7 +449,7 @@ public class HolyLandManager implements Listener
 			}
 			if (!this.plugin.getLandManager().isMobTypeAllowedToSpawn(event.getEntityType()))
 			{
-				this.plugin.logDebug("Prevented " + event.getCreatureType() + " from spawning in Holy Land of " + godName);
+				this.plugin.logDebug("Prevented " + event.getEntityType() + " from spawning in Holy Land of " + godName);
 				event.setCancelled(true);
 			}
 		}

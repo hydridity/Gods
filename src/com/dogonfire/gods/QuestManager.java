@@ -1037,7 +1037,7 @@ public class QuestManager
 		biomeTypes.add(Biome.FOREST_HILLS);
 		biomeTypes.add(Biome.JUNGLE_HILLS);
 		biomeTypes.add(Biome.TAIGA_HILLS);
-		biomeTypes.add(Biome.SMALL_MOUNTAINS);
+		biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
 
 		World world = this.plugin.getServer().getWorld(worldName);
 		
@@ -1121,9 +1121,10 @@ public class QuestManager
 
 		List<Biome> biomeTypes = new ArrayList();
 		biomeTypes.add(Biome.EXTREME_HILLS);
-		biomeTypes.add(Biome.EXTREME_HILLS_MOUNTAINS);
-		biomeTypes.add(Biome.EXTREME_HILLS_PLUS);
-		biomeTypes.add(Biome.EXTREME_HILLS_PLUS_MOUNTAINS);
+		biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
+		biomeTypes.add(Biome.EXTREME_HILLS_WITH_TREES);
+		biomeTypes.add(Biome.MUTATED_EXTREME_HILLS);
+		biomeTypes.add(Biome.MUTATED_EXTREME_HILLS_WITH_TREES);
 
 		World world = this.plugin.getServer().getWorld(worldName);
 		do

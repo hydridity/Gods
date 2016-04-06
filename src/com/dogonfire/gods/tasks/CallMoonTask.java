@@ -27,7 +27,7 @@ public class CallMoonTask implements Runnable
 		long time = this.player.getWorld().getFullTime() % 24000L;
 		if ((time < 14000L) || (time > 1000L))
 		{
-			this.player.playSound(this.player.getLocation(), Sound.STEP_STONE, 1.0F, 0.1F);
+			this.player.playSound(this.player.getLocation(), Sound.BLOCK_STONE_STEP, 1.0F, 0.1F);
 			this.player.getWorld().setFullTime(this.player.getWorld().getFullTime() + 1000L);
 			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new CallMoonTask(this.plugin, this.player, this.stopTime), 20L);
 		}
