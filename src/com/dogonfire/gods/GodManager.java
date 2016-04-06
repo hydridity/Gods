@@ -2634,7 +2634,7 @@ public class GodManager
 		this.godsConfig.set(godName + ".PendingPriest", null);
 		this.plugin.getBelieverManager().clearPendingPriest(playerId);
 
-		//this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
+		this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
 
 		List<String> priests = this.godsConfig.getStringList(formatGodName(godName) + ".Priests");
 		
