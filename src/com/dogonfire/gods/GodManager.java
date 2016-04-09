@@ -1537,7 +1537,7 @@ public class GodManager
 
 		List<PriestCandidate> candidates = new ArrayList();
 
-		if (allBelievers.size() == 0)
+		if (allBelievers == null || allBelievers.size() == 0)
 		{
 			this.plugin.logDebug("Did not find any priest candidates");
 			return null;
@@ -1594,7 +1594,7 @@ public class GodManager
 		if (names == null || names.isEmpty())
 		{
 			this.plugin.log("No priests for " + godName);
-			return null;
+			return list;
 		}
 
 		for (String name : names)
@@ -1637,7 +1637,7 @@ public class GodManager
 		{
 			List<UUID> list = getPriestsForGod(godName);
 
-			if (list.contains(believerId))
+			if (list != null && list.contains(believerId))
 			{
 				return true;
 			}
