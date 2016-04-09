@@ -2636,7 +2636,7 @@ public class GodManager
 
 		this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
 
-		List<String> priests = this.godsConfig.getStringList(formatGodName(godName) + ".Priests");
+		List<String> priests = this.godsConfig.getStringList(godName + ".Priests");
 		
 		if(priests.contains(playerId.toString()))
 		{

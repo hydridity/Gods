@@ -598,7 +598,7 @@ public class Commands
 		
 		if (args.length == 2)
 		{
-			godName = args[1];
+			godName = this.plugin.getGodManager().formatGodName(args[1]);
 		}
 		
 		if (godName == null)
@@ -610,8 +610,6 @@ public class Commands
 				return true;
 			}
 		}
-		
-		godName = this.plugin.getGodManager().formatGodName(godName);
 		
 		if (!this.plugin.getGodManager().godExist(godName))
 		{
@@ -1743,7 +1741,7 @@ public class Commands
 			return false;
 		}
 		
-		String godName = args[1];
+		String godName = this.plugin.getGodManager().formatGodName(args[1]);
 		if (!this.plugin.getGodManager().godExist(godName))
 		{
 			sender.sendMessage(ChatColor.RED + "There is no god called '" + ChatColor.GOLD + godName + ChatColor.AQUA + "'");
@@ -1801,8 +1799,7 @@ public class Commands
 		String godName = "";
 		if (args.length >= 2)
 		{
-			godName = args[1];
-			godName = this.plugin.getGodManager().formatGodName(godName);
+			godName = this.plugin.getGodManager().formatGodName(args[1]);
 		}
 		else
 		{
