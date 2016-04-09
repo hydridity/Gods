@@ -2629,32 +2629,38 @@ public class GodManager
 		return null;
 	}
 
-	public void assignPriest(String godName, UUID playerId)
+	public boolean assignPriest(String godName, UUID playerId)
 	{
 		this.godsConfig.set(godName + ".PendingPriest", null);
 		this.plugin.getBelieverManager().clearPendingPriest(playerId);
 
 		this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
 
-		List<String> priests = this.godsConfig.getStringList(godName + ".Priests");
-		
-		if(priests.contains(playerId.toString()))
-		{
-			this.plugin.log(playerId.toString() + " is already a priest of " + godName);
-		} 
-		else
-		{
-			priests.add(playerId.toString());
+		Set<UUID> believers = this.plugin.getBelieverManager().getBelieversForGod(godName);
+		if(believers.contains(playerId)) { 
+			List<String> priests = this.godsConfig.getStringList(godName + ".Priests");
+			
+			if(priests.contains(playerId.toString()))
+			{
+				this.plugin.log(playerId.toString() + " is already a priest of " + godName);
+			} 
+			else
+			{
+				priests.add(playerId.toString());
+			}
+			
+			this.godsConfig.set(formatGodName(godName) + ".Priests", priests);
+	
+			this.godsConfig.set(godName + ".PendingPriest", null);
+			this.godsConfig.set(godName + ".PendingPriestTime", null);
+	
+			this.plugin.getBelieverManager().setLastPrayerDate(playerId);
+	
+			saveTimed();
+			return true;
+		} else {
+			return false;
 		}
-		
-		this.godsConfig.set(formatGodName(godName) + ".Priests", priests);
-
-		this.godsConfig.set(godName + ".PendingPriest", null);
-		this.godsConfig.set(godName + ".PendingPriestTime", null);
-
-		this.plugin.getBelieverManager().setLastPrayerDate(playerId);
-
-		saveTimed();
 	}
 
 	public void removePriest(String godName, UUID playerId)

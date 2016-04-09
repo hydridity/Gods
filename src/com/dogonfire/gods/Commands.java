@@ -1755,11 +1755,11 @@ public class Commands
 			return false;
 		}
 		
-		//this.plugin.getBelieverManager().addPrayer(player.getName(), godName);
-		this.plugin.getGodManager().assignPriest(godName, otherPlayer.getUniqueId());
-
-		sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + otherPlayer.getName() + ChatColor.AQUA + " as priest of " + ChatColor.GOLD + godName);
-
+		if(this.plugin.getGodManager().assignPriest(godName, otherPlayer.getUniqueId())) {
+			sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + otherPlayer.getName() + ChatColor.AQUA + " as priest of " + ChatColor.GOLD + godName);
+		} else {
+			sender.sendMessage(ChatColor.GOLD + otherPlayer.getName() + ChatColor.RED + " was not assigned as a priest of " + ChatColor.GOLD + godName);
+		}
 		return true;
 	}
 
