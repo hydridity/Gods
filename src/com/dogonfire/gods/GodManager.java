@@ -130,6 +130,7 @@ public class GodManager
 		{
 			this.plugin.log("Could not save config to " + this.godsConfigFile + ": " + ex.getMessage());
 		}
+		this.plugin.log("Saved configuration");
 	}
 
 	public void saveTimed()
@@ -1536,7 +1537,7 @@ public class GodManager
 
 		List<PriestCandidate> candidates = new ArrayList();
 
-		if (allBelievers.size() == 0)
+		if (allBelievers == null || allBelievers.size() == 0)
 		{
 			this.plugin.logDebug("Did not find any priest candidates");
 			return null;
@@ -1588,11 +1589,12 @@ public class GodManager
 	public List<UUID> getPriestsForGod(String godName)
 	{
 		List<String> names = this.godsConfig.getStringList(godName + ".Priests");
-		List<UUID> list = new ArrayList();
+		List<UUID> list = new ArrayList<UUID>();
 
-		if (names == null)
+		if (names == null || names.isEmpty())
 		{
-			return null;
+			this.plugin.log("No priests for " + godName);
+			return list;
 		}
 
 		for (String name : names)
@@ -1610,9 +1612,7 @@ public class GodManager
 				if (diffHours > this.plugin.maxPriestPrayerTime)
 				{
 					this.plugin.getLanguageManager().setPlayerName(name);
-
 					godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversRemovedPriest, 2 + this.random.nextInt(40));
-
 					removePriest(godName, believerId);
 				}
 				else
@@ -1621,7 +1621,6 @@ public class GodManager
 				}
 			}
 		}
-
 		return list;
 	}
 
@@ -1638,7 +1637,7 @@ public class GodManager
 		{
 			List<UUID> list = getPriestsForGod(godName);
 
-			if (list.contains(believerId))
+			if (list != null && list.contains(believerId))
 			{
 				return true;
 			}
@@ -2630,25 +2629,38 @@ public class GodManager
 		return null;
 	}
 
-	public void assignPriest(String godName, UUID playerId)
+	public boolean assignPriest(String godName, UUID playerId)
 	{
 		this.godsConfig.set(godName + ".PendingPriest", null);
 		this.plugin.getBelieverManager().clearPendingPriest(playerId);
 
 		this.plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), this.plugin.getLanguageManager().getPriestAssignCommand(playerId));
 
-		List<String> priests = this.godsConfig.getStringList(godName + ".Priests");
-
-		priests.add(playerId.toString());
-
-		this.godsConfig.set(godName + ".Priests", priests);
-
-		this.godsConfig.set(godName + ".PendingPriest", null);
-		this.godsConfig.set(godName + ".PendingPriestTime", null);
-
-		this.plugin.getBelieverManager().setLastPrayerDate(playerId);
-
-		saveTimed();
+		Set<UUID> believers = this.plugin.getBelieverManager().getBelieversForGod(godName);
+		if(believers.contains(playerId)) { 
+			List<String> priests = this.godsConfig.getStringList(godName + ".Priests");
+			
+			if(priests.contains(playerId.toString()))
+			{
+				this.plugin.log(playerId.toString() + " is already a priest of " + godName);
+			} 
+			else
+			{
+				priests.add(playerId.toString());
+			}
+			
+			this.godsConfig.set(formatGodName(godName) + ".Priests", priests);
+	
+			this.godsConfig.set(godName + ".PendingPriest", null);
+			this.godsConfig.set(godName + ".PendingPriestTime", null);
+	
+			this.plugin.getBelieverManager().setLastPrayerDate(playerId);
+	
+			saveTimed();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void removePriest(String godName, UUID playerId)
@@ -3681,7 +3693,7 @@ public class GodManager
 					type = Material.BREAD;
 					break;
 				case 7:
-					type = Material.CARROT;
+					type = Material.CARROT_ITEM;
 					break;
 				case 8:
 					type = Material.IRON_PICKAXE;

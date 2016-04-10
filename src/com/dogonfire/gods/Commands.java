@@ -542,7 +542,7 @@ public class Commands
 			{
 				if (CommandSetPriest(player, args))
 				{
-					this.plugin.log(sender.getName() + " /gods setpriest " + args[1]);
+					this.plugin.log(sender.getName() + " /gods setpriest " + args[1] + " " + args[2]);
 				}
 				return true;
 			}
@@ -598,7 +598,7 @@ public class Commands
 		
 		if (args.length == 2)
 		{
-			godName = args[1];
+			godName = this.plugin.getGodManager().formatGodName(args[1]);
 		}
 		
 		if (godName == null)
@@ -611,8 +611,6 @@ public class Commands
 			}
 		}
 		
-		godName = this.plugin.getGodManager().formatGodName(godName);
-		
 		if (!this.plugin.getGodManager().godExist(godName))
 		{
 			sender.sendMessage(ChatColor.RED + "There is no God with such name.");
@@ -621,9 +619,9 @@ public class Commands
 		
 		List<UUID> priests = this.plugin.getGodManager().getPriestsForGod(godName);
 		
-		if (priests == null || priests.size() == 0)
+		if (priests == null)
 		{
-			priests = new ArrayList();
+			priests = new ArrayList<UUID>();
 		}
 		
 		sender.sendMessage(ChatColor.YELLOW + "--------- " + godName + " " + this.plugin.getGodManager().getColorForGod(godName) + this.plugin.getGodManager().getTitleForGod(godName) + ChatColor.YELLOW + " ---------");
@@ -1731,14 +1729,19 @@ public class Commands
 	private boolean CommandSetPriest(CommandSender sender, String[] args)
 	{
 		Player player = (Player) sender;
-
+		
+		if(args.length < 3)
+		{
+			sender.sendMessage(ChatColor.RED + "Not enough arguments");
+			return false;
+		}
 		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.setpriest")))
 		{
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 		
-		String godName = args[1];
+		String godName = this.plugin.getGodManager().formatGodName(args[1]);
 		if (!this.plugin.getGodManager().godExist(godName))
 		{
 			sender.sendMessage(ChatColor.RED + "There is no god called '" + ChatColor.GOLD + godName + ChatColor.AQUA + "'");
@@ -1746,17 +1749,17 @@ public class Commands
 		}
 		
 		Player otherPlayer = this.plugin.getServer().getPlayer(args[2]);
-		if (player == null)
+		if (otherPlayer == null)
 		{
 			sender.sendMessage(ChatColor.RED + "There is no such player online");
 			return false;
 		}
 		
-		//this.plugin.getBelieverManager().addPrayer(player.getName(), godName);
-		this.plugin.getGodManager().assignPriest(godName, otherPlayer.getUniqueId());
-
-		sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + otherPlayer.getName() + ChatColor.AQUA + " as priest of " + ChatColor.GOLD + godName);
-
+		if(this.plugin.getGodManager().assignPriest(godName, otherPlayer.getUniqueId())) {
+			sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + otherPlayer.getName() + ChatColor.AQUA + " as priest of " + ChatColor.GOLD + godName);
+		} else {
+			sender.sendMessage(ChatColor.GOLD + otherPlayer.getName() + ChatColor.RED + " was not assigned as a priest of " + ChatColor.GOLD + godName);
+		}
 		return true;
 	}
 
@@ -1796,8 +1799,7 @@ public class Commands
 		String godName = "";
 		if (args.length >= 2)
 		{
-			godName = args[1];
-			godName = this.plugin.getGodManager().formatGodName(godName);
+			godName = this.plugin.getGodManager().formatGodName(args[1]);
 		}
 		else
 		{
