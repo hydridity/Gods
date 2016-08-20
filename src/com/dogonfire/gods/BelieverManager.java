@@ -204,6 +204,33 @@ public class BelieverManager
 		this.believersConfig.set(believerId + ".LastPriestOffer", formatter.format(thisDate));
 		saveTimed();
 	}
+	
+	boolean hasRecentGodChange(UUID believerId)
+	{
+		String joinedGodString = this.believersConfig.getString(believerId + ".Joined");
+
+		String pattern = "HH:mm:ss dd-MM-yyyy";
+		DateFormat formatter = new SimpleDateFormat(pattern);
+		Date joinedGodDate = null;
+		Date thisDate = new Date();
+		boolean joinedRecently;
+	
+		try
+		{
+			joinedGodDate = formatter.parse(joinedGodString);
+
+			long diff = thisDate.getTime() - joinedGodDate.getTime();
+			long diffSeconds = diff / 1000L;
+
+			joinedRecently = diffSeconds <= plugin.minSecondsBetweenChangingGod;
+		}
+		catch (Exception ex)
+		{
+			joinedRecently = false;
+		}
+		
+		return joinedRecently;		
+	}
 
 	boolean getChangingGod(UUID believerId)
 	{
@@ -694,13 +721,16 @@ public class BelieverManager
 			lastPrayerDate = new Date();
 			lastPrayerDate.setTime(0L);
 		}
+		
 		int prayers = this.believersConfig.getInt(believerId + ".Prayers");
 		String oldGod = this.believersConfig.getString(believerId + ".God");
-		if ((oldGod != null) && (!oldGod.equals(godName)))
+		
+		if ((oldGod != null) && !oldGod.equals(godName))
 		{
 			prayers = 0;
 			lastPrayerDate.setTime(0L);
 		}
+		
 		long diff = thisDate.getTime() - lastPrayerDate.getTime();
 
 		long diffMinutes = diff / 60000L;
@@ -708,8 +738,14 @@ public class BelieverManager
 		{
 			return false;
 		}
-		prayers++;
+		
+		if(oldGod == null || !oldGod.equals(godName))
+		{
+			this.believersConfig.set(believerId + ".Joined", formatter.format(thisDate));			
+		}
 
+		prayers++;
+		
 		this.believersConfig.set(believerId + ".LastPrayer", formatter.format(thisDate));
 		this.believersConfig.set(believerId + ".God", godName);
 		this.believersConfig.set(believerId + ".Prayers", Integer.valueOf(prayers));

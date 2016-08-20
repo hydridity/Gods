@@ -24,6 +24,7 @@ Info:
   YouEarnedPowerBySlayingHeathen: You earned $Amount power by slaying a non-believer in the name of $PlayerName!
   YouEarnedPowerBySlayingEnemy: You earned $Amount power by slaying an enemy of $PlayerName!
   ConfirmChangeToOtherReligion: By praying to this God you will LEAVE the religion of $PlayerName! Click again to confirm this action.
+  CannotChangeGodSoSoon: You cannot change god so soon! Try again later.
   CannotPraySoSoon: You cannot pray at an altar so soon! Gather your strength and try again in $Amount minutes.
   InfoHelp: Use $PlayerName to see information about a God
   YouHealedBeings: You healed $Amount beings

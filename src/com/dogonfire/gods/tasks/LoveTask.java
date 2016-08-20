@@ -8,8 +8,8 @@ import com.dogonfire.gods.LanguageManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftOcelot;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftOcelot;
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;

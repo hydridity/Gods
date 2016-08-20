@@ -30,7 +30,7 @@ public class LanguageManager
 
 	private void downloadLanguageFile(String fileName) throws IOException
 	{
-		BufferedInputStream in = new BufferedInputStream(new URL("http://www.doggycraft.dk/plugins/gods/lang/" + fileName).openStream());
+		BufferedInputStream in = new BufferedInputStream(new URL("https://raw.githubusercontent.com/DogOnFire/Gods/master/lang/" + fileName).openStream());
 
 		FileOutputStream fos = new FileOutputStream(this.plugin.getDataFolder() + "/lang/" + fileName);
 
@@ -404,6 +404,7 @@ public class LanguageManager
 		PvPLostPower,
 		ConfirmChangeToOtherReligion,
 		CannotPraySoSoon,
+		CannotChangeGodSoSoon,
 		CannotBuildAltarToOtherGods,
 		InfoHelp,
 		YourPrayerPower,

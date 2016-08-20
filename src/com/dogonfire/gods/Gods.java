@@ -110,6 +110,7 @@ public class Gods extends JavaPlugin
 	public int godPowerForLevel2Items = 50;
 	public int godPowerForLevel1Items = 10;
 	public int minBelieversForPriest = 3;
+	public int minSecondsBetweenChangingGod = 5 * 60;
 	public int requiredBelieversForQuests = 1;
 	public boolean defaultPrivateReligions = false;
 	public double godVerbosity = 1.0D;
@@ -499,6 +500,7 @@ public class Gods extends JavaPlugin
 		this.maxBelieverPrayerTime = this.config.getInt("Settings.MaxBelieverPrayerTime", 154);
 		this.minBelieverPrayerTime = this.config.getInt("Settings.MinBelieverPrayerTime", 30);
 		this.minBelieversForPriest = this.config.getInt("Settings.MinBelieversForPriest", 3);
+		this.minSecondsBetweenChangingGod = this.config.getInt("Settings.MinSecondsBetweenChangingGod", 5 * 60);
 		this.maxPriestsPrGod = this.config.getInt("Settings.MaxPriestsPrGod", 1);
 		this.defaultPrivateReligions = this.config.getBoolean("Settings.DefaultPrivateReligions", false);
 

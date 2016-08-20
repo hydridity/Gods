@@ -17,6 +17,8 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 
+import com.dogonfire.gods.GodManager.GodType;
+
 public class AltarManager
 {
 	private Gods plugin;
@@ -34,7 +36,7 @@ public class AltarManager
 		this.altarBlockTypes.clear();
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.MOON);
 			this.altarBlockTypes.put(Material.ENDER_STONE, list);
 		}
@@ -486,8 +488,14 @@ public class AltarManager
 		}
 		else
 		{
+			event.setLine(0, "");
+			event.setLine(1, "");
+			event.setLine(2, "");
+			event.setLine(3, "");
+
 			return false;
 		}
+		
 		return true;
 	}
 

@@ -2506,7 +2506,7 @@ public class GodManager
 	{
 		if (!godExist(godName))
 		{
-			if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.god.create")))
+			if (!player.isOp() && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.god.create")))
 			{
 				this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.CreateGodNotAllowed, ChatColor.RED, 0, "", 20);
 				return false;
@@ -2553,6 +2553,12 @@ public class GodManager
 
 				this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.ConfirmChangeToOtherReligion, ChatColor.YELLOW, 0, oldGodName, 1);
 				return false;
+			}
+			
+			if(this.plugin.getBelieverManager().hasRecentGodChange(player.getUniqueId()))
+			{
+				this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.CannotChangeGodSoSoon, ChatColor.RED, 0, "", 1);
+				return false;				
 			}
 
 			this.plugin.getBelieverManager().clearChangingGod(player.getUniqueId());
@@ -2615,13 +2621,16 @@ public class GodManager
 
 	public boolean addAltar(Player player, String godName, Location location)
 	{
-		addBeliefByAltar(player, godName, location, true);
+		if(addBeliefByAltar(player, godName, location, true))
+		{
+			this.plugin.getLanguageManager().setPlayerName(player.getName());
 
-		this.plugin.getLanguageManager().setPlayerName(player.getName());
+			GodSay(godName, player, LanguageManager.LANGUAGESTRING.GodToBelieverAltarBuilt, 2 + this.random.nextInt(30));
 
-		GodSay(godName, player, LanguageManager.LANGUAGESTRING.GodToBelieverAltarBuilt, 2 + this.random.nextInt(30));
-
-		return true;
+			return true;
+		}
+		
+		return false;
 	}
 
 	public static String parseBelief(String message)
