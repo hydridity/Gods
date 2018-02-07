@@ -1,5 +1,23 @@
 package com.dogonfire.gods;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Level;
+
 /*
  * Copyright 2011 Tyler Blair. All rights reserved.
  *
@@ -29,28 +47,10 @@ package com.dogonfire.gods;
  */
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
 
 /**
  * <p>
@@ -66,8 +66,7 @@ import java.util.logging.Level;
  * void start(); <br/>
  * </code>
  */
-public class Metrics
-{
+public class Metrics {
 
 	/**
 	 * The current revision number
@@ -141,10 +140,8 @@ public class Metrics
 	 */
 	private volatile int taskId = -1;
 
-	public Metrics(final Plugin plugin) throws IOException
-	{
-		if (plugin == null)
-		{
+	public Metrics(final Plugin plugin) throws IOException {
+		if (plugin == null) {
 			throw new IllegalArgumentException("Plugin cannot be null");
 		}
 
@@ -159,8 +156,7 @@ public class Metrics
 		configuration.addDefault("guid", UUID.randomUUID().toString());
 
 		// Do we need to create the file?
-		if (configuration.get("guid", null) == null)
-		{
+		if (configuration.get("guid", null) == null) {
 			configuration.options().header("http://mcstats.org").copyDefaults(true);
 			configuration.save(configurationFile);
 		}
@@ -170,18 +166,16 @@ public class Metrics
 	}
 
 	/**
-	 * Construct and create a Graph that can be used to separate specific
-	 * plotters to their own graphs on the metrics website. Plotters can be
-	 * added to the graph object returned.
+	 * Construct and create a Graph that can be used to separate specific plotters
+	 * to their own graphs on the metrics website. Plotters can be added to the
+	 * graph object returned.
 	 * 
 	 * @param name
 	 * @return Graph object created. Will never return NULL under normal
 	 *         circumstances unless bad parameters are given
 	 */
-	public Graph createGraph(final String name)
-	{
-		if (name == null)
-		{
+	public Graph createGraph(final String name) {
+		if (name == null) {
 			throw new IllegalArgumentException("Graph name cannot be null");
 		}
 
@@ -200,10 +194,8 @@ public class Metrics
 	 * 
 	 * @param plotter
 	 */
-	public void addCustomData(final Plotter plotter)
-	{
-		if (plotter == null)
-		{
+	public void addCustomData(final Plotter plotter) {
+		if (plotter == null) {
 			throw new IllegalArgumentException("Plotter cannot be null");
 		}
 
@@ -215,47 +207,37 @@ public class Metrics
 	}
 
 	/**
-	 * Start measuring statistics. This will immediately create an async
-	 * repeating task as the plugin and send the initial data to the metrics
-	 * backend, and then after that it will post in increments of PING_INTERVAL
-	 * * 1200 ticks.
+	 * Start measuring statistics. This will immediately create an async repeating
+	 * task as the plugin and send the initial data to the metrics backend, and then
+	 * after that it will post in increments of PING_INTERVAL * 1200 ticks.
 	 * 
 	 * @return True if statistics measuring is running, otherwise false.
 	 */
-	public boolean start()
-	{
-		synchronized (optOutLock)
-		{
+	public boolean start() {
+		synchronized (optOutLock) {
 			// Did we opt out?
-			if (isOptOut())
-			{
+			if (isOptOut()) {
 				return false;
 			}
 
 			// Is metrics already running?
-			if (taskId >= 0)
-			{
+			if (taskId >= 0) {
 				return true;
 			}
 
 			// Begin hitting the server with glorious data
-			taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable()
-			{
+			taskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
 
 				private boolean firstPost = true;
 
-				public void run()
-				{
-					try
-					{
+				public void run() {
+					try {
 						// This has to be synchronized or it can collide with
 						// the disable method.
-						synchronized (optOutLock)
-						{
+						synchronized (optOutLock) {
 							// Disable Task, if it is running and the server
 							// owner decided to opt-out
-							if (isOptOut() && taskId > 0)
-							{
+							if (isOptOut() && taskId > 0) {
 								plugin.getServer().getScheduler().cancelTask(taskId);
 								taskId = -1;
 							}
@@ -271,9 +253,7 @@ public class Metrics
 						// After the first post we set firstPost to false
 						// Each post thereafter will be a ping
 						firstPost = false;
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						Bukkit.getLogger().log(Level.INFO, "[Metrics] {0}", e.getMessage());
 					}
 				}
@@ -288,22 +268,15 @@ public class Metrics
 	 * 
 	 * @return
 	 */
-	public boolean isOptOut()
-	{
-		synchronized (optOutLock)
-		{
-			try
-			{
+	public boolean isOptOut() {
+		synchronized (optOutLock) {
+			try {
 				// Reload the metrics file
 				configuration.load(CONFIG_FILE);
-			}
-			catch (IOException ex)
-			{
+			} catch (IOException ex) {
 				Bukkit.getLogger().log(Level.INFO, "[Metrics] {0}", ex.getMessage());
 				return true;
-			}
-			catch (InvalidConfigurationException ex)
-			{
+			} catch (InvalidConfigurationException ex) {
 				Bukkit.getLogger().log(Level.INFO, "[Metrics] {0}", ex.getMessage());
 				return true;
 			}
@@ -312,56 +285,48 @@ public class Metrics
 	}
 
 	/**
-	 * Enables metrics for the server by setting "opt-out" to false in the
-	 * config file and starting the metrics task.
+	 * Enables metrics for the server by setting "opt-out" to false in the config
+	 * file and starting the metrics task.
 	 * 
 	 * @throws IOException
 	 */
-	public void enable() throws IOException
-	{
+	public void enable() throws IOException {
 		// This has to be synchronized or it can collide with the check in the
 		// task.
-		synchronized (optOutLock)
-		{
+		synchronized (optOutLock) {
 			// Check if the server owner has already set opt-out, if not, set
 			// it.
-			if (isOptOut())
-			{
+			if (isOptOut()) {
 				configuration.set("opt-out", false);
 				configuration.save(configurationFile);
 			}
 
 			// Enable Task, if it is not running
-			if (taskId < 0)
-			{
+			if (taskId < 0) {
 				start();
 			}
 		}
 	}
 
 	/**
-	 * Disables metrics for the server by setting "opt-out" to true in the
-	 * config file and canceling the metrics task.
+	 * Disables metrics for the server by setting "opt-out" to true in the config
+	 * file and canceling the metrics task.
 	 * 
 	 * @throws IOException
 	 */
-	public void disable() throws IOException
-	{
+	public void disable() throws IOException {
 		// This has to be synchronized or it can collide with the check in the
 		// task.
-		synchronized (optOutLock)
-		{
+		synchronized (optOutLock) {
 			// Check if the server owner has already set opt-out, if not, set
 			// it.
-			if (!isOptOut())
-			{
+			if (!isOptOut()) {
 				configuration.set("opt-out", true);
 				configuration.save(configurationFile);
 			}
 
 			// Disable Task, if it is running
-			if (taskId > 0)
-			{
+			if (taskId > 0) {
 				this.plugin.getServer().getScheduler().cancelTask(taskId);
 				taskId = -1;
 			}
@@ -371,8 +336,7 @@ public class Metrics
 	/**
 	 * Generic method that posts a plugin to the metrics website
 	 */
-	private void postPlugin(final boolean isPing) throws IOException
-	{
+	private void postPlugin(final boolean isPing) throws IOException {
 		// The plugin's description file containg all of the plugin data such as
 		// name, version, author, etc
 		final PluginDescriptionFile description = plugin.getDescription();
@@ -386,20 +350,17 @@ public class Metrics
 		encodeDataPair(data, "revision", String.valueOf(REVISION));
 
 		// If we're pinging, append it
-		if (isPing)
-		{
+		if (isPing) {
 			encodeDataPair(data, "ping", "true");
 		}
 
 		// Acquire a lock on the graphs, which lets us make the assumption we
 		// also lock everything
 		// inside of the graph (e.g plotters)
-		synchronized (graphs)
-		{
+		synchronized (graphs) {
 			final Iterator<Graph> iter = graphs.iterator();
 
-			while (iter.hasNext())
-			{
+			while (iter.hasNext()) {
 				final Graph graph = iter.next();
 
 				// Because we have a lock on the graphs set already, it is
@@ -410,8 +371,7 @@ public class Metrics
 				// access this list
 				// without reflection so this is a safe assumption without
 				// adding more code.
-				for (Plotter plotter : graph.getPlotters())
-				{
+				for (Plotter plotter : graph.getPlotters()) {
 					// The key name to send to the metrics server
 					// The format is C-GRAPHNAME-PLOTTERNAME where separator -
 					// is defined at the top
@@ -438,12 +398,9 @@ public class Metrics
 
 		// Mineshafter creates a socks proxy, so we can safely bypass it
 		// It does not reroute POST requests so we need to go around it
-		if (isMineshafterPresent())
-		{
+		if (isMineshafterPresent()) {
 			connection = url.openConnection(Proxy.NO_PROXY);
-		}
-		else
-		{
+		} else {
 			connection = url.openConnection();
 		}
 
@@ -462,25 +419,18 @@ public class Metrics
 		writer.close();
 		reader.close();
 
-		if (response == null || response.startsWith("ERR"))
-		{
+		if (response == null || response.startsWith("ERR")) {
 			throw new IOException(response); // Throw the exception
-		}
-		else
-		{
+		} else {
 			// Is this the first update this hour?
-			if (response.contains("OK This is your first update this hour"))
-			{
-				synchronized (graphs)
-				{
+			if (response.contains("OK This is your first update this hour")) {
+				synchronized (graphs) {
 					final Iterator<Graph> iter = graphs.iterator();
 
-					while (iter.hasNext())
-					{
+					while (iter.hasNext()) {
 						final Graph graph = iter.next();
 
-						for (Plotter plotter : graph.getPlotters())
-						{
+						for (Plotter plotter : graph.getPlotters()) {
 							plotter.reset();
 						}
 					}
@@ -492,28 +442,24 @@ public class Metrics
 	}
 
 	/**
-	 * Check if mineshafter is present. If it is, we need to bypass it to send
-	 * POST requests
+	 * Check if mineshafter is present. If it is, we need to bypass it to send POST
+	 * requests
 	 * 
 	 * @return
 	 */
-	private boolean isMineshafterPresent()
-	{
-		try
-		{
+	private boolean isMineshafterPresent() {
+		try {
 			Class.forName("mineshafter.MineServer");
 			return true;
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			return false;
 		}
 	}
 
 	/**
 	 * <p>
-	 * Encode a key/value data pair to be used in a HTTP post request. This
-	 * INCLUDES a & so the first key/value pair MUST be included manually, e.g:
+	 * Encode a key/value data pair to be used in a HTTP post request. This INCLUDES
+	 * a & so the first key/value pair MUST be included manually, e.g:
 	 * </p>
 	 * <code>
 	 * StringBuffer data = new StringBuffer();
@@ -526,8 +472,7 @@ public class Metrics
 	 * @param value
 	 * @return
 	 */
-	private static void encodeDataPair(final StringBuilder buffer, final String key, final String value) throws UnsupportedEncodingException
-	{
+	private static void encodeDataPair(final StringBuilder buffer, final String key, final String value) throws UnsupportedEncodingException {
 		buffer.append('&').append(encode(key)).append('=').append(encode(value));
 	}
 
@@ -537,20 +482,18 @@ public class Metrics
 	 * @param text
 	 * @return
 	 */
-	private static String encode(final String text) throws UnsupportedEncodingException
-	{
+	private static String encode(final String text) throws UnsupportedEncodingException {
 		return URLEncoder.encode(text, "UTF-8");
 	}
 
 	/**
 	 * Represents a custom graph on the website
 	 */
-	public static class Graph
-	{
+	public static class Graph {
 
 		/**
-		 * The graph's name, alphanumeric and spaces only :) If it does not
-		 * comply to the above when submitted, it is rejected
+		 * The graph's name, alphanumeric and spaces only :) If it does not comply to
+		 * the above when submitted, it is rejected
 		 */
 		private final String name;
 
@@ -559,8 +502,7 @@ public class Metrics
 		 */
 		private final Set<Plotter> plotters = new LinkedHashSet<Plotter>();
 
-		private Graph(final String name)
-		{
+		private Graph(final String name) {
 			this.name = name;
 		}
 
@@ -569,8 +511,7 @@ public class Metrics
 		 * 
 		 * @return
 		 */
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 
@@ -579,8 +520,7 @@ public class Metrics
 		 * 
 		 * @param plotter
 		 */
-		public void addPlotter(final Plotter plotter)
-		{
+		public void addPlotter(final Plotter plotter) {
 			plotters.add(plotter);
 		}
 
@@ -589,8 +529,7 @@ public class Metrics
 		 * 
 		 * @param plotter
 		 */
-		public void removePlotter(final Plotter plotter)
-		{
+		public void removePlotter(final Plotter plotter) {
 			plotters.remove(plotter);
 		}
 
@@ -599,22 +538,18 @@ public class Metrics
 		 * 
 		 * @return
 		 */
-		public Set<Plotter> getPlotters()
-		{
+		public Set<Plotter> getPlotters() {
 			return Collections.unmodifiableSet(plotters);
 		}
 
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return name.hashCode();
 		}
 
 		@Override
-		public boolean equals(final Object object)
-		{
-			if (!(object instanceof Graph))
-			{
+		public boolean equals(final Object object) {
+			if (!(object instanceof Graph)) {
 				return false;
 			}
 
@@ -627,8 +562,7 @@ public class Metrics
 	/**
 	 * Interface used to collect custom data for a plugin
 	 */
-	public static abstract class Plotter
-	{
+	public static abstract class Plotter {
 
 		/**
 		 * The plot's name
@@ -638,8 +572,7 @@ public class Metrics
 		/**
 		 * Construct a plotter with the default plot name
 		 */
-		public Plotter()
-		{
+		public Plotter() {
 			this("Default");
 		}
 
@@ -648,8 +581,7 @@ public class Metrics
 		 * 
 		 * @param name
 		 */
-		public Plotter(final String name)
-		{
+		public Plotter(final String name) {
 			this.name = name;
 		}
 
@@ -665,29 +597,24 @@ public class Metrics
 		 * 
 		 * @return the plotted point's column name
 		 */
-		public String getColumnName()
-		{
+		public String getColumnName() {
 			return name;
 		}
 
 		/**
 		 * Called after the website graphs have been updated
 		 */
-		public void reset()
-		{
+		public void reset() {
 		}
 
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return getColumnName().hashCode() + getValue();
 		}
 
 		@Override
-		public boolean equals(final Object object)
-		{
-			if (!(object instanceof Plotter))
-			{
+		public boolean equals(final Object object) {
+			if (!(object instanceof Plotter)) {
 				return false;
 			}
 

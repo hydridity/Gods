@@ -1,36 +1,31 @@
 package com.dogonfire.gods.tasks;
 
-import com.dogonfire.gods.Gods;
-import com.dogonfire.gods.LanguageManager;
-import com.dogonfire.gods.LanguageManager.LANGUAGESTRING;
-
 import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-public class GodSpeakTask implements Runnable
-{
-	private Gods							plugin;
-	private UUID							playerId			= null;
-	private String							godName				= null;
-	private LanguageManager.LANGUAGESTRING	message				= null;
-	private int								amount				= 0;
-	private String							playerNameString	= null;
-	private String							typeString			= null;
+import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.LanguageManager;
 
-	public GodSpeakTask(Gods instance, String gname, UUID playerId, String player, String type, int a)
-	{
+public class GodSpeakTask implements Runnable {
+	private Gods plugin;
+	private UUID playerId = null;
+	private String godName = null;
+	private LanguageManager.LANGUAGESTRING message = null;
+	private int amount = 0;
+	private String playerNameString = null;
+	private String typeString = null;
+
+	public GodSpeakTask(Gods instance, String gname, UUID playerId, String player, String type, int a) {
 		this.plugin = instance;
 		this.playerId = playerId;
 		this.godName = new String(gname);
 		this.message = null;
 	}
 
-	public GodSpeakTask(Gods instance, String gname, UUID playerId, String player, String type, int a, LanguageManager.LANGUAGESTRING m)
-	{
+	public GodSpeakTask(Gods instance, String gname, UUID playerId, String player, String type, int a, LanguageManager.LANGUAGESTRING m) {
 		this.plugin = instance;
 		this.playerId = playerId;
 		this.godName = new String(gname);
@@ -38,22 +33,17 @@ public class GodSpeakTask implements Runnable
 
 		this.playerNameString = new String(player);
 		this.amount = a;
-		if (type != null)
-		{
+		if (type != null) {
 			this.typeString = new String(type);
-		}
-		else
-		{
+		} else {
 			type = "";
 		}
 	}
 
-	private void godWeakSpeak(String godName, Player player)
-	{
+	private void godWeakSpeak(String godName, Player player) {
 		String message = "";
 		Random r = new Random();
-		switch (r.nextInt(15))
-		{
+		switch (r.nextInt(15)) {
 			case 0:
 				message = "...";
 				break;
@@ -102,31 +92,23 @@ public class GodSpeakTask implements Runnable
 		player.sendMessage(ChatColor.GOLD + "<" + godName + ">: " + ChatColor.WHITE + message);
 	}
 
-	public void run()
-	{
+	public void run() {
 		Player player = this.plugin.getServer().getPlayer(this.playerId);
-		if (player == null)
-		{
+		if (player == null) {
 			return;
 		}
 		this.plugin.getLanguageManager().setAmount(this.amount);
-		try
-		{
+		try {
 			this.plugin.getLanguageManager().setType(this.typeString);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			this.plugin.logDebug(ex.getStackTrace().toString());
 		}
 		this.plugin.getLanguageManager().setPlayerName(this.playerNameString);
-		if (this.message != null)
-		{
+		if (this.message != null) {
 			player.sendMessage(ChatColor.GOLD + "<" + this.godName + ">: " + ChatColor.WHITE +
 
-			ChatColor.BOLD + this.plugin.getLanguageManager().getLanguageString(this.godName, this.message));
-		}
-		else
-		{
+					ChatColor.BOLD + this.plugin.getLanguageManager().getLanguageString(this.godName, this.message));
+		} else {
 			String questionMessage = ChatColor.AQUA + "Use " + ChatColor.WHITE + "/gods yes" + ChatColor.AQUA + " or " + ChatColor.WHITE + "/gods no" + ChatColor.AQUA + " to answer your god.";
 
 			player.sendMessage(ChatColor.GOLD + "[" + "Gods" + "]: " + questionMessage);

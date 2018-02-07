@@ -2,24 +2,22 @@ package com.dogonfire.gods.tasks;
 
 import java.util.UUID;
 
-import com.dogonfire.gods.Gods;
-import com.dogonfire.gods.LanguageManager;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class InfoTask implements Runnable
-{
-	private Gods							plugin;
-	private UUID							playerId	= null;
-	private String							name1		= null;
-	private String							name2		= null;
-	private LanguageManager.LANGUAGESTRING	message		= null;
-	private int								amount		= 0;
-	private ChatColor						color;
+import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.LanguageManager;
 
-	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, int amount, String name1)
-	{
+public class InfoTask implements Runnable {
+	private Gods plugin;
+	private UUID playerId = null;
+	private String name1 = null;
+	private String name2 = null;
+	private LanguageManager.LANGUAGESTRING message = null;
+	private int amount = 0;
+	private ChatColor color;
+
+	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, int amount, String name1) {
 		this.plugin = instance;
 		this.playerId = playerId;
 		this.message = m;
@@ -29,8 +27,7 @@ public class InfoTask implements Runnable
 		this.color = color;
 	}
 
-	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name1, String name2)
-	{
+	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name1, String name2) {
 		this.plugin = instance;
 		this.playerId = playerId;
 		this.name1 = name1;
@@ -40,8 +37,7 @@ public class InfoTask implements Runnable
 		this.color = color;
 	}
 
-	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name, int amount1, int amount2)
-	{
+	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name, int amount1, int amount2) {
 		this.plugin = instance;
 		this.playerId = playerId;
 		this.name1 = this.name1;
@@ -51,23 +47,18 @@ public class InfoTask implements Runnable
 		this.color = color;
 	}
 
-	public void run()
-	{
+	public void run() {
 		Player player = this.plugin.getServer().getPlayer(this.playerId);
 
-		if (player == null)
-		{
+		if (player == null) {
 			return;
 		}
 
 		this.plugin.getLanguageManager().setPlayerName(this.name1);
 
-		try
-		{
+		try {
 			this.plugin.getLanguageManager().setType(this.name2);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			this.plugin.logDebug(ex.getStackTrace().toString());
 		}
 
@@ -77,6 +68,6 @@ public class InfoTask implements Runnable
 
 		player.sendMessage(
 
-		this.color + questionMessage);
+				this.color + questionMessage);
 	}
 }

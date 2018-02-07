@@ -1,6 +1,6 @@
 name: Gods
 author: DogOnFire
-version: "0.9.0"
+version: "0.9.1"
 website: "http://dev.bukkit.org/server-mods/gods"
 main: com.dogonfire.gods.Gods
 softdepend: 

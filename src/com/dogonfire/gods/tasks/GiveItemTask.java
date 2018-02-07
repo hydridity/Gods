@@ -1,29 +1,25 @@
 package com.dogonfire.gods.tasks;
 
-import com.dogonfire.gods.GodManager;
-import com.dogonfire.gods.Gods;
-import com.dogonfire.gods.LanguageManager;
-import com.dogonfire.gods.LanguageManager.LANGUAGESTRING;
 import java.util.Random;
+
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public class GiveItemTask implements Runnable
-{
+import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.LanguageManager;
+
+public class GiveItemTask implements Runnable {
 	private Gods plugin;
 	private Player player = null;
 	private Material itemType;
 	private String godName = null;
 	private boolean speak = false;
 
-	public GiveItemTask(Gods instance, String god, Player p, Material material, boolean godspeak)
-	{
+	public GiveItemTask(Gods instance, String god, Player p, Material material, boolean godspeak) {
 		this.plugin = instance;
 		this.player = p;
 		this.godName = new String(god);
@@ -31,8 +27,7 @@ public class GiveItemTask implements Runnable
 		this.speak = godspeak;
 	}
 
-	private boolean giveItem()
-	{
+	private boolean giveItem() {
 		Vector dir = this.player.getLocation().getDirection();
 
 		dir.setY(0);
@@ -40,37 +35,27 @@ public class GiveItemTask implements Runnable
 		Location spawnLocation = this.player.getLocation().toVector().add(dir.multiply(4)).toLocation(this.player.getWorld());
 
 		spawnLocation.setY(spawnLocation.getY() + 2.0D);
-		if (spawnLocation.getBlock().getType() != Material.AIR)
-		{
+		if (spawnLocation.getBlock().getType() != Material.AIR) {
 			return false;
 		}
-		try
-		{
+		try {
 			spawnLocation.getWorld().dropItem(spawnLocation, new ItemStack(this.itemType, 1));
 
 			spawnLocation.getWorld().playEffect(spawnLocation, Effect.MOBSPAWNER_FLAMES, 25);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			return false;
 		}
 		return true;
 	}
 
-	public void run()
-	{
-		if (giveItem())
-		{
+	public void run() {
+		if (giveItem()) {
 			Random random = new Random();
-			if (this.speak)
-			{
+			if (this.speak) {
 				this.plugin.getLanguageManager().setPlayerName(this.player.getName());
-				try
-				{
+				try {
 					this.plugin.getLanguageManager().setType(this.itemType.name());
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					this.plugin.logDebug(ex.getStackTrace().toString());
 				}
 				this.plugin.getGodManager().GodSay(this.godName, this.player, LanguageManager.LANGUAGESTRING.GodToBelieverItemBlessing, 2 + random.nextInt(10));

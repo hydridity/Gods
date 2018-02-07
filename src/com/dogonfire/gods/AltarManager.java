@@ -3,15 +3,13 @@ package com.dogonfire.gods;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.material.Attachable;
@@ -19,20 +17,17 @@ import org.bukkit.material.MaterialData;
 
 import com.dogonfire.gods.GodManager.GodType;
 
-public class AltarManager
-{
+public class AltarManager {
 	private Gods plugin;
 	private Random random = new Random();
-	private HashMap<Integer, String> droppedItems = new HashMap();
-	private HashMap<Material, List<GodManager.GodType>> altarBlockTypes = new HashMap();
+	private Map<Integer, String> droppedItems = new HashMap<Integer, String>();
+	private Map<Material, List<GodType>> altarBlockTypes = new HashMap<Material, List<GodType>>();
 
-	AltarManager(Gods p)
-	{
+	AltarManager(Gods p) {
 		this.plugin = p;
 	}
 
-	public void resetAltarBlockTypes()
-	{
+	public void resetAltarBlockTypes() {
 		this.altarBlockTypes.clear();
 
 		{
@@ -42,174 +37,153 @@ public class AltarManager
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.EVIL);
 			this.altarBlockTypes.put(Material.OBSIDIAN, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.FROST);
 			this.altarBlockTypes.put(Material.SNOW_BLOCK, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.CREATURES);
 			this.altarBlockTypes.put(Material.LOG, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.NATURE);
 			this.altarBlockTypes.put(Material.MELON_BLOCK, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.WISDOM);
 			this.altarBlockTypes.put(Material.BOOKSHELF, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.LOVE);
 			this.altarBlockTypes.put(Material.DIAMOND_BLOCK, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.THUNDER);
 			this.altarBlockTypes.put(Material.QUARTZ_BLOCK, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.SUN);
 			this.altarBlockTypes.put(Material.SANDSTONE, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.PARTY);
 			this.altarBlockTypes.put(Material.EMERALD_BLOCK, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.WAR);
 			this.altarBlockTypes.put(Material.NETHERRACK, list);
 		}
 
 		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.SEA);
 			this.altarBlockTypes.put(Material.LAPIS_BLOCK, list);
 		}
 
-		if (this.plugin.werewolfEnabled)
-		{
-			ArrayList<GodManager.GodType> list = new ArrayList();
+		if (this.plugin.werewolfEnabled) {
+			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.WEREWOLVES);
 			this.altarBlockTypes.put(Material.WOOD, list);
 		}
 	}
 
-	public void setAltarBlockTypeForGodType(GodManager.GodType godType, Material blockMaterial)
-	{
-		List<GodManager.GodType> godTypes = new ArrayList();
-		if (this.altarBlockTypes.containsKey(blockMaterial))
-		{
-			godTypes = (List) this.altarBlockTypes.get(blockMaterial);
+	public void setAltarBlockTypeForGodType(GodManager.GodType godType, Material blockMaterial) {
+		List<GodManager.GodType> godTypes = new ArrayList<GodType>();
+		if (this.altarBlockTypes.containsKey(blockMaterial)) {
+			godTypes = (List<GodType>) this.altarBlockTypes.get(blockMaterial);
 		}
-		if (!godTypes.contains(godType))
-		{
+		if (!godTypes.contains(godType)) {
 			godTypes.add(godType);
 		}
 		this.altarBlockTypes.put(blockMaterial, godTypes);
 	}
 
-	public GodManager.GodType getGodTypeForAltarBlockType(Material altarBlockType)
-	{
-		List<GodManager.GodType> godTypes = (List) this.altarBlockTypes.get(altarBlockType);
-		if ((godTypes == null) || (godTypes.size() == 0))
-		{
+	public GodManager.GodType getGodTypeForAltarBlockType(Material altarBlockType) {
+		List<GodManager.GodType> godTypes = (List<GodType>) this.altarBlockTypes.get(altarBlockType);
+		if ((godTypes == null) || (godTypes.size() == 0)) {
 			this.plugin.logDebug("No god types available for block type " + altarBlockType.name() + "!");
 			return null;
 		}
 		return (GodManager.GodType) godTypes.get(this.random.nextInt(godTypes.size()));
 	}
 
-	public List<String> getAltarBlockTypesFromGodType(GodManager.GodType godType)
-	{
-		List<String> list = new ArrayList();
-		for (Material blockMaterial : this.altarBlockTypes.keySet())
-		{
-			if ((this.altarBlockTypes.get(blockMaterial) != null) && (((List) this.altarBlockTypes.get(blockMaterial)).contains(godType)))
-			{
+	public List<String> getAltarBlockTypesFromGodType(GodManager.GodType godType) {
+		List<String> list = new ArrayList<String>();
+		for (Material blockMaterial : this.altarBlockTypes.keySet()) {
+			if ((this.altarBlockTypes.get(blockMaterial) != null) && (((List<?>) this.altarBlockTypes.get(blockMaterial)).contains(godType))) {
 				list.add(blockMaterial.name());
 			}
 		}
 		return list;
 	}
 
-	public Player getCursedPlayerFromAltar(Block block, String[] lines)
-	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
-		{
+	public Player getCursedPlayerFromAltar(Block block, String[] lines) {
+		if ((block == null) || (block.getType() != Material.WALL_SIGN)) {
 			return null;
 		}
 
 		String cursesName = lines[0].trim();
-		if (!cursesName.equalsIgnoreCase("curses"))
-		{
+		if (!cursesName.equalsIgnoreCase("curses")) {
 			return null;
 		}
 
 		String playerName = lines[2];
-		if ((playerName == null) || (playerName.length() < 1))
-		{
+		if ((playerName == null) || (playerName.length() < 1)) {
 			return null;
 		}
 
 		return plugin.getServer().getPlayer(playerName);
 	}
 
-	public Player getBlessedPlayerFromAltarSign(Block block, String[] lines)
-	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
-		{
+	public Player getBlessedPlayerFromAltarSign(Block block, String[] lines) {
+		if ((block == null) || (block.getType() != Material.WALL_SIGN)) {
 			return null;
 		}
 		String cursesName = lines[0].trim();
-		if (!cursesName.equalsIgnoreCase("blessings"))
-		{
+		if (!cursesName.equalsIgnoreCase("blessings")) {
 			return null;
 		}
 
 		String playerName = lines[2];
 
-		if ((playerName == null) || (playerName.length() < 1))
-		{
+		if ((playerName == null) || (playerName.length() < 1)) {
 			return null;
 		}
 
 		return plugin.getServer().getPlayer(playerName);
 	}
 
-	public GodManager.GodGender getGodGenderFromAltarBlock(Block block)
-	{
-		if (block.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON))
-		{
+	public GodManager.GodGender getGodGenderFromAltarBlock(Block block) {
+		if (block.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON)) {
 			return GodManager.GodGender.Female;
 		}
 		return GodManager.GodGender.Male;
 	}
 
-	public Block getAltarBlockFromSign(Block block)
-	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
-		{
+	public Block getAltarBlockFromSign(Block block) {
+		if ((block == null) || (block.getType() != Material.WALL_SIGN)) {
 			return null;
 		}
 		MaterialData m = block.getState().getData();
@@ -221,21 +195,17 @@ public class AltarManager
 		Block altarBlock = block.getRelative(face);
 
 		this.plugin.logDebug("getAltarBlockFromSign(): AltarBlock block is " + altarBlock.getType().name());
-		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null)
-		{
+		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null) {
 			return null;
 		}
-		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON)))
-		{
+		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON))) {
 			return null;
 		}
 		return altarBlock;
 	}
 
-	public boolean isAltarSign(Block block)
-	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
-		{
+	public boolean isAltarSign(Block block) {
+		if ((block == null) || (block.getType() != Material.WALL_SIGN)) {
 			return false;
 		}
 		MaterialData m = block.getState().getData();
@@ -247,110 +217,77 @@ public class AltarManager
 		Block altarBlock = block.getRelative(face);
 
 		this.plugin.logDebug("isAltarSign(): AltarBlock block is " + altarBlock.getType().name());
-		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null)
-		{
+		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null) {
 			return false;
 		}
-		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON)))
-		{
+		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON))) {
 			return false;
 		}
 		return true;
 	}
 
-	public boolean isAltarBlock(Block block)
-	{
-		if ((block == null) || (getGodTypeForAltarBlockType(block.getType()) == null))
-		{
+	public boolean isAltarBlock(Block block) {
+		if ((block == null) || (getGodTypeForAltarBlockType(block.getType()) == null)) {
 			return false;
 		}
-		if ((block.getRelative(BlockFace.UP).getTypeId() != Material.TORCH.getId()) && (block.getRelative(BlockFace.UP).getTypeId() != Material.REDSTONE_TORCH_ON.getId()))
-		{
+		if ((block.getRelative(BlockFace.UP).getType() != Material.TORCH) && (block.getRelative(BlockFace.UP).getType() != Material.REDSTONE_TORCH_ON)) {
 			return false;
 		}
-		if (block.getRelative(BlockFace.NORTH).getTypeId() == Material.WALL_SIGN.getId())
-		{
-			return true;
-		}
-		if (block.getRelative(BlockFace.SOUTH).getTypeId() == Material.WALL_SIGN.getId())
-		{
-			return true;
-		}
-		if (block.getRelative(BlockFace.WEST).getTypeId() == Material.WALL_SIGN.getId())
-		{
-			return true;
-		}
-		if (block.getRelative(BlockFace.EAST).getTypeId() == Material.WALL_SIGN.getId())
-		{
-			return true;
-		}
+		for (BlockFace face : new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST })
+			if (block.getRelative(face).getType() == Material.WALL_SIGN)
+				return true;
 		return false;
 	}
 
-	public boolean isAltarTorch(Block block)
-	{
-		if (block == null)
-		{
+	public boolean isAltarTorch(Block block) {
+		if (block == null) {
 			return false;
 		}
-		if ((block.getType() != Material.TORCH) && (block.getType() != Material.REDSTONE_TORCH_ON))
-		{
+		if ((block.getType() != Material.TORCH) && (block.getType() != Material.REDSTONE_TORCH_ON)) {
 			return false;
 		}
 		Block altarBlock = block.getRelative(BlockFace.DOWN);
 
 		this.plugin.logDebug("isAltarTorch(): AltarBlock block is " + altarBlock.getType().name());
-		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null)
-		{
+		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null) {
 			return false;
 		}
-		if (altarBlock.getRelative(BlockFace.EAST).getType() == Material.WALL_SIGN)
-		{
+		if (altarBlock.getRelative(BlockFace.EAST).getType() == Material.WALL_SIGN) {
 			return true;
 		}
-		if (altarBlock.getRelative(BlockFace.WEST).getType() == Material.WALL_SIGN)
-		{
+		if (altarBlock.getRelative(BlockFace.WEST).getType() == Material.WALL_SIGN) {
 			return true;
 		}
-		if (altarBlock.getRelative(BlockFace.NORTH).getType() == Material.WALL_SIGN)
-		{
+		if (altarBlock.getRelative(BlockFace.NORTH).getType() == Material.WALL_SIGN) {
 			return true;
 		}
-		if (altarBlock.getRelative(BlockFace.SOUTH).getType() == Material.WALL_SIGN)
-		{
+		if (altarBlock.getRelative(BlockFace.SOUTH).getType() == Material.WALL_SIGN) {
 			return true;
 		}
 		return false;
 	}
 
-	public boolean isPrayingAltar(Block block)
-	{
+	public boolean isPrayingAltar(Block block) {
 		return isAltarSign(block);
 	}
 
-	public boolean isCursingAltar(Block block, String[] lines)
-	{
-		if (!isAltarSign(block))
-		{
+	public boolean isCursingAltar(Block block, String[] lines) {
+		if (!isAltarSign(block)) {
 			return false;
 		}
 		return getCursedPlayerFromAltar(block, lines) != null;
 	}
 
-	public boolean isBlessingAltar(Block block, String[] lines)
-	{
-		if (!isAltarSign(block))
-		{
+	public boolean isBlessingAltar(Block block, String[] lines) {
+		if (!isAltarSign(block)) {
 			return false;
 		}
 		return getBlessedPlayerFromAltarSign(block, lines) != null;
 	}
 
-	public boolean handleNewCursingAltar(SignChangeEvent event)
-	{
+	public boolean handleNewCursingAltar(SignChangeEvent event) {
 		Player player = event.getPlayer();
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build")))
-		{
+		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build"))) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.BuildAltarNotAllowed, ChatColor.DARK_RED, 0, "", 10);
 			return false;
 		}
@@ -364,12 +301,10 @@ public class AltarManager
 		return true;
 	}
 
-	public boolean handleNewBlessingAltar(SignChangeEvent event)
-	{
+	public boolean handleNewBlessingAltar(SignChangeEvent event) {
 		Player player = event.getPlayer();
 
-		if (!player.isOp() && !this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build"))
-		{
+		if (!player.isOp() && !this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build")) {
 			return false;
 		}
 		event.setLine(0, "Blessings");
@@ -382,22 +317,18 @@ public class AltarManager
 		return true;
 	}
 
-	public boolean handleNewSacrificingAltar(SignChangeEvent event)
-	{
+	public boolean handleNewSacrificingAltar(SignChangeEvent event) {
 		Player player = event.getPlayer();
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build")))
-		{
+		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build"))) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.BuildAltarNotAllowed, ChatColor.DARK_RED, 0, "", 10);
 			return false;
 		}
 		return false;
 	}
 
-	public boolean handleNewPrayingAltar(SignChangeEvent event)
-	{
+	public boolean handleNewPrayingAltar(SignChangeEvent event) {
 		Player player = event.getPlayer();
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build")))
-		{
+		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.altar.build"))) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.BuildAltarNotAllowed, ChatColor.DARK_RED, 0, "", 10);
 			return false;
 		}
@@ -405,25 +336,19 @@ public class AltarManager
 		String godName = "";
 		int line = 0;
 		int otherline = 0;
-		while ((godName.isEmpty()) && (line < 4))
-		{
+		while ((godName.isEmpty()) && (line < 4)) {
 			godName = event.getLine(line++);
 		}
 
 		line--;
 
-		while (otherline < 4)
-		{
-			if (otherline == line)
-			{
+		while (otherline < 4) {
+			if (otherline == line) {
 				otherline++;
-			}
-			else
-			{
+			} else {
 				String text = event.getLine(otherline);
 
-				if ((text != null) && (text.length() > 0))
-				{
+				if ((text != null) && (text.length() > 0)) {
 					this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.InvalidAltarSign, ChatColor.DARK_RED, 0, "", 10);
 					return false;
 				}
@@ -431,8 +356,7 @@ public class AltarManager
 			}
 		}
 
-		if (godName.length() <= 1)
-		{
+		if (godName.length() <= 1) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.InvalidGodName, ChatColor.DARK_RED, 0, "", 20);
 			return false;
 		}
@@ -440,41 +364,34 @@ public class AltarManager
 		godName = godName.trim();
 		godName = this.plugin.getGodManager().formatGodName(godName);
 
-		if ((godName.length() <= 1) || (godName.contains(" ")))
-		{
+		if ((godName.length() <= 1) || (godName.contains(" "))) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.InvalidGodName, ChatColor.DARK_RED, 0, "", 20);
 			return false;
 		}
 
-		if ((this.plugin.isBlacklistedGod(godName)) || (!this.plugin.isWhitelistedGod(godName)))
-		{
+		if ((this.plugin.isBlacklistedGod(godName)) || (!this.plugin.isWhitelistedGod(godName))) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayToBlacklistedGodNotAllowed, ChatColor.DARK_RED, 0, "", 1);
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().hasGodAccess(player.getUniqueId(), godName))
-		{
+		if (!this.plugin.getGodManager().hasGodAccess(player.getUniqueId(), godName)) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrivateGodNoAccess, ChatColor.DARK_RED, 0, "", 1);
 			return false;
 		}
 
 		String currentGodName = plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-		if (currentGodName!=null && !currentGodName.equals(godName))
-		{
+		if (currentGodName != null && !currentGodName.equals(godName)) {
 			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.CannotBuildAltarToOtherGods, ChatColor.DARK_RED, 0, godName, 1);
 			return false;
 		}
-		
+
 		Block altarBlock = this.plugin.getAltarManager().getAltarBlockFromSign(player.getWorld().getBlockAt(event.getBlock().getLocation()));
 
-		if (altarBlock == null)
-		{
+		if (altarBlock == null) {
 			return false;
 		}
-		if (this.plugin.getGodManager().addAltar(event.getPlayer(), godName, event.getBlock().getLocation()))
-		{
-			if ((this.plugin.holyLandEnabled) && (this.plugin.getPermissionsManager().hasPermission(player, "gods.holyland")))
-			{
+		if (this.plugin.getGodManager().addAltar(event.getPlayer(), godName, event.getBlock().getLocation())) {
+			if ((this.plugin.holyLandEnabled) && (this.plugin.getPermissionsManager().hasPermission(player, "gods.holyland"))) {
 				this.plugin.getLandManager().setPrayingHotspot(player.getName(), godName, altarBlock.getLocation());
 			}
 			this.plugin.getQuestManager().handleBuiltPrayingAltar(godName);
@@ -485,9 +402,7 @@ public class AltarManager
 			event.setLine(3, "");
 
 			this.plugin.sendInfo(event.getPlayer().getUniqueId(), LanguageManager.LANGUAGESTRING.PrayAlterHelp, ChatColor.AQUA, 0, godName, 80);
-		}
-		else
-		{
+		} else {
 			event.setLine(0, "");
 			event.setLine(1, "");
 			event.setLine(2, "");
@@ -495,22 +410,19 @@ public class AltarManager
 
 			return false;
 		}
-		
+
 		return true;
 	}
 
-	public void addDroppedItem(int entityID, String playerName)
-	{
+	public void addDroppedItem(int entityID, String playerName) {
 		this.droppedItems.put(Integer.valueOf(entityID), playerName);
 	}
 
-	public String getDroppedItemPlayer(int entityID)
-	{
+	public String getDroppedItemPlayer(int entityID) {
 		return (String) this.droppedItems.get(Integer.valueOf(entityID));
 	}
 
-	public void clearDroppedItems()
-	{
+	public void clearDroppedItems() {
 		this.plugin.logDebug("Cleared " + this.droppedItems.size() + " dropped items");
 		this.droppedItems.clear();
 	}

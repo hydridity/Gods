@@ -1,7 +1,5 @@
 package com.dogonfire.gods;
 
-import com.dogonfire.gods.tasks.LoveTask;
-
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,31 +15,27 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitScheduler;
 
-public class MarriageManager
-{
+import com.dogonfire.gods.tasks.LoveTask;
+
+public class MarriageManager {
 	private Gods plugin;
 	private FileConfiguration marriagesConfig = null;
 	private File marriagesConfigFile = null;
 	private Random random = new Random();
 	private Material marriageTokenType = Material.GOLD_NUGGET;
 
-	public class MarriedCouple
-	{
+	public class MarriedCouple {
 		public UUID player1Id;
 		public UUID player2Id;
 		public String godName;
 		public Date lastLove;
 
-		MarriedCouple(UUID player1Id, UUID player2Id, String godName, Date lastLove)
-		{
+		MarriedCouple(UUID player1Id, UUID player2Id, String godName, Date lastLove) {
 			this.player1Id = player1Id;
 			this.player2Id = player2Id;
 			this.godName = godName;
@@ -49,14 +43,11 @@ public class MarriageManager
 		}
 	}
 
-	public class MarriedCoupleComparator implements Comparator<MarriageManager.MarriedCouple>
-	{
-		public MarriedCoupleComparator()
-		{
+	public class MarriedCoupleComparator implements Comparator<MarriageManager.MarriedCouple> {
+		public MarriedCoupleComparator() {
 		}
 
-		public int compare(MarriageManager.MarriedCouple object1, MarriageManager.MarriedCouple object2)
-		{
+		public int compare(MarriageManager.MarriedCouple object1, MarriageManager.MarriedCouple object2) {
 			MarriageManager.MarriedCouple b1 = object1;
 			MarriageManager.MarriedCouple b2 = object2;
 
@@ -64,63 +55,50 @@ public class MarriageManager
 		}
 	}
 
-	MarriageManager(Gods p)
-	{
+	MarriageManager(Gods p) {
 		this.plugin = p;
 	}
 
-	public void load()
-	{
-		if (this.marriagesConfigFile == null)
-		{
+	public void load() {
+		if (this.marriagesConfigFile == null) {
 			this.marriagesConfigFile = new File(this.plugin.getDataFolder(), "marriages.yml");
 		}
-		
+
 		this.marriagesConfig = YamlConfiguration.loadConfiguration(this.marriagesConfigFile);
 
 		this.plugin.log("Loaded " + this.marriagesConfig.getKeys(false).size() + " marriages.");
 	}
 
-	public void save()
-	{
-		if ((this.marriagesConfig == null) || (this.marriagesConfigFile == null))
-		{
+	public void save() {
+		if ((this.marriagesConfig == null) || (this.marriagesConfigFile == null)) {
 			return;
 		}
-		try
-		{
+		try {
 			this.marriagesConfig.save(this.marriagesConfigFile);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			this.plugin.log("Could not save config to " + this.marriagesConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 
-	public UUID getProposal(UUID believerId)
-	{
+	public UUID getProposal(UUID believerId) {
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date thisDate = new Date();
 		Date offerDate = null;
 
 		String offerDateString = this.marriagesConfig.getString(believerId + ".MarriageProposal.Time");
-		try
-		{
+		try {
 			offerDate = formatter.parse(offerDateString);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			this.plugin.logDebug("Could no parse marriage proposal time: " + ex.getMessage());
 			offerDate = new Date();
 			offerDate.setTime(0L);
 		}
-		
+
 		long diff = thisDate.getTime() - offerDate.getTime();
 		long diffSeconds = diff / 1000L;
-		
-		if (diffSeconds > 30L)
-		{
+
+		if (diffSeconds > 30L) {
 			this.plugin.logDebug("getProposal DiffSeconds is " + diffSeconds);
 
 			this.marriagesConfig.set(believerId + ".MarriageProposal", null);
@@ -129,24 +107,21 @@ public class MarriageManager
 
 			return null;
 		}
-		
+
 		return UUID.fromString(this.marriagesConfig.getString(believerId.toString() + ".MarriageProposal.Partner"));
 	}
 
-	public UUID getPartnerId(UUID believerId)
-	{
+	public UUID getPartnerId(UUID believerId) {
 		String partner = this.marriagesConfig.getString(believerId.toString() + ".Married.Partner");
-		
-		if(partner==null)
-		{
-			return null;			
+
+		if (partner == null) {
+			return null;
 		}
-		
+
 		return UUID.fromString(partner);
 	}
 
-	public void setMarriageProposal(UUID player1, UUID player2)
-	{
+	public void setMarriageProposal(UUID player1, UUID player2) {
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date thisDate = new Date();
@@ -164,8 +139,7 @@ public class MarriageManager
 		save();
 	}
 
-	public void setGettingMarried(UUID player1, UUID player2)
-	{
+	public void setGettingMarried(UUID player1, UUID player2) {
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date thisDate = new Date();
@@ -183,8 +157,7 @@ public class MarriageManager
 		save();
 	}
 
-	public void setMarried(UUID player1, UUID player2)
-	{
+	public void setMarried(UUID player1, UUID player2) {
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date thisDate = new Date();
@@ -202,60 +175,49 @@ public class MarriageManager
 		save();
 	}
 
-	public UUID getGettingMarriedPartner(UUID playerId)
-	{
+	public UUID getGettingMarriedPartner(UUID playerId) {
 		String partnerId = this.marriagesConfig.getString(playerId.toString() + ".GettingMarried.Partner");
-		
-		if(partnerId==null)
-		{
-			return null;			
+
+		if (partnerId == null) {
+			return null;
 		}
 
 		return UUID.fromString(partnerId);
 	}
 
-	public String getPartnerName(UUID playerId)
-	{
+	public String getPartnerName(UUID playerId) {
 		String partnerId = this.marriagesConfig.getString(playerId.toString() + ".Married.Partner");
-		
-		if(partnerId==null)
-		{
-			return null;			
+
+		if (partnerId == null) {
+			return null;
 		}
-		
+
 		return plugin.getServer().getOfflinePlayer(UUID.fromString(partnerId)).getName();
 	}
 
-	public List<MarriedCouple> getMarriedCouples()
-	{
+	public List<MarriedCouple> getMarriedCouples() {
 		Set<String> list = this.marriagesConfig.getKeys(false);
-		List<MarriedCouple> couples = new ArrayList();
+		List<MarriedCouple> couples = new ArrayList<MarriedCouple>();
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date lastLove = null;
-		
-		List<UUID> names = new ArrayList();
-		
-		for (String player : list)
-		{
-			UUID playerId = UUID.fromString(player);			
+
+		List<UUID> names = new ArrayList<UUID>();
+
+		for (String player : list) {
+			UUID playerId = UUID.fromString(player);
 			UUID partnerId = getPartnerId(playerId);
-			
-			if (partnerId == null)
-			{
+
+			if (partnerId == null) {
 				continue;
 			}
-			
-			if (!names.contains(partnerId))
-			{
+
+			if (!names.contains(partnerId)) {
 				String lastLoveString = this.marriagesConfig.getString(playerId + ".Married.LastLove");
-				
-				try
-				{
+
+				try {
 					lastLove = formatter.parse(lastLoveString);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					this.plugin.log("Invalid lastlove format for " + playerId);
 					lastLove = new Date();
 
@@ -264,49 +226,42 @@ public class MarriageManager
 
 					save();
 				}
-				
+
 				couples.add(new MarriedCouple(playerId, partnerId, this.plugin.getBelieverManager().getGodForBeliever(playerId), lastLove));
 
 				names.add(playerId);
 			}
 		}
-		
+
 		Collections.sort(couples, new MarriedCoupleComparator());
 
 		return couples;
 	}
 
-	public boolean hasPickupWeddingRing(UUID playerId)
-	{		
-		if(playerId==null)
-		{
+	public boolean hasPickupWeddingRing(UUID playerId) {
+		if (playerId == null) {
 			this.plugin.log("playerId==null");
 		}
-		
-		if (this.marriagesConfig.getString(playerId.toString() + ".GettingMarried.HasPickupWeddingToken") == null)
-		{
+
+		if (this.marriagesConfig.getString(playerId.toString() + ".GettingMarried.HasPickupWeddingToken") == null) {
 			return false;
 		}
-				
+
 		Player player = this.plugin.getServer().getPlayer(playerId);
 
 		return true;
 	}
 
-	public void handleAcceptProposal(UUID playerId1, UUID playerId2, String godName)
-	{
+	public void handleAcceptProposal(UUID playerId1, UUID playerId2, String godName) {
 		Player player1 = this.plugin.getServer().getPlayer(playerId1);
 		Player player2 = this.plugin.getServer().getPlayer(playerId2);
-		
-		try
-		{
+
+		try {
 			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getItemTypeName(this.marriageTokenType));
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			this.plugin.logDebug(ex.getStackTrace().toString());
 		}
-		
+
 		this.plugin.getLanguageManager().setPlayerName(player2.getDisplayName());
 		this.plugin.getGodManager().GodSay(godName, player1, LanguageManager.LANGUAGESTRING.GodToBelieverAcceptedMarriageProposal, 2 + this.random.nextInt(40));
 
@@ -316,47 +271,39 @@ public class MarriageManager
 		setGettingMarried(playerId1, playerId2);
 	}
 
-	public void handlePickupItem(Player player, Item item, Location location)
-	{
-		if (item.getItemStack().getType() != this.marriageTokenType)
-		{
+	public void handlePickupItem(Player player, Item item, Location location) {
+		if (item.getItemStack().getType() != this.marriageTokenType) {
 			return;
 		}
 
-		
 		{
 			UUID partnerId = getPartnerId(player.getUniqueId());
-		
+
 			// Already married
-			if (partnerId != null)
-			{
+			if (partnerId != null) {
 				return;
 			}
 		}
-		
-				
+
 		UUID gettingMarriedPartnerId = getGettingMarriedPartner(player.getUniqueId());
 
-		if (gettingMarriedPartnerId == null)
-		{
+		if (gettingMarriedPartnerId == null) {
 			return;
 		}
 
 		Player partner = this.plugin.getServer().getPlayer(gettingMarriedPartnerId);
 
-		if(player==null || partner==null)
-		{
+		if (player == null || partner == null) {
 			return;
 		}
-		
+
 		this.marriagesConfig.set(player.getUniqueId().toString() + ".GettingMarried.HasPickupWeddingToken", true);
-		
-		//if (hasPickupWeddingRing(player.getUniqueId()))
+
+		// if (hasPickupWeddingRing(player.getUniqueId()))
 		{
 			String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-			
-			if (hasPickupWeddingRing(gettingMarriedPartnerId))
-			{
+
+			if (hasPickupWeddingRing(gettingMarriedPartnerId)) {
 				setMarried(player.getUniqueId(), gettingMarriedPartnerId);
 
 				float godPower = this.plugin.getGodManager().getGodPower(godName);
@@ -370,21 +317,16 @@ public class MarriageManager
 				this.plugin.getLanguageManager().setPlayerName(player.getDisplayName());
 				this.plugin.getGodManager().GodSay(godName, partner, LanguageManager.LANGUAGESTRING.GodToBelieverMarried, 10);
 
-				this.plugin.getServer().broadcastMessage(ChatColor.WHITE + player.getDisplayName() + ChatColor.AQUA + " just married " + ChatColor.WHITE + partner.getDisplayName() + ChatColor.AQUA + " in the name of " + ChatColor.GOLD + godName + ChatColor.AQUA + "!");
-				if ((this.plugin.holyArtifactsEnabled) && (this.plugin.marriageFireworksEnabled))
-				{
+				this.plugin.getServer().broadcastMessage(ChatColor.WHITE + player.getDisplayName() + ChatColor.AQUA + " just married " + ChatColor.WHITE + partner.getDisplayName() + ChatColor.AQUA + " in the name of " + ChatColor.GOLD + godName
+						+ ChatColor.AQUA + "!");
+				if ((this.plugin.holyArtifactsEnabled) && (this.plugin.marriageFireworksEnabled)) {
 					this.plugin.getHolyPowerManager().shootFirework(player, 16);
 					this.plugin.getHolyPowerManager().shootFirework(partner, 16);
 				}
-			}
-			else
-			{
-				try
-				{
+			} else {
+				try {
 					this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getItemTypeName(this.marriageTokenType));
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					this.plugin.logDebug(ex.getStackTrace().toString());
 				}
 				this.plugin.getLanguageManager().setPlayerName(partner.getDisplayName());
@@ -394,12 +336,11 @@ public class MarriageManager
 				this.plugin.getGodManager().GodSay(godName, partner, LanguageManager.LANGUAGESTRING.GodToBelieverMarriagePartnerTokenPickup, 10);
 			}
 		}
-		
+
 		save();
 	}
 
-	public void proposeMarriage(UUID player1, UUID player2)
-	{
+	public void proposeMarriage(UUID player1, UUID player2) {
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date thisDate = new Date();
@@ -417,34 +358,29 @@ public class MarriageManager
 		save();
 	}
 
-	public void divorce(UUID believerId)
-	{
+	public void divorce(UUID believerId) {
 		String partnerId = this.marriagesConfig.getString(believerId.toString() + ".Married.Partner");
 
 		this.marriagesConfig.set(believerId.toString(), null);
-		
-		if (partnerId != null)
-		{
+
+		if (partnerId != null) {
 			this.marriagesConfig.set(partnerId, null);
 
 			Player partner = this.plugin.getServer().getPlayer(partnerId);
-			if (partner != null)
-			{
+			if (partner != null) {
 				this.plugin.sendInfo(partner.getUniqueId(), LanguageManager.LANGUAGESTRING.DivorcedYou, ChatColor.RED, "DIVORCED", plugin.getServer().getPlayer(partnerId).getDisplayName(), 1);
 			}
 		}
 		save();
 	}
 
-	public void love(UUID playerId)
-	{
+	public void love(UUID playerId) {
 		String pattern = "HH:mm:ss dd-MM-yyyy";
 		DateFormat formatter = new SimpleDateFormat(pattern);
 		Date thisDate = new Date();
 		String partnerId = this.marriagesConfig.getString(playerId.toString() + ".Married.Partner");
-		
-		if (partnerId != null)
-		{
+
+		if (partnerId != null) {
 			Player player = this.plugin.getServer().getPlayer(playerId);
 			Player partner = this.plugin.getServer().getPlayer(UUID.fromString(partnerId));
 
@@ -452,12 +388,11 @@ public class MarriageManager
 			this.marriagesConfig.set(partner.getUniqueId().toString() + ".Married.LastLove", formatter.format(thisDate));
 
 			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new LoveTask(this.plugin, player, partner), 1L);
-			if (partner != null)
-			{
+			if (partner != null) {
 				this.plugin.sendInfo(partner.getUniqueId(), LanguageManager.LANGUAGESTRING.MarrigeLovesYou, ChatColor.GREEN, plugin.getServer().getPlayer(playerId).getDisplayName(), ChatColor.DARK_RED + "LOVES", 1);
 			}
 		}
-		
+
 		save();
 	}
 }

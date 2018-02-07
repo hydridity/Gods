@@ -1,8 +1,5 @@
 package com.dogonfire.gods;
 
-import com.dogonfire.gods.GodManager.GodType;
-import com.dogonfire.gods.tasks.InfoTask;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,25 +10,23 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
-public class Gods extends JavaPlugin
-{
+import com.dogonfire.gods.GodManager.GodType;
+import com.dogonfire.gods.tasks.InfoTask;
+
+public class Gods extends JavaPlugin {
 	private PrayerManager prayerManager = null;
 	private MarriageManager marriageManager = null;
 	private HolyPowerManager holyPowerManager = null;
-	//private ProphecyManager prophecyManager = null;
-	//private BossManager bossManager = null;
+	// private ProphecyManager prophecyManager = null;
+	// private BossManager bossManager = null;
 	private HolyArtifactManager holyArtifactManager = null;
 	private ChatManager chatManager = null;
 	private PermissionsManager permissionsManager = null;
@@ -94,7 +89,7 @@ public class Gods extends JavaPlugin
 	public boolean holywarQuestsEnabled = false;
 	public boolean slayDragonQuestsEnabled = false;
 	public String serverName = "Your Server";
-	private List<String> worlds = new ArrayList();
+	private List<String> worlds = new ArrayList<String>();
 	public boolean broadcastNewGods = true;
 	public boolean broadcastProphecyFullfillment = true;
 	public int maxPriestsPrGod = 3;
@@ -120,7 +115,7 @@ public class Gods extends JavaPlugin
 	public String priestRemoveCommand = "";
 	public boolean commandmentsBroadcastFoodEaten = true;
 	public boolean commandmentsBroadcastMobSlain = true;
-	public Set<Material> holylandBreakableBlockTypes = new HashSet();
+	public Set<Material> holylandBreakableBlockTypes = new HashSet<Material>();
 	public double holyLandRadiusPrPower = 1.25D;
 	public boolean holyLandDefaultPvP = false;
 	public boolean holyLandDefaultMobDamage = true;
@@ -134,121 +129,100 @@ public class Gods extends JavaPlugin
 	public int maxHolyLandRadius = 1000;
 	public int maxHolyArtifacts = 50;
 	public boolean werewolfEnabled = false;
-	
+
 	public int prayerPowerForItem = 20;
 	public int prayerPowerForQuest = 50;
 	public int prayerPowerForBlessing = 10;
 	public int prayerPowerForHolyArtifact = 100;
 	public int prayerPowerForHealth = 10;
 
-	public MarriageManager getMarriageManager()
-	{
+	public MarriageManager getMarriageManager() {
 		return this.marriageManager;
 	}
 
-	public HolyPowerManager getHolyPowerManager()
-	{
+	public HolyPowerManager getHolyPowerManager() {
 		return this.holyPowerManager;
 	}
 
-//	public BossManager getBossManager()
-//	{
-//		return this.bossManager;
-//	}
+	// public BossManager getBossManager()
+	// {
+	// return this.bossManager;
+	// }
 
-//	public ProphecyManager getProphecyManager()
-//	{
-//		return this.prophecyManager;
-//	}
+	// public ProphecyManager getProphecyManager()
+	// {
+	// return this.prophecyManager;
+	// }
 
-	public HolyArtifactManager getHolyArtifactManager()
-	{
+	public HolyArtifactManager getHolyArtifactManager() {
 		return this.holyArtifactManager;
 	}
 
-	public HolyBookManager getBibleManager()
-	{
+	public HolyBookManager getBibleManager() {
 		return this.bibleManager;
 	}
 
-	public ChatManager getChatManager()
-	{
+	public ChatManager getChatManager() {
 		return this.chatManager;
 	}
 
-	public PermissionsManager getPermissionsManager()
-	{
+	public PermissionsManager getPermissionsManager() {
 		return this.permissionsManager;
 	}
 
-	public HolyLandManager getLandManager()
-	{
+	public HolyLandManager getLandManager() {
 		return this.landManager;
 	}
 
-	public AltarManager getAltarManager()
-	{
+	public AltarManager getAltarManager() {
 		return this.churchManager;
 	}
 
-	public QuestManager getQuestManager()
-	{
+	public QuestManager getQuestManager() {
 		return this.questManager;
 	}
 
-	public GodManager getGodManager()
-	{
+	public GodManager getGodManager() {
 		return this.godManager;
 	}
 
-	public BelieverManager getBelieverManager()
-	{
+	public BelieverManager getBelieverManager() {
 		return this.believerManager;
 	}
 
-	public LanguageManager getLanguageManager()
-	{
+	public LanguageManager getLanguageManager() {
 		return this.languageManager;
 	}
 
-	public WhitelistManager getWhitelistManager()
-	{
+	public WhitelistManager getWhitelistManager() {
 		return this.whitelistManager;
 	}
 
-	public PrayerManager getPrayerManager()
-	{
+	public PrayerManager getPrayerManager() {
 		return this.prayerManager;
 	}
 
-	public boolean isWhitelistedGod(String godName)
-	{
-		if (this.useWhitelist)
-		{
+	public boolean isWhitelistedGod(String godName) {
+		if (this.useWhitelist) {
 			return this.whitelistManager.isWhitelistedGod(godName);
 		}
 		return true;
 	}
 
-	public boolean isBlacklistedGod(String godName)
-	{
-		if (this.useBlacklist)
-		{
+	public boolean isBlacklistedGod(String godName) {
+		if (this.useBlacklist) {
 			return this.whitelistManager.isBlacklistedGod(godName);
 		}
 		return false;
 	}
 
-	public boolean isEnabledInWorld(World world)
-	{
+	public boolean isEnabledInWorld(World world) {
 		return this.worlds.contains(world.getName());
 	}
 
-	public Material getMaterialById(String materialString)
-	{
+	public Material getMaterialById(String materialString) {
 		String[] split = materialString.split(":");
-		if (split.length < 2)
-		{
+		if (split.length < 2) {
 			return null;
 		}
 		int id = Integer.valueOf(split[0]).intValue();
@@ -259,57 +233,47 @@ public class Gods extends JavaPlugin
 		return material;
 	}
 
-	public void log(String message)
-	{
+	public void log(String message) {
 		Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 	}
 
-	public void logDebug(String message)
-	{
-		if (this.debug)
-		{
+	public void logDebug(String message) {
+		if (this.debug) {
 			Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 		}
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, int amount, String name, int delay)
-	{
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, int amount, String name, int delay) {
 		Player player = getServer().getPlayer(playerId);
 
-		if (player == null)
-		{
+		if (player == null) {
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
-		
+
 		getServer().getScheduler().runTaskLater(this, new InfoTask(this, color, playerId, message, amount, name), delay);
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay)
-	{
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay) {
 		Player player = getServer().getPlayer(playerId);
-		if (player == null)
-		{
+		if (player == null) {
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
-		
+
 		getServer().getScheduler().runTaskLater(this, new InfoTask(this, color, playerId, message, name1, name2), delay);
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay)
-	{
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay) {
 		Player player = getServer().getPlayer(playerId);
-		if (player == null)
-		{
+		if (player == null) {
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
 		getServer().getScheduler().runTaskLater(this, new InfoTask(this, color, playerId, message, name, amount1, amount2), delay);
 	}
 
-	public void reloadSettings()
-	{
+	public void reloadSettings() {
 		reloadConfig();
 
 		loadSettings();
@@ -317,13 +281,12 @@ public class Gods extends JavaPlugin
 		this.whitelistManager.load();
 	}
 
-	public void loadSettings()
-	{
-//		if (getBossManager() != null)
-//		{
-//			getBossManager().removeDragons();
-//		}
-		
+	public void loadSettings() {
+		// if (getBossManager() != null)
+		// {
+		// getBossManager().removeDragons();
+		// }
+
 		this.config = getConfig();
 
 		this.debug = this.config.getBoolean("Settings.Debug", false);
@@ -333,77 +296,66 @@ public class Gods extends JavaPlugin
 		this.languageIdentifier = this.config.getString("Settings.Language", "english");
 
 		List<String> worldNames = this.config.getStringList("Settings.Worlds");
-		if ((worldNames == null) || (worldNames.size() == 0))
-		{
+		if ((worldNames == null) || (worldNames.size() == 0)) {
 			log("No worlds found in config file.");
-			for (World world : getServer().getWorlds())
-			{
+			for (World world : getServer().getWorlds()) {
 				this.worlds.add(world.getName());
 				log("Enabed in world '" + world.getName() + "'");
 			}
 			this.config.set("Settings.Worlds", this.worlds);
 			saveConfig();
-		}
-		else
-		{
-			for (String worldName : worldNames)
-			{
+		} else {
+			for (String worldName : worldNames) {
 				this.worlds.add(worldName);
 				log("Enabled in '" + worldName + "'");
 			}
-			if (worldNames.size() == 0)
-			{
+			if (worldNames.size() == 0) {
 				log("WARNING: No worlds are set in config file. Gods are disabled on this server!");
 			}
 		}
 		this.biblesEnabled = this.config.getBoolean("Bibles.Enabled", true);
-		if (this.biblesEnabled)
-		{
+		if (this.biblesEnabled) {
 			this.bibleManager = new HolyBookManager(this);
 			this.bibleManager.load();
 		}
 		this.marriageEnabled = this.config.getBoolean("Marriage.Enabled", true);
-		if (this.marriageEnabled)
-		{
+		if (this.marriageEnabled) {
 			this.marriageFireworksEnabled = this.config.getBoolean("Marriage.WeddingFireworks", true);
 
 			this.marriageManager = new MarriageManager(this);
 			this.marriageManager.load();
 		}
 		this.holyArtifactsEnabled = this.config.getBoolean("HolyArtifacts.Enabled", true);
-		if (this.holyArtifactsEnabled)
-		{
+		if (this.holyArtifactsEnabled) {
 			this.holyPowerManager = new HolyPowerManager(this);
 			this.holyArtifactManager = new HolyArtifactManager(this);
 			this.holyArtifactManager.load();
 		}
-		
+
 		this.prayersEnabled = this.config.getBoolean("Prayers.Enabled", true);
 
-		//		if (this.propheciesEnabled)
-//		{
-//			this.prophecyManager = new ProphecyManager(this);
-//			this.prophecyManager.load();
-//
-//			//this.bossManager = new BossManager(this);
-//		}
-				
+		// if (this.propheciesEnabled)
+		// {
+		// this.prophecyManager = new ProphecyManager(this);
+		// this.prophecyManager.load();
+		//
+		// //this.bossManager = new BossManager(this);
+		// }
+
 		this.chatFormattingEnabled = this.config.getBoolean("ChatFormatting.Enabled", false);
-		
-		if (this.chatFormattingEnabled)
-		{
+
+		if (this.chatFormattingEnabled) {
 			this.chatManager = new ChatManager(this);
 			this.chatManager.load();
 		}
-		
+
 		this.holyLandEnabled = this.config.getBoolean("HolyLand.Enabled", false);
-		
-		if (this.holyLandEnabled)
-		{
+
+		if (this.holyLandEnabled) {
 			this.landManager = new HolyLandManager(this);
 			this.landManager.load();
 		}
-		
+
 		this.minHolyLandRadius = this.config.getInt("HolyLand.MinRadius", 10);
 		this.maxHolyLandRadius = this.config.getInt("HolyLand.MaxRadius", 1000);
 		this.holyLandRadiusPrPower = this.config.getDouble("HolyLand.RadiusPrPower", 1.25D);
@@ -414,28 +366,21 @@ public class Gods extends JavaPlugin
 		this.numberOfDaysForAbandonedHolyLands = this.config.getInt("HolyLand.DeleteAbandonedHolyLandsAfterDays", 14);
 
 		List<String> blockList = this.config.getStringList("HolyLand.BreakableBlockTypes");
-		if ((blockList != null) && (blockList.size() > 0))
-		{
-			for (String blockType : blockList)
-			{
-				try
-				{
+		if ((blockList != null) && (blockList.size() > 0)) {
+			for (String blockType : blockList) {
+				try {
 					logDebug("adding breakable block type " + blockType);
 					this.holylandBreakableBlockTypes.add(Material.getMaterial(blockType));
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					log("ERROR parsing HolyLand.BreakableBlockTypes blocktype '" + blockType + "' in config");
 				}
 			}
-		}
-		else
-		{
+		} else {
 			log("No HolyLand.BreakableBlockTypes section found in config.");
 			log("Adding '" + Material.SMOOTH_BRICK.name() + "' to BreakableBlockTypes");
 			this.holylandBreakableBlockTypes.add(Material.SMOOTH_BRICK);
 		}
-		
+
 		this.sacrificesEnabled = this.config.getBoolean("Sacrifices.Enabled", true);
 
 		this.commandmentsEnabled = this.config.getBoolean("Commandments.Enabled", true);
@@ -444,7 +389,7 @@ public class Gods extends JavaPlugin
 
 		this.questsEnabled = this.config.getBoolean("Quests.Enabled", false);
 		this.minMinutesBetweenQuests = this.config.getInt("Quests.MinMinutesBetweenQuests", 180);
-				
+
 		this.globalQuestsPercentChance = this.config.getInt("Quests.GlobalQuestsPercentChance", 1);
 
 		this.slayQuestsEnabled = this.config.getBoolean("Quests.SlayQuests", true);
@@ -452,27 +397,20 @@ public class Gods extends JavaPlugin
 		this.pilgrimageQuestsEnabled = this.config.getBoolean("Quests.PilgrimageQuests", true);
 
 		ConfigurationSection configSection = this.config.getConfigurationSection("Quests.RewardValues");
-		if (configSection != null)
-		{
-			for (String rewardItem : configSection.getKeys(false))
-			{
-				try
-				{
+		if (configSection != null) {
+			for (String rewardItem : configSection.getKeys(false)) {
+				try {
 					logDebug("Setting value for reward item " + rewardItem + " to " + this.config.getInt(new StringBuilder().append("Quests.RewardValues.").append(rewardItem).toString()));
 
 					getQuestManager().setItemRewardValue(Material.getMaterial(rewardItem), this.config.getInt("Quests.RewardValues." + rewardItem));
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					log("ERROR parsing Quests.RewardValues value '" + rewardItem + "' in config");
 				}
 			}
-		}
-		else
-		{
+		} else {
 			getQuestManager().resetItemRewardValues();
 		}
-		
+
 		this.blessingEnabled = this.config.getBoolean("Blessing.Enabled", true);
 		this.speedBlessingEnabled = this.config.getBoolean("Blessing.Speed", true);
 		this.regenerationBlessingEnabled = this.config.getBoolean("Blessing.Regeneration", true);
@@ -516,44 +454,34 @@ public class Gods extends JavaPlugin
 		this.moodFalloff = this.config.getDouble("Settings.MoodFalloff", 0.03D);
 
 		configSection = this.config.getConfigurationSection("Altars.BlockTypes");
-		
+
 		Object localObject;
-		
-		if (configSection != null)
-		{
-			for (String godType : configSection.getKeys(false))
-			{
-				try
-				{
-					for (localObject = this.config.getStringList("Altars.BlockTypes." + godType).iterator(); ((Iterator) localObject).hasNext();)
-					{
-						String blockMaterial = (String) ((Iterator) localObject).next();
+
+		if (configSection != null) {
+			for (String godType : configSection.getKeys(false)) {
+				try {
+					for (localObject = this.config.getStringList("Altars.BlockTypes." + godType).iterator(); ((Iterator<?>) localObject).hasNext();) {
+						String blockMaterial = (String) ((Iterator<?>) localObject).next();
 
 						log("Setting block type " + blockMaterial + " for God type " + godType);
 						getAltarManager().setAltarBlockTypeForGodType(GodManager.GodType.valueOf(godType), Material.getMaterial(blockMaterial));
 					}
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					log("ERROR parsing Altars.BlockType value '" + godType + "' in config");
 				}
 			}
-		}
-		else
-		{
+		} else {
 			log("No altar blocktypes found in config. Setting defaults.");
 			getAltarManager().resetAltarBlockTypes();
 
-			for (GodType godType : GodManager.GodType.values())
-			{
+			for (GodType godType : GodManager.GodType.values()) {
 				this.config.set("Altars.BlockTypes." + godType.name(), getAltarManager().getAltarBlockTypesFromGodType(godType));
 			}
 			saveSettings();
 		}
 	}
 
-	public void saveSettings()
-	{
+	public void saveSettings() {
 		this.config.set("Settings.Debug", Boolean.valueOf(this.debug));
 		this.config.set("Settings.DisplayUpdateNotifications", Boolean.valueOf(this.useUpdateNotifications));
 		this.config.set("Settings.MetricsOptOut", Boolean.valueOf(this.metricsOptOut));
@@ -578,8 +506,7 @@ public class Gods extends JavaPlugin
 		this.config.set("Settings.AllowMultipleGodsPrDivinePower", Boolean.valueOf(this.allowMultipleGodsPrDivinePower));
 		this.config.set("Settings.MoodFalloff", Double.valueOf(this.moodFalloff));
 		this.config.set("Settings.DefaultPrivateReligions", Boolean.valueOf(this.defaultPrivateReligions));
-		for (GodManager.GodType godType : GodManager.GodType.values())
-		{
+		for (GodManager.GodType godType : GodManager.GodType.values()) {
 			this.config.set("Altars.BlockTypes." + godType.name(), getAltarManager().getAltarBlockTypesFromGodType(godType));
 		}
 		this.config.set("ItemBlessing.Enabled", Boolean.valueOf(this.itemBlessingEnabled));
@@ -630,9 +557,8 @@ public class Gods extends JavaPlugin
 		this.config.set("HolyLand.AllowInteractionInNeutralLands", Boolean.valueOf(this.allowInteractionInNeutralLands));
 		this.config.set("HolyLand.DeleteAbandonedHolyLandsAfterDays", Integer.valueOf(this.numberOfDaysForAbandonedHolyLands));
 
-		List<String> blockTypes = new ArrayList();
-		for (Material blockType : this.holylandBreakableBlockTypes)
-		{
+		List<String> blockTypes = new ArrayList<String>();
+		for (Material blockType : this.holylandBreakableBlockTypes) {
 			blockTypes.add(blockType.name());
 		}
 		this.config.set("HolyLand.BreakableBlockTypes", blockTypes);
@@ -644,7 +570,7 @@ public class Gods extends JavaPlugin
 		this.config.set("Prophecies.Enabled", Boolean.valueOf(this.propheciesEnabled));
 
 		this.config.set("HolyArtifacts.Enabled", Boolean.valueOf(this.holyArtifactsEnabled));
-		
+
 		this.config.set("Marriage.Enabled", Boolean.valueOf(this.marriageEnabled));
 		this.config.set("Marriage.WeddingFireworks", Boolean.valueOf(this.marriageFireworksEnabled));
 
@@ -653,8 +579,7 @@ public class Gods extends JavaPlugin
 		saveConfig();
 	}
 
-	public void onEnable()
-	{
+	public void onEnable() {
 		this.permissionsManager = new PermissionsManager(this);
 		this.questManager = new QuestManager(this);
 		this.godManager = new GodManager(this);
@@ -662,7 +587,7 @@ public class Gods extends JavaPlugin
 		this.languageManager = new LanguageManager(this);
 		this.churchManager = new AltarManager(this);
 		this.whitelistManager = new WhitelistManager(this);
-		//this.bossManager = new BossManager(this);
+		// this.bossManager = new BossManager(this);
 		this.commands = new Commands(this);
 
 		loadSettings();
@@ -674,230 +599,174 @@ public class Gods extends JavaPlugin
 		this.questManager.load();
 		this.believerManager.load();
 		this.whitelistManager.load();
-		if (this.landManager != null)
-		{
+		if (this.landManager != null) {
 			getServer().getPluginManager().registerEvents(this.landManager, this);
 		}
 		getServer().getPluginManager().registerEvents(new BlockListener(this), this);
 		getServer().getPluginManager().registerEvents(new ChatListener(this), this);
 
-		Runnable updateTask = new Runnable()
-		{
-			public void run()
-			{
+		Runnable updateTask = new Runnable() {
+			public void run() {
 				Gods.this.godManager.update();
 			}
 		};
-		
+
 		// Async WONT work with some calls
-		//getServer().getScheduler().runTaskTimerAsynchronously(this, updateTask, 20L, 200L);
+		// getServer().getScheduler().runTaskTimerAsynchronously(this, updateTask, 20L,
+		// 200L);
 		getServer().getScheduler().runTaskTimer(this, updateTask, 20L, 200L);
-		
-		if (!this.metricsOptOut)
-		{
+
+		if (!this.metricsOptOut) {
 			StartMetrics();
 		}
 	}
 
-	public void onDisable()
-	{
+	public void onDisable() {
 		reloadSettings();
 
 		this.godManager.save();
 		this.questManager.save();
 		this.believerManager.save();
-		if ((this.useBlacklist) || (this.useWhitelist))
-		{
+		if ((this.useBlacklist) || (this.useWhitelist)) {
 			this.whitelistManager.save();
 		}
-		if (this.holyLandEnabled)
-		{
+		if (this.holyLandEnabled) {
 			this.landManager.save();
 		}
-		if (this.biblesEnabled)
-		{
+		if (this.biblesEnabled) {
 			this.bibleManager.save();
 		}
-		//this.bossManager.disable();
+		// this.bossManager.disable();
 	}
 
-	private void StartMetrics()
-	{
-		try
-		{
+	private void StartMetrics() {
+		try {
 			Metrics metrics = new Metrics(this);
 
-			metrics.addCustomData(new Metrics.Plotter("Servers")
-			{
-				public int getValue()
-				{
+			metrics.addCustomData(new Metrics.Plotter("Servers") {
+				public int getValue() {
 					return 1;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using quests")
-			{
-				public int getValue()
-				{
-					if (Gods.this.questsEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using quests") {
+				public int getValue() {
+					if (Gods.this.questsEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using item blessings")
-			{
-				public int getValue()
-				{
-					if (Gods.this.itemBlessingEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using item blessings") {
+				public int getValue() {
+					if (Gods.this.itemBlessingEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using blessings")
-			{
-				public int getValue()
-				{
-					if (Gods.this.blessingEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using blessings") {
+				public int getValue() {
+					if (Gods.this.blessingEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using curses")
-			{
-				public int getValue()
-				{
-					if (Gods.this.cursingEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using curses") {
+				public int getValue() {
+					if (Gods.this.cursingEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using whitelist")
-			{
-				public int getValue()
-				{
-					if (Gods.this.useWhitelist)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using whitelist") {
+				public int getValue() {
+					if (Gods.this.useWhitelist) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using blacklist")
-			{
-				public int getValue()
-				{
-					if (Gods.this.useBlacklist)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using blacklist") {
+				public int getValue() {
+					if (Gods.this.useBlacklist) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using commandments")
-			{
-				public int getValue()
-				{
-					if (Gods.this.commandmentsEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using commandments") {
+				public int getValue() {
+					if (Gods.this.commandmentsEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using holy land")
-			{
-				public int getValue()
-				{
-					if (Gods.this.holyLandEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using holy land") {
+				public int getValue() {
+					if (Gods.this.holyLandEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using PermissionsBukkit")
-			{
-				public int getValue()
-				{
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("PermissionsBukkit"))
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using PermissionsBukkit") {
+				public int getValue() {
+					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("PermissionsBukkit")) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using PermissionsEx")
-			{
-				public int getValue()
-				{
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("PermissionsEx"))
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using PermissionsEx") {
+				public int getValue() {
+					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("PermissionsEx")) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using GroupManager")
-			{
-				public int getValue()
-				{
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("GroupManager"))
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using GroupManager") {
+				public int getValue() {
+					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("GroupManager")) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using bPermissions")
-			{
-				public int getValue()
-				{
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("bPermissions"))
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using bPermissions") {
+				public int getValue() {
+					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("bPermissions")) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using Bibles")
-			{
-				public int getValue()
-				{
-					if (Gods.this.biblesEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using Bibles") {
+				public int getValue() {
+					if (Gods.this.biblesEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
-			metrics.addCustomData(new Metrics.Plotter("Using Marriages")
-			{
-				public int getValue()
-				{
-					if (Gods.this.marriageEnabled)
-					{
+			metrics.addCustomData(new Metrics.Plotter("Using Marriages") {
+				public int getValue() {
+					if (Gods.this.marriageEnabled) {
 						return 1;
 					}
 					return 0;
 				}
 			});
 			metrics.start();
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			log("Failed to submit metrics :-(");
 		}
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
-	{
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		return this.commands.onCommand(sender, cmd, label, args);
 	}
 }
