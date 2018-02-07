@@ -386,7 +386,7 @@ public class MarriageManager {
 			this.marriagesConfig.set(player.getUniqueId().toString() + ".Married.LastLove", formatter.format(thisDate));
 			this.marriagesConfig.set(partner.getUniqueId().toString() + ".Married.LastLove", formatter.format(thisDate));
 
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskLove(this.plugin, player, partner), 1L);
+			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskLove(player, partner), 1L);
 			if (partner != null) {
 				this.plugin.sendInfo(partner.getUniqueId(), LanguageManager.LANGUAGESTRING.MarrigeLovesYou, ChatColor.GREEN, plugin.getServer().getPlayer(playerId).getDisplayName(), ChatColor.DARK_RED + "LOVES", 1);
 			}

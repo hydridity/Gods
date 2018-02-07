@@ -3,13 +3,11 @@ package com.dogonfire.gods.tasks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
-
-public class TaskBoostKnowledge implements Runnable {
+public class TaskBoostKnowledge extends Task {
 	private Player player;
 	private long amount;
 
-	public TaskBoostKnowledge(Gods instance, Player player, long amount) {
+	public TaskBoostKnowledge(Player player, long amount) {
 		this.amount = amount;
 		this.player = player;
 	}

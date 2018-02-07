@@ -5,11 +5,9 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.managers.LanguageManager;
 
-public class TaskGodSpeak implements Runnable {
-	private Gods plugin;
+public class TaskGodSpeak extends Task {
 	private UUID playerId = null;
 	private String godName = null;
 	private LanguageManager.LANGUAGESTRING message = null;
@@ -17,15 +15,13 @@ public class TaskGodSpeak implements Runnable {
 	private String playerNameString = null;
 	private String typeString = null;
 
-	public TaskGodSpeak(Gods instance, String gname, UUID playerId, String player, String type, int a) {
-		this.plugin = instance;
+	public TaskGodSpeak(String gname, UUID playerId, String player, String type, int a) {
 		this.playerId = playerId;
 		this.godName = new String(gname);
 		this.message = null;
 	}
 
-	public TaskGodSpeak(Gods instance, String gname, UUID playerId, String player, String type, int a, LanguageManager.LANGUAGESTRING m) {
-		this.plugin = instance;
+	public TaskGodSpeak(String gname, UUID playerId, String player, String type, int a, LanguageManager.LANGUAGESTRING m) {
 		this.playerId = playerId;
 		this.godName = new String(gname);
 		this.message = m;
@@ -40,21 +36,21 @@ public class TaskGodSpeak implements Runnable {
 	}
 
 	public void run() {
-		Player player = this.plugin.getServer().getPlayer(this.playerId);
+		Player player = getPlugin().getServer().getPlayer(this.playerId);
 		if (player == null) {
 			return;
 		}
-		this.plugin.getLanguageManager().setAmount(this.amount);
+		getPlugin().getLanguageManager().setAmount(this.amount);
 		try {
-			this.plugin.getLanguageManager().setType(this.typeString);
+			getPlugin().getLanguageManager().setType(this.typeString);
 		} catch (Exception ex) {
-			this.plugin.logDebug(ex.getStackTrace().toString());
+			getPlugin().logDebug(ex.getStackTrace().toString());
 		}
-		this.plugin.getLanguageManager().setPlayerName(this.playerNameString);
+		getPlugin().getLanguageManager().setPlayerName(this.playerNameString);
 		if (this.message != null) {
 			player.sendMessage(ChatColor.GOLD + "<" + this.godName + ">: " + ChatColor.WHITE +
 
-					ChatColor.BOLD + this.plugin.getLanguageManager().getLanguageString(this.godName, this.message));
+					ChatColor.BOLD + getPlugin().getLanguageManager().getLanguageString(this.godName, this.message));
 		} else {
 			String questionMessage = ChatColor.AQUA + "Use " + ChatColor.WHITE + "/gods yes" + ChatColor.AQUA + " or " + ChatColor.WHITE + "/gods no" + ChatColor.AQUA + " to answer your god.";
 

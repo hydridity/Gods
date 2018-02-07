@@ -7,20 +7,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.dogonfire.gods.Gods;
-
-public class TaskSpawnGuideMob implements Runnable {
-	private Gods plugin = null;
+public class TaskSpawnGuideMob extends Task {
 	private EntityType mobType;
 	private Location targetLocation;
 	private Player player;
 	private Creature spawnedMob = null;
 	private int runs = 0;
 
-	public TaskSpawnGuideMob(Gods instance, Player p, Location location, EntityType entityType) {
+	public TaskSpawnGuideMob(Player p, Location location, EntityType entityType) {
 		this.targetLocation = location;
 		this.player = p;
-		this.plugin = instance;
 		this.mobType = entityType;
 	}
 
@@ -38,10 +34,10 @@ public class TaskSpawnGuideMob implements Runnable {
 				this.spawnedMob = ((Creature) entity);
 				this.spawnedMob.setTarget(this.player);
 
-				this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, 40L);
+				getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), this, 40L);
 			}
 		} else if (this.runs < 2) {
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, 40L);
+			getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), this, 40L);
 			this.spawnedMob.setVelocity(new Vector(0.0F, 0.5F, 0.0F));
 		} else {
 			this.spawnedMob.remove();

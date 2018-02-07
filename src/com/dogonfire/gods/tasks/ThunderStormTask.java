@@ -6,16 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
-
-public class ThunderStormTask implements Runnable {
-	private Gods plugin;
+public class ThunderStormTask extends Task {
 	private long stopTime;
 	private Player player;
 	private Random random = new Random();
 
-	public ThunderStormTask(Gods instance, Player player, long stopTime) {
-		this.plugin = instance;
+	public ThunderStormTask(Player player, long stopTime) {
 		this.stopTime = stopTime;
 		this.player = player;
 	}
@@ -23,7 +19,7 @@ public class ThunderStormTask implements Runnable {
 	public void run() {
 		this.player.getWorld().setStorm(true);
 
-		Entity[] entities = this.plugin.getHolyPowerManager().getNearbyLivingEntities(this.player.getLocation(), 20.0D);
+		Entity[] entities = getPlugin().getHolyPowerManager().getNearbyLivingEntities(this.player.getLocation(), 20.0D);
 
 		Entity targetEntity = entities[this.random.nextInt(entities.length)];
 		if (targetEntity != this.player) {
@@ -32,7 +28,7 @@ public class ThunderStormTask implements Runnable {
 			this.player.getWorld().strikeLightning(strikeLocation);
 		}
 		if (System.currentTimeMillis() < this.stopTime) {
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new ThunderStormTask(this.plugin, this.player, this.stopTime), 20 + this.random.nextInt(100));
+			getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), new ThunderStormTask(this.player, this.stopTime), 20 + this.random.nextInt(100));
 		} else {
 			this.player.getWorld().setStorm(false);
 		}

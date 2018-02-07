@@ -655,7 +655,7 @@ public class GodManager {
 		return (int) (1.0D + variation * (this.plugin.godVerbosity * godVerbosity));
 	}
 
-	private String generateHolyMobTypeForGod(String godName) {
+	private String generateHolyMobTypeForGod() {
 		EntityType mobType = EntityType.UNKNOWN;
 		int r1 = this.random.nextInt(7);
 		switch (r1) {
@@ -683,7 +683,7 @@ public class GodManager {
 		return mobType.name();
 	}
 
-	private String generateUnholyMobTypeForGod(String godName) {
+	private String generateUnholyMobTypeForGod() {
 		EntityType mobType = EntityType.UNKNOWN;
 		int r1 = this.random.nextInt(11);
 		switch (r1) {
@@ -727,7 +727,7 @@ public class GodManager {
 		String mobTypeString = this.godsConfig.getString(godName + ".SlayMobType");
 		EntityType mobType = EntityType.UNKNOWN;
 		if (mobTypeString == null) {
-			mobTypeString = generateUnholyMobTypeForGod(godName);
+			mobTypeString = generateUnholyMobTypeForGod();
 
 			this.godsConfig.set(godName + ".SlayMobType", mobTypeString);
 
@@ -735,7 +735,7 @@ public class GodManager {
 		}
 		mobType = (EntityType) EntityType.valueOf(EntityType.class, mobTypeString);
 		if (mobType == null) {
-			mobTypeString = generateUnholyMobTypeForGod(godName);
+			mobTypeString = generateUnholyMobTypeForGod();
 
 			this.godsConfig.set(godName + ".SlayMobType", mobTypeString);
 
@@ -751,7 +751,7 @@ public class GodManager {
 		EntityType mobType = EntityType.UNKNOWN;
 		if (mobTypeString == null) {
 			do {
-				mobTypeString = generateHolyMobTypeForGod(godName);
+				mobTypeString = generateHolyMobTypeForGod();
 			} while (mobTypeString.equals(getUnholyMobTypeForGod(godName).name()));
 			this.godsConfig.set(godName + ".NotSlayMobType", mobTypeString);
 
@@ -760,7 +760,7 @@ public class GodManager {
 		mobType = (EntityType) EntityType.valueOf(EntityType.class, mobTypeString);
 		if (mobType == null) {
 			do {
-				mobTypeString = generateHolyMobTypeForGod(godName);
+				mobTypeString = generateHolyMobTypeForGod();
 			} while (mobTypeString.equals(getUnholyMobTypeForGod(godName).name()));
 			this.godsConfig.set(godName + ".NotSlayMobType", mobTypeString);
 
@@ -939,31 +939,8 @@ public class GodManager {
 		if (godType == null) {
 			return;
 		}
-
 		if (this.plugin.leaveReligionOnDeath) {
 			this.plugin.getBelieverManager().believerLeave(godName, playerId);
-		}
-
-		if (this.random.nextInt(10) == 0) {
-			// this.plugin.getGodManager().GodSayToPriest(godName,
-			// LanguageManager.LANGUAGESTRING.GodToPriestBelieverKilledDeclareWarQuestion);
-		}
-
-		switch (godType) {
-			case SUN:
-				// if (!this.plugin.getQuestManager().hasQuest(godName))
-				// {
-				// int godPower = 1 + (int)
-				// this.plugin.getGodManager().getGodPower(godName);
-				// int i = godPower * this.plugin.questFrequency;
-				// }
-				break;
-			case WAR:
-
-				// Check for being in war, and in that case +1 belief
-				// Earn 1
-
-				break;
 		}
 	}
 
@@ -1786,19 +1763,19 @@ public class GodManager {
 		if (player == null) {
 			return;
 		}
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskSpawnGuideMob(this.plugin, player, targetLocation, mobType), 2L);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskSpawnGuideMob(player, targetLocation, mobType), 2L);
 	}
 
 	public void spawnHostileMobs(String godName, Player player, EntityType mobType, int numberOfMobs) {
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskSpawnHostileMobs(this.plugin, godName, player, mobType, numberOfMobs), 2L);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskSpawnHostileMobs(godName, player, mobType, numberOfMobs), 2L);
 	}
 
 	public void giveItem(String godName, Player player, Material material, boolean speak) {
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGiveItem(this.plugin, godName, player, material, speak), 2L);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGiveItem(godName, player, material, speak), 2L);
 	}
 
 	public void giveHolyArtifact(String godName, GodType godType, Player player, boolean speak) {
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGiveHolyArtifact(this.plugin, godName, godType, player, speak), 2L);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGiveHolyArtifact(godName, godType, player, speak), 2L);
 	}
 
 	public ItemStack blessPlayerWithItem(String godName, Player player) {
@@ -1894,7 +1871,7 @@ public class GodManager {
 	}
 
 	public void healPlayer(String godName, Player player, double healing) {
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskHealPlayer(this.plugin, godName, player, LanguageManager.LANGUAGESTRING.GodToBelieverHealthBlessing), 2L);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskHealPlayer(godName, player, LanguageManager.LANGUAGESTRING.GodToBelieverHealthBlessing), 2L);
 	}
 
 	public void believerAccept(UUID believerId) {
@@ -2385,7 +2362,7 @@ public class GodManager {
 		Player player = this.plugin.getServer().getPlayer(playerId);
 
 		if (player == null) {
-			this.plugin.logDebug("GodSayToBeliever player for " + player.getDisplayName() + " is null");
+			this.plugin.logDebug("GodSayToBeliever player is null");
 			return;
 		}
 		GodSay(godName, player, message, delay);
@@ -2408,7 +2385,7 @@ public class GodManager {
 			return;
 		}
 
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGodSpeak(this.plugin, godName, player.getUniqueId(), playerNameString, typeNameString, amount, message), delay);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGodSpeak(godName, player.getUniqueId(), playerNameString, typeNameString, amount, message), delay);
 
 		this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverQuestionHelp, ChatColor.AQUA, ChatColor.WHITE + "/gods yes or /gods no", ChatColor.WHITE + "/gods yes or /gods no", delay + 80);
 	}
@@ -2433,7 +2410,7 @@ public class GodManager {
 			return;
 		}
 
-		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGodSpeak(this.plugin, godName, player.getUniqueId(), playerNameString, typeNameString, amount, message), delay);
+		this.plugin.getServer().getScheduler().runTaskLater(this.plugin, new TaskGodSpeak(godName, player.getUniqueId(), playerNameString, typeNameString, amount, message), delay);
 	}
 
 	public boolean isDeadGod(String godName) {

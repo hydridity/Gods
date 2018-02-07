@@ -3,15 +3,11 @@ package com.dogonfire.gods.tasks;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
-
-public class TaskCallSun implements Runnable {
-	private Gods plugin;
+public class TaskCallSun extends Task {
 	private long stopTime;
 	private Player player;
 
-	public TaskCallSun(Gods instance, Player player, long stopTime) {
-		this.plugin = instance;
+	public TaskCallSun(Player player, long stopTime) {
 		this.stopTime = stopTime;
 		this.player = player;
 	}
@@ -21,7 +17,7 @@ public class TaskCallSun implements Runnable {
 		if ((time > 13000L) || (time < 1000L)) {
 			this.player.playSound(this.player.getLocation(), Sound.BLOCK_STONE_STEP, 1.0F, 0.1F);
 			this.player.getWorld().setFullTime(this.player.getWorld().getFullTime() + 1000L);
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallSun(this.plugin, this.player, this.stopTime), 20L);
+			getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), new TaskCallSun(this.player, this.stopTime), 20L);
 		}
 	}
 }

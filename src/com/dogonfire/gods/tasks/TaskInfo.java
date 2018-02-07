@@ -5,11 +5,9 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.managers.LanguageManager;
 
-public class TaskInfo implements Runnable {
-	private Gods plugin;
+public class TaskInfo extends Task {
 	private UUID playerId = null;
 	private String name1 = null;
 	private String name2 = null;
@@ -17,8 +15,7 @@ public class TaskInfo implements Runnable {
 	private int amount = 0;
 	private ChatColor color;
 
-	public TaskInfo(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, int amount, String name1) {
-		this.plugin = instance;
+	public TaskInfo(ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, int amount, String name1) {
 		this.playerId = playerId;
 		this.message = m;
 		this.name1 = name1;
@@ -26,8 +23,7 @@ public class TaskInfo implements Runnable {
 		this.color = color;
 	}
 
-	public TaskInfo(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name1, String name2) {
-		this.plugin = instance;
+	public TaskInfo(ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name1, String name2) {
 		this.playerId = playerId;
 		this.name1 = name1;
 		this.name2 = name2;
@@ -35,8 +31,7 @@ public class TaskInfo implements Runnable {
 		this.color = color;
 	}
 
-	public TaskInfo(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name, int amount1, int amount2) {
-		this.plugin = instance;
+	public TaskInfo(ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name, int amount1, int amount2) {
 		this.playerId = playerId;
 		this.name2 = String.valueOf(amount1);
 		this.message = m;
@@ -45,23 +40,23 @@ public class TaskInfo implements Runnable {
 	}
 
 	public void run() {
-		Player player = this.plugin.getServer().getPlayer(this.playerId);
+		Player player = getPlugin().getServer().getPlayer(this.playerId);
 
 		if (player == null) {
 			return;
 		}
 
-		this.plugin.getLanguageManager().setPlayerName(this.name1);
+		getPlugin().getLanguageManager().setPlayerName(this.name1);
 
 		try {
-			this.plugin.getLanguageManager().setType(this.name2);
+			getPlugin().getLanguageManager().setType(this.name2);
 		} catch (Exception ex) {
-			this.plugin.logDebug(ex.getStackTrace().toString());
+			getPlugin().logDebug(ex.getStackTrace().toString());
 		}
 
-		this.plugin.getLanguageManager().setAmount(this.amount);
+		getPlugin().getLanguageManager().setAmount(this.amount);
 
-		String questionMessage = this.plugin.getLanguageManager().getInfoString(this.message, this.color);
+		String questionMessage = getPlugin().getLanguageManager().getInfoString(this.message, this.color);
 
 		player.sendMessage(
 

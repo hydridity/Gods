@@ -506,42 +506,42 @@ public class HolyPowerManager {
 
 		this.plugin.logDebug("Starting thunderstorm for " + powerValue + " minutes");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new ThunderStormTask(this.plugin, player, System.currentTimeMillis() + powerValue * 60000), 60L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new ThunderStormTask(player, System.currentTimeMillis() + powerValue * 60000), 60L);
 	}
 
 	public void shootFirework(Player player, int powerValue) {
 		this.plugin.logDebug("Starting fireworks with " + powerValue + " rockets");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskFirework(this.plugin, player, powerValue), 1L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskFirework(player, powerValue), 1L);
 	}
 
 	public void callSun(Player player, int powerValue) {
 		this.plugin.logDebug("Starting call sun " + powerValue + " rockets");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallSun(this.plugin, player, powerValue), 1L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallSun(player, powerValue), 1L);
 	}
 
 	public void callMoon(Player player, int powerValue) {
 		this.plugin.logDebug("Starting call moon " + powerValue + " ");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallMoon(this.plugin, player, powerValue), 1L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallMoon(player, powerValue), 1L);
 	}
 
 	public void healing(Player player, int powerValue) {
 		this.plugin.logDebug("Healing up to " + powerValue + " creatures");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskHealRadius(this.plugin, player, powerValue), 1L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskHealRadius(player, powerValue), 1L);
 	}
 
 	public void drunk(Player player, int powerValue) {
 		this.plugin.logDebug("Drunking " + powerValue + " creatures");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskDrunk(this.plugin, player, powerValue), 1L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskDrunk(player, powerValue), 1L);
 	}
 
 	public void boostKnowledge(Player player, int powerValue) {
 		this.plugin.logDebug("Boosting " + powerValue + " xp of knowledge");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskBoostKnowledge(this.plugin, player, powerValue), 1L);
+		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskBoostKnowledge(player, powerValue), 1L);
 	}
 }

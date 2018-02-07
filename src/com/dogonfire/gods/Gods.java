@@ -32,13 +32,13 @@ import com.dogonfire.gods.managers.HolyPowerManager;
 import com.dogonfire.gods.managers.LanguageManager;
 import com.dogonfire.gods.managers.MarriageManager;
 import com.dogonfire.gods.managers.PermissionsManager;
-import com.dogonfire.gods.managers.PrayerManager;
 import com.dogonfire.gods.managers.QuestManager;
 import com.dogonfire.gods.managers.WhitelistManager;
 import com.dogonfire.gods.tasks.TaskInfo;
 
 public class Gods extends JavaPlugin {
-	private PrayerManager prayerManager = null;
+	private static Gods pluginInstance;
+
 	private MarriageManager marriageManager = null;
 	private HolyPowerManager holyPowerManager = null;
 	// private ProphecyManager prophecyManager = null;
@@ -212,10 +212,6 @@ public class Gods extends JavaPlugin {
 		return this.whitelistManager;
 	}
 
-	public PrayerManager getPrayerManager() {
-		return this.prayerManager;
-	}
-
 	public boolean isWhitelistedGod(String godName) {
 		if (this.useWhitelist) {
 			return this.whitelistManager.isWhitelistedGod(godName);
@@ -252,7 +248,7 @@ public class Gods extends JavaPlugin {
 			return;
 		}
 
-		getServer().getScheduler().runTaskLater(this, new TaskInfo(this, color, playerId, message, amount, name), delay);
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, amount, name), delay);
 	}
 
 	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay) {
@@ -262,7 +258,7 @@ public class Gods extends JavaPlugin {
 			return;
 		}
 
-		getServer().getScheduler().runTaskLater(this, new TaskInfo(this, color, playerId, message, name1, name2), delay);
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name1, name2), delay);
 	}
 
 	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay) {
@@ -271,7 +267,7 @@ public class Gods extends JavaPlugin {
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
-		getServer().getScheduler().runTaskLater(this, new TaskInfo(this, color, playerId, message, name, amount1, amount2), delay);
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name, amount1, amount2), delay);
 	}
 
 	public void reloadSettings() {
@@ -577,6 +573,7 @@ public class Gods extends JavaPlugin {
 	}
 
 	public void onEnable() {
+		pluginInstance = this;
 		this.permissionsManager = new PermissionsManager(this);
 		this.questManager = new QuestManager(this);
 		this.godManager = new GodManager(this);
@@ -630,7 +627,11 @@ public class Gods extends JavaPlugin {
 		if (this.biblesEnabled) {
 			this.bibleManager.save();
 		}
-		// this.bossManager.disable();
+		pluginInstance = null;
+	}
+
+	public static Gods get() {
+		return pluginInstance;
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

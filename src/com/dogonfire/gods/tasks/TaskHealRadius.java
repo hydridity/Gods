@@ -8,22 +8,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.managers.LanguageManager.LANGUAGESTRING;
 
-public class TaskHealRadius implements Runnable {
-	private Gods plugin;
+public class TaskHealRadius extends Task {
 	private Player player;
 
-	public TaskHealRadius(Gods instance, Player player, long amount) {
-		this.plugin = instance;
+	public TaskHealRadius(Player player, long amount) {
 		this.player = player;
 	}
 
 	public void run() {
 		this.player.playSound(this.player.getLocation(), Sound.AMBIENT_CAVE, 1.0F, 0.1F);
 
-		Entity[] entities = this.plugin.getHolyPowerManager().getNearbyLivingEntities(this.player.getLocation(), 20.0D);
+		Entity[] entities = getPlugin().getHolyPowerManager().getNearbyLivingEntities(this.player.getLocation(), 20.0D);
 		int n = 0;
 		for (Entity entity : entities) {
 			if (this.player.getEntityId() != entity.getEntityId()) {
@@ -33,6 +30,6 @@ public class TaskHealRadius implements Runnable {
 				n++;
 			}
 		}
-		this.plugin.sendInfo(this.player.getUniqueId(), LANGUAGESTRING.YouHealedBeings, ChatColor.AQUA, n, "", 20);
+		getPlugin().sendInfo(this.player.getUniqueId(), LANGUAGESTRING.YouHealedBeings, ChatColor.AQUA, n, "", 20);
 	}
 }

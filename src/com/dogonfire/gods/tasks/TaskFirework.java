@@ -12,16 +12,12 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.dogonfire.gods.Gods;
-
-public class TaskFirework implements Runnable {
-	private Gods plugin;
+public class TaskFirework extends Task {
 	private Player player;
 	private Random random = new Random();
 	private int numberOfRockets = 1;
 
-	public TaskFirework(Gods instance, Player player, int numberOfRockets) {
-		this.plugin = instance;
+	public TaskFirework(Player player, int numberOfRockets) {
 		this.player = player;
 		this.numberOfRockets = numberOfRockets;
 	}
@@ -105,7 +101,7 @@ public class TaskFirework implements Runnable {
 		int n = (int) (((float) this.numberOfRockets) / 1.50f);
 
 		if (n > 0) {
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskFirework(this.plugin, this.player, n), 20 + this.random.nextInt(80));
+			getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), new TaskFirework(this.player, n), 20 + this.random.nextInt(80));
 		}
 	}
 }

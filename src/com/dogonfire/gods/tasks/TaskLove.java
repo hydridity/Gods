@@ -7,22 +7,17 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
-
-public class TaskLove implements Runnable {
-	private Gods plugin;
+public class TaskLove extends Task {
 	private Player player1;
 	private Player player2;
 	private int cycle = 3;
 
-	public TaskLove(Gods instance, Player player1, Player player2) {
-		this.plugin = instance;
+	public TaskLove(Player player1, Player player2) {
 		this.player1 = player1;
 		this.player2 = player2;
 	}
 
-	public TaskLove(Gods instance, Player player1, Player player2, int cycle) {
-		this.plugin = instance;
+	public TaskLove(Player player1, Player player2, int cycle) {
 		this.player1 = player1;
 		this.player2 = player2;
 		this.cycle = cycle;
@@ -44,7 +39,7 @@ public class TaskLove implements Runnable {
 			ocelot.remove();
 
 			if (firework) {
-				this.plugin.getHolyPowerManager().shootFirework(player, 16);
+				getPlugin().getHolyPowerManager().shootFirework(player, 16);
 			}
 		}
 
@@ -56,30 +51,13 @@ public class TaskLove implements Runnable {
 			ocelot.remove();
 
 			if (firework) {
-				this.plugin.getHolyPowerManager().shootFirework(player, 16);
+				getPlugin().getHolyPowerManager().shootFirework(player, 16);
 			}
 		}
 
 		int newcycle = this.cycle - 1;
 		if (newcycle > 0) {
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskLove(this.plugin, this.player1, this.player2, newcycle), 40L);
+			getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), new TaskLove(this.player1, this.player2, newcycle), 40L);
 		}
 	}
-
-	/*
-	 * private void onLove()
-	 * 
-	 * { if (this.plugin.getGodManager().getDivineForceForGod(godName) ==
-	 * GodManager.GodType.LOVE) { powerBefore =
-	 * this.plugin.getBelieverManager().getBelieverPower(player.getUniqueId());
-	 * this.plugin.getBelieverManager().increasePrayer(killer.getUniqueId(),
-	 * killerGodName, 2);
-	 * this.plugin.getBelieverManager().increasePrayerPower(killer .getUniqueId(),
-	 * 2); powerAfter =
-	 * this.plugin.getBelieverManager().getBelieverPower(player.getUniqueId());
-	 * 
-	 * this.plugin.sendInfo(killer.getUniqueId(),
-	 * LanguageManager.LANGUAGESTRING.YouEarnedPowerBySlayingHeathen,
-	 * ChatColor.AQUA, (int) (powerAfter - powerBefore), killerGodName, 20); } }
-	 */
 }

@@ -4,14 +4,12 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import com.dogonfire.gods.Gods;
-
-public class TaskSpawnHostileMobs implements Runnable {
+public class TaskSpawnHostileMobs extends Task {
 	private EntityType mobType;
 	private int numberOfMobs = 0;
 	private Player player;
 
-	public TaskSpawnHostileMobs(Gods instance, String god, Player p, EntityType entityType, int n) {
+	public TaskSpawnHostileMobs(String god, Player p, EntityType entityType, int n) {
 		this.numberOfMobs = n;
 		this.player = p;
 		new String(god);
