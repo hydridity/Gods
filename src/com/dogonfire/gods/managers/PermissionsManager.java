@@ -10,7 +10,6 @@ import org.anjocaido.groupmanager.dataholder.OverloadedWorldHolder;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import com.dogonfire.gods.Gods;
@@ -24,38 +23,40 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class PermissionsManager {
+
+	private static PermissionsManager instance;
+
+	public static PermissionsManager get() {
+		if (instance == null)
+			instance = new PermissionsManager();
+		return instance;
+	}
+
+	private PermissionsManager() {
+	}
+
 	private String pluginName = "null";
 	private PluginManager pluginManager = null;
-	private Gods plugin;
-
 	private PermissionManager pex = null;
 	private GroupManager groupManager = null;
 
-	public PermissionsManager(Gods p) {
-		this.plugin = p;
-	}
-
 	public void load() {
-		this.pluginManager = this.plugin.getServer().getPluginManager();
+		this.pluginManager = Gods.get().getServer().getPluginManager();
 		if (this.pluginManager.getPlugin("PermissionsEx") != null) {
-			this.plugin.log("Using PermissionsEx.");
+			Gods.get().log("Using PermissionsEx.");
 			this.pluginName = "PermissionsEx";
 			this.pex = PermissionsEx.getPermissionManager();
 		} else if (this.pluginManager.getPlugin("GroupManager") != null) {
-			this.plugin.log("Using GroupManager");
+			Gods.get().log("Using GroupManager");
 			this.pluginName = "GroupManager";
 			this.groupManager = ((GroupManager) this.pluginManager.getPlugin("GroupManager"));
 		} else if (this.pluginManager.getPlugin("bPermissions") != null) {
-			this.plugin.log("Using bPermissions.");
+			Gods.get().log("Using bPermissions.");
 			this.pluginName = "bPermissions";
 		} else {
-			this.plugin.log("No permissions plugin detected! Defaulting to superperm");
+			Gods.get().log("No permissions plugin detected! Defaulting to superperm");
 			this.pluginName = "SuperPerm";
 		}
-	}
-
-	public Plugin getPlugin() {
-		return this.plugin;
 	}
 
 	public String getPermissionPluginName() {
@@ -136,7 +137,7 @@ public class PermissionsManager {
 		if (this.pluginName.equals("GroupManager")) {
 			AnjoPermissionsHandler handler = this.groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
 			if (handler == null) {
-				this.plugin.logDebug("PermissionManager(): No handler for player " + playerName);
+				Gods.get().logDebug("PermissionManager(): No handler for player " + playerName);
 				return "";
 			}
 			return handler.getGroup(playerName);
@@ -186,7 +187,7 @@ public class PermissionsManager {
 			groups = new String[] { groupName };
 			user.setGroups(groups);
 		} else if (this.pluginName.equals("bPermissions")) {
-			for (org.bukkit.World world : this.plugin.getServer().getWorlds()) {
+			for (org.bukkit.World world : Gods.get().getServer().getWorlds()) {
 				ApiLayer.setGroup(world.getName(), CalculableType.USER, playerName, groupName);
 			}
 		} else if (this.pluginName.equals("GroupManager")) {
@@ -196,12 +197,12 @@ public class PermissionsManager {
 			}
 			org.anjocaido.groupmanager.data.User user = owh.getUser(playerName);
 			if (user == null) {
-				this.plugin.log("No player with the name '" + groupName + "'");
+				Gods.get().log("No player with the name '" + groupName + "'");
 				return;
 			}
 			org.anjocaido.groupmanager.data.Group group = owh.getGroup(groupName);
 			if (group == null) {
-				this.plugin.log("No group with the name '" + groupName + "'");
+				Gods.get().log("No group with the name '" + groupName + "'");
 				return;
 			}
 			user.setGroup(group);

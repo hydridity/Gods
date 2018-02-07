@@ -18,20 +18,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.dogonfire.gods.config.GodsConfiguration;
+import com.dogonfire.gods.managers.AltarManager;
+import com.dogonfire.gods.managers.BelieverManager;
 import com.dogonfire.gods.managers.GodManager;
 import com.dogonfire.gods.managers.GodManager.GodMood;
+import com.dogonfire.gods.managers.HolyBookManager;
+import com.dogonfire.gods.managers.HolyLandManager;
 import com.dogonfire.gods.managers.LanguageManager;
 import com.dogonfire.gods.managers.MarriageManager;
+import com.dogonfire.gods.managers.PermissionsManager;
+import com.dogonfire.gods.managers.QuestManager;
+import com.dogonfire.gods.managers.WhitelistManager;
 
 public class Commands {
-	private Gods plugin = null;
-
-	Commands(Gods p) {
-		this.plugin = p;
-	}
 
 	private boolean CommandList(CommandSender sender) {
-		if (sender != null && !sender.isOp() && !this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.list")) {
+		if (sender != null && !sender.isOp() && !PermissionsManager.get().hasPermission((Player) sender, "gods.list")) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
@@ -40,11 +43,11 @@ public class Commands {
 		List<God> gods = new ArrayList<God>();
 		String playerGod = null;
 
-		Set<String> list = this.plugin.getGodManager().getTopGods();
+		Set<String> list = GodManager.get().getTopGods();
 		for (String godName : list) {
-			int power = (int) this.plugin.getGodManager().getGodPower(godName);
+			int power = (int) GodManager.get().getGodPower(godName);
 
-			int believers = this.plugin.getBelieverManager().getBelieversForGod(godName).size();
+			int believers = BelieverManager.get().getBelieversForGod(godName).size();
 			if (believers > 0) {
 				gods.add(new God(godName, power, believers));
 			}
@@ -52,18 +55,18 @@ public class Commands {
 
 		if (gods.size() == 0) {
 			if (sender != null) {
-				sender.sendMessage(ChatColor.GOLD + "There are no Gods in " + this.plugin.serverName + "!");
+				sender.sendMessage(ChatColor.GOLD + "There are no Gods in " + GodsConfiguration.get().getServerName() + "!");
 			} else {
-				this.plugin.log("There are no Gods in " + this.plugin.serverName + "!");
+				Gods.get().log("There are no Gods in " + GodsConfiguration.get().getServerName() + "!");
 			}
 			return true;
 		}
 
 		if (sender != null) {
-			playerGod = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-			sender.sendMessage(ChatColor.YELLOW + "--------- The Gods of " + this.plugin.serverName + " ---------");
+			playerGod = BelieverManager.get().getGodForBeliever(player.getUniqueId());
+			sender.sendMessage(ChatColor.YELLOW + "--------- The Gods of " + GodsConfiguration.get().getServerName() + " ---------");
 		} else {
-			this.plugin.log("--------- The Gods of " + this.plugin.serverName + " ---------");
+			Gods.get().log("--------- The Gods of " + GodsConfiguration.get().getServerName() + " ---------");
 		}
 
 		Collections.sort(gods, new TopGodsComparator());
@@ -79,7 +82,7 @@ public class Commands {
 		boolean playerGodShown = false;
 
 		for (God god : topGods) {
-			String fullGodName = String.format("%-16s", new Object[] { god.name }) + "   " + String.format("%-16s", new Object[] { this.plugin.getGodManager().getTitleForGod(god.name) });
+			String fullGodName = String.format("%-16s", new Object[] { god.name }) + "   " + String.format("%-16s", new Object[] { GodManager.get().getTitleForGod(god.name) });
 			if (sender != null) {
 				if ((playerGod != null) && (god.name.equals(playerGod))) {
 					playerGodShown = true;
@@ -92,8 +95,8 @@ public class Commands {
 							.toString(), 2) + StringUtils.rightPad(new StringBuilder().append(" Believers ").append(god.believers).toString(), 2));
 				}
 			} else {
-				this.plugin.log(String.format("%2d", new Object[] { Integer.valueOf(n) }) + " - " + fullGodName + ChatColor.GOLD + StringUtils.rightPad(new StringBuilder().append(" Mood ").append(this.plugin.getGodManager().getExactMoodForGod(
-						god.name)).toString(), 2) + StringUtils.rightPad(new StringBuilder().append(" Power ").append(god.power).toString(), 2) + StringUtils.rightPad(new StringBuilder().append(" Believers ").append(god.believers).toString(), 2));
+				Gods.get().log(String.format("%2d", new Object[] { Integer.valueOf(n) }) + " - " + fullGodName + ChatColor.GOLD + StringUtils.rightPad(new StringBuilder().append(" Mood ").append(GodManager.get().getExactMoodForGod(god.name))
+						.toString(), 2) + StringUtils.rightPad(new StringBuilder().append(" Power ").append(god.power).toString(), 2) + StringUtils.rightPad(new StringBuilder().append(" Believers ").append(god.believers).toString(), 2));
 			}
 			n++;
 		}
@@ -102,7 +105,7 @@ public class Commands {
 
 		if ((playerGod != null) && (!playerGodShown)) {
 			for (God god : gods) {
-				String fullGodName = String.format("%-16s", new Object[] { god.name }) + "   " + String.format("%-16s", new Object[] { this.plugin.getGodManager().getTitleForGod(god.name) });
+				String fullGodName = String.format("%-16s", new Object[] { god.name }) + "   " + String.format("%-16s", new Object[] { GodManager.get().getTitleForGod(god.name) });
 				if ((playerGod != null) && (god.name.equals(playerGod))) {
 					playerGodShown = true;
 					sender.sendMessage("" + ChatColor.GOLD + n + " - " + fullGodName + StringUtils.rightPad(new StringBuilder().append(" Power ").append(god.power).toString(), 2) + StringUtils.rightPad(new StringBuilder().append(" Believers ")
@@ -112,7 +115,7 @@ public class Commands {
 			}
 		}
 		if (sender != null) {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.InfoHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g info <godname>", 80);
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.InfoHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g info <godname>", 80);
 		}
 		return true;
 	}
@@ -127,11 +130,10 @@ public class Commands {
 		if (player == null) {
 			if ((cmd.getName().equalsIgnoreCase("gods")) || (cmd.getName().equalsIgnoreCase("g"))) {
 				if ((args.length == 1) && (args[0].equalsIgnoreCase("reload"))) {
-					this.plugin.reloadSettings();
-					this.plugin.loadSettings();
-					this.plugin.getQuestManager().load();
-					this.plugin.getGodManager().load();
-					this.plugin.getBelieverManager().load();
+					Gods.get().reloadSettings();
+					QuestManager.get().load();
+					GodManager.get().load();
+					BelieverManager.get().load();
 
 					return true;
 				}
@@ -143,105 +145,105 @@ public class Commands {
 		if ((cmd.getName().equalsIgnoreCase("gods")) || (cmd.getName().equalsIgnoreCase("g"))) {
 			if (args.length == 0) {
 				CommandGods(sender);
-				this.plugin.log(sender.getName() + " /gods");
+				Gods.get().log(sender.getName() + " /gods");
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("reload")) {
 				if (CommandReload(sender)) {
-					this.plugin.log(sender.getName() + " /gods reload");
+					Gods.get().log(sender.getName() + " /gods reload");
 				}
 				return true;
 			}
 			// if (args[0].equalsIgnoreCase("regen"))
 			// {
-			// EndManager endManager = new EndManager(this.plugin);
+			// EndManager endManager = new EndManager(Gods.get());
 			// endManager.init();
 			//
-			// this.plugin.log(sender.getName() + " /gods regen");
+			// Gods.get().log(sender.getName() + " /gods regen");
 			//
 			// return true;
 			// }
 			if (args[0].equalsIgnoreCase("info")) {
 				if (CommandInfo(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods info");
+					Gods.get().log(sender.getName() + " /gods info");
 				}
 				return true;
 			}
 			if ((args[0].equalsIgnoreCase("c")) || (args[0].equalsIgnoreCase("chat"))) {
 				if (CommandChat(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods chat");
+					Gods.get().log(sender.getName() + " /gods chat");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("list")) {
 				if (CommandList(sender)) {
-					this.plugin.log(sender.getName() + " /gods list");
+					Gods.get().log(sender.getName() + " /gods list");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("marriages")) {
 				if (CommandMarriages(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods marriages");
+					Gods.get().log(sender.getName() + " /gods marriages");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("followers")) {
 				if (CommandFollowers(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods followers");
+					Gods.get().log(sender.getName() + " /gods followers");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("love")) {
 				if (CommandLove(player, args)) {
-					this.plugin.log(sender.getName() + " /gods love");
+					Gods.get().log(sender.getName() + " /gods love");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("divorce")) {
 				if (CommandDivorce(player, args)) {
-					this.plugin.log(sender.getName() + " /gods divorce");
+					Gods.get().log(sender.getName() + " /gods divorce");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("sethome")) {
 				if (CommandSetHome(player, args)) {
-					this.plugin.log(sender.getName() + " /gods sethome");
+					Gods.get().log(sender.getName() + " /gods sethome");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("home")) {
 				if (CommandHome(player, args)) {
-					this.plugin.log(sender.getName() + " /gods home");
+					Gods.get().log(sender.getName() + " /gods home");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("bible")) {
 				if (CommandBible(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods bible");
+					Gods.get().log(sender.getName() + " /gods bible");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("editbible")) {
 				if (CommandEditBible(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods editbible");
+					Gods.get().log(sender.getName() + " /gods editbible");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("setbible")) {
 				if (CommandSetBible(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods setbible");
+					Gods.get().log(sender.getName() + " /gods setbible");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("pvp")) {
 				if (CommandTogglePvP(player, args)) {
-					this.plugin.log(sender.getName() + " /gods pvp");
+					Gods.get().log(sender.getName() + " /gods pvp");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("hunt")) {
 				if (CommandHunt(player, args)) {
-					this.plugin.log(sender.getName() + " /gods hunt");
+					Gods.get().log(sender.getName() + " /gods hunt");
 				}
 				return true;
 			}
@@ -253,9 +255,9 @@ public class Commands {
 			}
 
 			if (args[0].equalsIgnoreCase("leave")) {
-				String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+				String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-				if (this.plugin.getGodManager().believerLeaveGod(player.getUniqueId())) {
+				if (GodManager.get().believerLeaveGod(player.getUniqueId())) {
 					sender.sendMessage(ChatColor.AQUA + "You left the religion of " + ChatColor.YELLOW + godName);
 				} else {
 					sender.sendMessage(ChatColor.RED + "You are not part of any religion!");
@@ -268,19 +270,19 @@ public class Commands {
 				if (args.length > 1) {
 					if (args[1].equalsIgnoreCase("altar")) {
 						if (CommandHelpAltar(sender, args)) {
-							this.plugin.log(sender.getName() + " /gods help altar" + args[1]);
+							Gods.get().log(sender.getName() + " /gods help altar" + args[1]);
 						}
 						return true;
 					}
 
 					if (args[1].equalsIgnoreCase("blocks")) {
 						if (CommandHelpBlocks(sender, args)) {
-							this.plugin.log(sender.getName() + " /gods help blocks" + args[1]);
+							Gods.get().log(sender.getName() + " /gods help blocks" + args[1]);
 						}
 						return true;
 					}
 				} else if (CommandHelp(sender)) {
-					this.plugin.log(sender.getName() + " /gods help");
+					Gods.get().log(sender.getName() + " /gods help");
 				}
 
 				return true;
@@ -292,7 +294,7 @@ public class Commands {
 				}
 
 				if (CommandMarry(player, args)) {
-					this.plugin.log(sender.getName() + " /gods marry " + args[1]);
+					Gods.get().log(sender.getName() + " /gods marry " + args[1]);
 				}
 				return true;
 			}
@@ -302,7 +304,7 @@ public class Commands {
 					return false;
 				}
 
-				if (!this.plugin.getPermissionsManager().hasPermission(player, "gods.pray")) {
+				if (!PermissionsManager.get().hasPermission(player, "gods.pray")) {
 					sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 					return false;
 				}
@@ -330,7 +332,7 @@ public class Commands {
 				// return true;
 				// }
 
-				if (plugin.questsEnabled) {
+				if (GodsConfiguration.get().isQuestsEnabled()) {
 					if (args[1].equalsIgnoreCase("quest")) {
 						CommandPrayForQuest(sender);
 						return true;
@@ -342,31 +344,31 @@ public class Commands {
 			}
 			if (args[0].equalsIgnoreCase("invite")) {
 				if (CommandInvite(player, args)) {
-					this.plugin.log(sender.getName() + " /gods invite " + args[1]);
+					Gods.get().log(sender.getName() + " /gods invite " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("war")) {
 				if (CommandWar(player, args)) {
-					this.plugin.log(sender.getName() + " /gods war " + args[1]);
+					Gods.get().log(sender.getName() + " /gods war " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("ally")) {
 				if (CommandAlliance(player, args)) {
-					this.plugin.log(sender.getName() + " /gods ally " + args[1]);
+					Gods.get().log(sender.getName() + " /gods ally " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("info")) {
 				if (CommandInfo(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods info " + args[1]);
+					Gods.get().log(sender.getName() + " /gods info " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("followers")) {
 				if (CommandFollowers(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods followers " + args[1]);
+					Gods.get().log(sender.getName() + " /gods followers " + args[1]);
 				}
 				return true;
 			}
@@ -376,10 +378,10 @@ public class Commands {
 					return false;
 				}
 
-				Player otherPlayer = plugin.getServer().getPlayer(args[1]);
+				Player otherPlayer = Gods.get().getServer().getPlayer(args[1]);
 
 				if (CommandCheck(sender, otherPlayer)) {
-					this.plugin.log(sender.getName() + " /gods check " + args[1]);
+					Gods.get().log(sender.getName() + " /gods check " + args[1]);
 				}
 				return true;
 			}
@@ -390,76 +392,76 @@ public class Commands {
 				}
 
 				if (CommandKick(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods kick " + args[1]);
+					Gods.get().log(sender.getName() + " /gods kick " + args[1]);
 				}
 
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("startattack")) {
 				if (CommandStartAttackHolyLand(sender, args)) {
-					this.plugin.log(sender.getName() + " /startattack");
+					Gods.get().log(sender.getName() + " /startattack");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("attack")) {
 				if (CommandAttackHolyLand(sender, args)) {
-					this.plugin.log(sender.getName() + " /g attack");
+					Gods.get().log(sender.getName() + " /g attack");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("defend")) {
 				if (CommandDefendHolyLand(sender, args)) {
-					this.plugin.log(sender.getName() + " /g defend");
+					Gods.get().log(sender.getName() + " /g defend");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("desc")) {
 				if (CommandSetDescription(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods desc " + args[1]);
+					Gods.get().log(sender.getName() + " /gods desc " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("setsafe")) {
 				if (CommandSetNeutralLand(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods setsafe");
+					Gods.get().log(sender.getName() + " /gods setsafe");
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("holyartifact")) {
 				if (CommandGiveHolyArtifact(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods holyartifact " + args[1]);
+					Gods.get().log(sender.getName() + " /gods holyartifact " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("setpriest")) {
 				if (CommandSetPriest(player, args)) {
-					this.plugin.log(sender.getName() + " /gods setpriest " + args[1] + " " + args[2]);
+					Gods.get().log(sender.getName() + " /gods setpriest " + args[1] + " " + args[2]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("desc")) {
 				if (CommandSetDescription(sender, args)) {
-					this.plugin.log(sender.getName() + " /gods desc " + args[1]);
+					Gods.get().log(sender.getName() + " /gods desc " + args[1]);
 				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("yes")) {
-				if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.accept"))) {
+				if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.accept"))) {
 					sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 					return false;
 				}
 
-				this.plugin.getGodManager().believerAccept(player.getUniqueId());
+				GodManager.get().believerAccept(player.getUniqueId());
 
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("no")) {
-				if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.reject"))) {
+				if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.reject"))) {
 					sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 					return false;
 				}
 
-				this.plugin.getGodManager().believerReject(player.getUniqueId());
+				GodManager.get().believerReject(player.getUniqueId());
 
 				return true;
 			}
@@ -471,7 +473,7 @@ public class Commands {
 	}
 
 	private boolean CommandInfo(CommandSender sender, String[] args) {
-		if ((sender != null) && !sender.isOp() && !this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.info")) {
+		if ((sender != null) && !sender.isOp() && !PermissionsManager.get().hasPermission((Player) sender, "gods.info")) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
@@ -480,34 +482,34 @@ public class Commands {
 		String godName = null;
 
 		if (args.length == 2) {
-			godName = this.plugin.getGodManager().formatGodName(args[1]);
+			godName = GodManager.get().formatGodName(args[1]);
 		}
 
 		if (godName == null) {
-			godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+			godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 			if (godName == null) {
 				sender.sendMessage(ChatColor.RED + "You do not believe in any God.");
 				return true;
 			}
 		}
 
-		if (!this.plugin.getGodManager().godExist(godName)) {
+		if (!GodManager.get().godExist(godName)) {
 			sender.sendMessage(ChatColor.RED + "There is no God with such name.");
 			return true;
 		}
 
-		List<UUID> priests = this.plugin.getGodManager().getPriestsForGod(godName);
+		List<UUID> priests = GodManager.get().getPriestsForGod(godName);
 
 		if (priests == null) {
 			priests = new ArrayList<UUID>();
 		}
 
-		sender.sendMessage(ChatColor.YELLOW + "--------- " + godName + " " + this.plugin.getGodManager().getColorForGod(godName) + this.plugin.getGodManager().getTitleForGod(godName) + ChatColor.YELLOW + " ---------");
+		sender.sendMessage(ChatColor.YELLOW + "--------- " + godName + " " + GodManager.get().getColorForGod(godName) + GodManager.get().getTitleForGod(godName) + ChatColor.YELLOW + " ---------");
 
-		sender.sendMessage("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + this.plugin.getGodManager().getGodDescription(godName));
+		sender.sendMessage("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + GodManager.get().getGodDescription(godName));
 
 		ChatColor moodColor = ChatColor.AQUA;
-		GodMood godMood = this.plugin.getGodManager().getMoodForGod(godName);
+		GodMood godMood = GodManager.get().getMoodForGod(godName);
 
 		switch (godMood) {
 			case EXALTED:
@@ -527,43 +529,43 @@ public class Commands {
 				break;
 		}
 
-		sender.sendMessage(moodColor + godName + " is " + this.plugin.getLanguageManager().getGodMoodName(godMood));
+		sender.sendMessage(moodColor + godName + " is " + LanguageManager.get().getGodMoodName(godMood));
 
-		Material neededItem = this.plugin.getGodManager().getSacrificeItemTypeForGod(godName);
+		Material neededItem = GodManager.get().getSacrificeItemTypeForGod(godName);
 		if (neededItem != null) {
-			sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " wants more " + ChatColor.WHITE + this.plugin.getLanguageManager().getItemTypeName(neededItem));
+			sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " wants more " + ChatColor.WHITE + LanguageManager.get().getItemTypeName(neededItem));
 		}
 
 		if (priests.size() == 0) {
 			sender.sendMessage(ChatColor.AQUA + "Priest: " + ChatColor.YELLOW + "None");
 		} else if (priests.size() == 1) {
-			sender.sendMessage(ChatColor.AQUA + "Priest: " + ChatColor.YELLOW + plugin.getServer().getOfflinePlayer(priests.get(0)).getName());
+			sender.sendMessage(ChatColor.AQUA + "Priest: " + ChatColor.YELLOW + Gods.get().getServer().getOfflinePlayer(priests.get(0)).getName());
 		} else {
 			sender.sendMessage(ChatColor.AQUA + "Priests: ");
 			for (UUID priest : priests) {
-				sender.sendMessage(ChatColor.YELLOW + " - " + plugin.getServer().getOfflinePlayer(priest).getName());
+				sender.sendMessage(ChatColor.YELLOW + " - " + Gods.get().getServer().getOfflinePlayer(priest).getName());
 			}
 		}
 
-		sender.sendMessage(ChatColor.AQUA + "Believers: " + ChatColor.YELLOW + this.plugin.getBelieverManager().getBelieversForGod(godName).size());
-		sender.sendMessage(ChatColor.AQUA + "Exact power: " + ChatColor.YELLOW + this.plugin.getGodManager().getGodPower(godName));
-		if (this.plugin.commandmentsEnabled) {
-			sender.sendMessage(ChatColor.AQUA + "Holy food: " + ChatColor.YELLOW + this.plugin.getLanguageManager().getItemTypeName(this.plugin.getGodManager().getEatFoodTypeForGod(godName)));
-			sender.sendMessage(ChatColor.AQUA + "Unholy food: " + ChatColor.YELLOW + this.plugin.getLanguageManager().getItemTypeName(this.plugin.getGodManager().getNotEatFoodTypeForGod(godName)));
+		sender.sendMessage(ChatColor.AQUA + "Believers: " + ChatColor.YELLOW + BelieverManager.get().getBelieversForGod(godName).size());
+		sender.sendMessage(ChatColor.AQUA + "Exact power: " + ChatColor.YELLOW + GodManager.get().getGodPower(godName));
+		if (GodsConfiguration.get().isCommandmentsEnabled()) {
+			sender.sendMessage(ChatColor.AQUA + "Holy food: " + ChatColor.YELLOW + LanguageManager.get().getItemTypeName(GodManager.get().getEatFoodTypeForGod(godName)));
+			sender.sendMessage(ChatColor.AQUA + "Unholy food: " + ChatColor.YELLOW + LanguageManager.get().getItemTypeName(GodManager.get().getNotEatFoodTypeForGod(godName)));
 
-			sender.sendMessage(ChatColor.AQUA + "Holy creature: " + ChatColor.YELLOW + this.plugin.getLanguageManager().getMobTypeName(this.plugin.getGodManager().getHolyMobTypeForGod(godName)));
-			sender.sendMessage(ChatColor.AQUA + "Unholy creature: " + ChatColor.YELLOW + this.plugin.getLanguageManager().getMobTypeName(this.plugin.getGodManager().getUnholyMobTypeForGod(godName)));
+			sender.sendMessage(ChatColor.AQUA + "Holy creature: " + ChatColor.YELLOW + LanguageManager.get().getMobTypeName(GodManager.get().getHolyMobTypeForGod(godName)));
+			sender.sendMessage(ChatColor.AQUA + "Unholy creature: " + ChatColor.YELLOW + LanguageManager.get().getMobTypeName(GodManager.get().getUnholyMobTypeForGod(godName)));
 		}
 
-		List<String> allyRelations = this.plugin.getGodManager().getAllianceRelations(godName);
-		Object warRelations = this.plugin.getGodManager().getWarRelations(godName);
+		List<String> allyRelations = GodManager.get().getAllianceRelations(godName);
+		Object warRelations = GodManager.get().getWarRelations(godName);
 
 		if ((((List<?>) warRelations).size() > 0) || (allyRelations.size() > 0)) {
 			sender.sendMessage(ChatColor.AQUA + "Religious relations: ");
-			for (String ally : this.plugin.getGodManager().getAllianceRelations(godName)) {
+			for (String ally : GodManager.get().getAllianceRelations(godName)) {
 				sender.sendMessage(ChatColor.GREEN + " Alliance with " + ChatColor.GOLD + ally);
 			}
-			List<String> enemies = this.plugin.getGodManager().getWarRelations(godName);
+			List<String> enemies = GodManager.get().getWarRelations(godName);
 			for (String enemy : enemies) {
 				sender.sendMessage(ChatColor.RED + " War with " + ChatColor.GOLD + enemy);
 			}
@@ -572,7 +574,7 @@ public class Commands {
 	}
 
 	private boolean CommandCheck(CommandSender sender, Player believer) {
-		if ((sender != null) && (!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.check"))) {
+		if ((sender != null) && (!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.check"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
@@ -582,11 +584,11 @@ public class Commands {
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(believer.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(believer.getUniqueId());
 
 		if (godName == null) {
 			sender.sendMessage(ChatColor.AQUA + believer.getDisplayName() + " does not believe in a god");
-		} else if (this.plugin.getGodManager().isPriest(believer.getUniqueId())) {
+		} else if (GodManager.get().isPriest(believer.getUniqueId())) {
 			sender.sendMessage(ChatColor.AQUA + believer.getDisplayName() + " is the Priest of " + ChatColor.YELLOW + godName);
 		} else {
 			sender.sendMessage(ChatColor.AQUA + believer.getDisplayName() + " believes in " + ChatColor.YELLOW + godName);
@@ -595,46 +597,46 @@ public class Commands {
 	}
 
 	private boolean CommandGods(CommandSender sender) {
-		sender.sendMessage(ChatColor.YELLOW + "------------------ " + this.plugin.getDescription().getFullName() + " ------------------");
+		sender.sendMessage(ChatColor.YELLOW + "------------------ " + Gods.get().getDescription().getFullName() + " ------------------");
 		sender.sendMessage(ChatColor.AQUA + "By DogOnFire");
 		sender.sendMessage("" + ChatColor.AQUA);
-		sender.sendMessage(ChatColor.AQUA + "There are currently " + ChatColor.WHITE + this.plugin.getGodManager().getAllGods().size() + ChatColor.AQUA + " Gods and");
-		sender.sendMessage("" + ChatColor.WHITE + this.plugin.getBelieverManager().getBelievers().size() + ChatColor.AQUA + " believers in " + this.plugin.serverName);
+		sender.sendMessage(ChatColor.AQUA + "There are currently " + ChatColor.WHITE + GodManager.get().getAllGods().size() + ChatColor.AQUA + " Gods and");
+		sender.sendMessage("" + ChatColor.WHITE + BelieverManager.get().getBelievers().size() + ChatColor.AQUA + " believers in " + GodsConfiguration.get().getServerName());
 		sender.sendMessage("" + ChatColor.AQUA);
 
 		if (sender != null && sender instanceof Player) {
 			Player player = (Player) sender;
 
-			String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+			String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 			if (godName != null) {
-				List<UUID> priests = this.plugin.getGodManager().getPriestsForGod(godName);
+				List<UUID> priests = GodManager.get().getPriestsForGod(godName);
 				if (priests == null || !priests.contains(player.getUniqueId())) {
 					sender.sendMessage(ChatColor.WHITE + "You believe in " + ChatColor.GOLD + godName);
 				} else {
 					sender.sendMessage(ChatColor.WHITE + "You are the priest of " + ChatColor.GOLD + godName);
 				}
 
-				if (plugin.prayersEnabled) {
-					sender.sendMessage(ChatColor.WHITE + "You have " + ChatColor.GOLD + plugin.getBelieverManager().getPrayerPower(player.getUniqueId()) + ChatColor.WHITE + " prayer power");
+				if (GodsConfiguration.get().isPrayersEnabled()) {
+					sender.sendMessage(ChatColor.WHITE + "You have " + ChatColor.GOLD + BelieverManager.get().getPrayerPower(player.getUniqueId()) + ChatColor.WHITE + " prayer power");
 				}
 			} else {
 				sender.sendMessage(ChatColor.RED + "You do not believe in any god");
 			}
 
-			if (this.plugin.marriageEnabled) {
-				String partnerName = this.plugin.getMarriageManager().getPartnerName(player.getUniqueId());
+			if (GodsConfiguration.get().isMarriageEnabled()) {
+				String partnerName = MarriageManager.get().getPartnerName(player.getUniqueId());
 				if (partnerName != null) {
 					sender.sendMessage(ChatColor.WHITE + "You are married to " + ChatColor.GOLD + partnerName);
 				}
 			}
 			sender.sendMessage("" + ChatColor.AQUA);
 
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodsHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g help", 80);
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.AltarHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g help altar", 160);
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodsHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g help", 80);
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.AltarHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g help altar", 160);
 
-			if (plugin.prayersEnabled) {
-				this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayForHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g prayfor", 240);
+			if (GodsConfiguration.get().isPrayersEnabled()) {
+				Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayForHelp, ChatColor.AQUA, 0, ChatColor.WHITE + "/g prayfor", 240);
 			}
 		}
 
@@ -653,7 +655,7 @@ public class Commands {
 		sender.sendMessage(ChatColor.WHITE + "/g prayfor item - " + ChatColor.AQUA + " pray for an item");
 		sender.sendMessage(ChatColor.WHITE + "/g prayfor health - " + ChatColor.AQUA + " pray for health");
 		sender.sendMessage(ChatColor.WHITE + "/g prayfor blessing - " + ChatColor.AQUA + " pray for a magical blessing");
-		if (plugin.questsEnabled) {
+		if (GodsConfiguration.get().isQuestsEnabled()) {
 			sender.sendMessage(ChatColor.WHITE + "/g prayfor quest - " + ChatColor.AQUA + " pray for a quest");
 		}
 		sender.sendMessage("");
@@ -681,10 +683,10 @@ public class Commands {
 		sender.sendMessage(ChatColor.AQUA + "These are the block types you can use for making Gods:");
 		sender.sendMessage("");
 		for (GodManager.GodType godType : GodManager.GodType.values()) {
-			List<String> materials = this.plugin.getAltarManager().getAltarBlockTypesFromGodType(godType);
+			List<String> materials = AltarManager.get().getAltarBlockTypesFromGodType(godType);
 			if (materials != null) {
 				for (String blockMaterial : materials) {
-					sender.sendMessage(ChatColor.WHITE + blockMaterial + "  --->  " + this.plugin.getGodManager().getColorForGodType(godType) + this.plugin.getLanguageManager().getGodTypeName(godType, "God"));
+					sender.sendMessage(ChatColor.WHITE + blockMaterial + "  --->  " + GodManager.get().getColorForGodType(godType) + LanguageManager.get().getGodTypeName(godType, "God"));
 				}
 			}
 		}
@@ -697,87 +699,87 @@ public class Commands {
 	private boolean CommandHelp(CommandSender sender) {
 		Player player = (Player) sender;
 
-		if ((sender != null) && (!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.help"))) {
+		if ((sender != null) && (!sender.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.help"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		sender.sendMessage(ChatColor.YELLOW + "------------------ " + this.plugin.getDescription().getFullName() + " ------------------");
+		sender.sendMessage(ChatColor.YELLOW + "------------------ " + Gods.get().getDescription().getFullName() + " ------------------");
 		sender.sendMessage(ChatColor.AQUA + "/gods" + ChatColor.WHITE + " - Basic info");
 
 		sender.sendMessage(ChatColor.AQUA + "/gods help altar" + ChatColor.WHITE + " - How to build an altar to a God");
 		sender.sendMessage(ChatColor.AQUA + "/gods help blocks" + ChatColor.WHITE + " - What type of blocks are used for God altars");
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.list"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.list"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods list" + ChatColor.WHITE + " - List of all gods");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.info"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.info"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods info" + ChatColor.WHITE + " - Show info about your God");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.info"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.info"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods info <godname>" + ChatColor.WHITE + " - Show info about a specific God");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.marriages"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.marriages"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods marriages" + ChatColor.WHITE + " - List the most loving married couples");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.marry"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.marry"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods marry" + ChatColor.WHITE + " - Ask another player to marry you");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.love"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.love"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods love" + ChatColor.WHITE + " - Love your partner");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.followers"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.followers"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods followers" + ChatColor.WHITE + " - Show the followers of your God");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.followers"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.followers"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods followers <godname>" + ChatColor.WHITE + " - Show followers of a God");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.check"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.check"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods check <playername>" + ChatColor.WHITE + " - Show religion for a player");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.chat"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.chat"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods chat" + ChatColor.WHITE + " - Chat only with believers within your religion");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.home"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.home"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods home" + ChatColor.WHITE + " - Teleports you to your religion home");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.sethome"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.sethome"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods sethome" + ChatColor.WHITE + " - Sets the home of your religion");
 		}
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.leave"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.leave"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods leave" + ChatColor.WHITE + " - Leave your religion");
 		}
 
 		sender.sendMessage(ChatColor.AQUA + "/gods yes" + ChatColor.WHITE + " - Accept a proposal from your god");
 		sender.sendMessage(ChatColor.AQUA + "/gods no" + ChatColor.WHITE + " - Reject a proposal from your god");
 
-		if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.reload"))) {
+		if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.reload"))) {
 			sender.sendMessage(ChatColor.AQUA + "/gods reload" + ChatColor.WHITE + " - Reload config for gods system");
 		}
 
-		if (this.plugin.getGodManager().isPriest(player.getUniqueId())) {
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.invite"))) {
+		if (GodManager.get().isPriest(player.getUniqueId())) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.invite"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods invite <playername>" + ChatColor.WHITE + " - Invite a player to your religion");
 			}
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.kick"))) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.kick"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods kick <playername>" + ChatColor.WHITE + " - Kick a believer from your religion");
 			}
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.bible"))) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.bible"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods bible" + ChatColor.WHITE + " - Produces the Holy Book for your religion");
 			}
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.editbible"))) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.editbible"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods editbible" + ChatColor.WHITE + " - Edits the Holy Book for your religion");
 			}
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.setbible"))) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.setbible"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods setbible" + ChatColor.WHITE + " - Sets a book to be the Holy Book for your religion");
 			}
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.alliance"))) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.alliance"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods ally <godname>" + ChatColor.WHITE + " - Toggle alliance with another religion");
 			}
-			if ((sender.isOp()) || (this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.war"))) {
+			if ((sender.isOp()) || (PermissionsManager.get().hasPermission((Player) sender, "gods.priest.war"))) {
 				sender.sendMessage(ChatColor.AQUA + "/gods war <godname>" + ChatColor.WHITE + " - Toggle war with another religion");
 			}
 			sender.sendMessage(ChatColor.AQUA + "/gods open" + ChatColor.WHITE + " - Set your religion as open to join for everyone");
 			sender.sendMessage(ChatColor.AQUA + "/gods close" + ChatColor.WHITE + " - Set your religion as invite only");
-			if (this.plugin.holyLandEnabled) {
+			if (GodsConfiguration.get().isHolyLandEnabled()) {
 				sender.sendMessage(ChatColor.AQUA + "/gods desc <text>" + ChatColor.WHITE + " - Set the description for your religion");
 				sender.sendMessage(ChatColor.AQUA + "/gods pvp" + ChatColor.WHITE + " - Toggle pvp for your religon");
 			}
@@ -786,118 +788,118 @@ public class Commands {
 	}
 
 	private boolean CommandReload(CommandSender sender) {
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.reload"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.reload"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		this.plugin.loadSettings();
+		GodsConfiguration.get().loadSettings();
 
-		this.plugin.getGodManager().load();
-		this.plugin.getQuestManager().load();
-		this.plugin.getBelieverManager().load();
-		this.plugin.getWhitelistManager().load();
+		GodManager.get().load();
+		QuestManager.get().load();
+		BelieverManager.get().load();
+		WhitelistManager.get().load();
 
-		sender.sendMessage(ChatColor.YELLOW + this.plugin.getDescription().getFullName() + ": " + ChatColor.WHITE + "Reloaded configuration.");
-		this.plugin.log(sender.getName() + " /gods reload");
+		sender.sendMessage(ChatColor.YELLOW + Gods.get().getDescription().getFullName() + ": " + ChatColor.WHITE + "Reloaded configuration.");
+		Gods.get().log(sender.getName() + " /gods reload");
 
 		return true;
 	}
 
 	private boolean CommandWar(Player player, String[] args) {
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.war"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.priest.war"))) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			player.sendMessage(ChatColor.RED + "Only priests can declare religous wars");
 			return false;
 		}
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-		String enemyGodName = this.plugin.getGodManager().formatGodName(args[1]);
-		if (!this.plugin.getGodManager().godExist(args[1])) {
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
+		String enemyGodName = GodManager.get().formatGodName(args[1]);
+		if (!GodManager.get().godExist(args[1])) {
 			player.sendMessage(ChatColor.RED + "There is no God with the name " + ChatColor.GOLD + args[1]);
 			return false;
 		}
-		List<String> alliances = this.plugin.getGodManager().getAllianceRelations(godName);
+		List<String> alliances = GodManager.get().getAllianceRelations(godName);
 		if (alliances.contains(enemyGodName)) {
 			player.sendMessage(ChatColor.RED + "You are ALLIED with " + ChatColor.GOLD + args[1] + ChatColor.RED + "!");
 			return false;
 		}
-		if (this.plugin.getGodManager().toggleWarRelationForGod(godName, enemyGodName)) {
-			this.plugin.getLanguageManager().setPlayerName(godName);
-			this.plugin.getGodManager().godSayToBelievers(enemyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversWar, 10);
+		if (GodManager.get().toggleWarRelationForGod(godName, enemyGodName)) {
+			LanguageManager.get().setPlayerName(godName);
+			GodManager.get().godSayToBelievers(enemyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversWar, 10);
 
-			this.plugin.getLanguageManager().setPlayerName(enemyGodName);
-			this.plugin.getGodManager().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversWar, 10);
+			LanguageManager.get().setPlayerName(enemyGodName);
+			GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversWar, 10);
 		} else {
-			this.plugin.getLanguageManager().setPlayerName(godName);
-			this.plugin.getGodManager().godSayToBelievers(enemyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversWarCancelled, 10);
+			LanguageManager.get().setPlayerName(godName);
+			GodManager.get().godSayToBelievers(enemyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversWarCancelled, 10);
 
-			this.plugin.getLanguageManager().setPlayerName(enemyGodName);
-			this.plugin.getGodManager().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversWarCancelled, 10);
+			LanguageManager.get().setPlayerName(enemyGodName);
+			GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversWarCancelled, 10);
 		}
 		return true;
 	}
 
 	private boolean CommandAlliance(Player player, String[] args) {
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.alliance"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.priest.alliance"))) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			player.sendMessage(ChatColor.RED + "Only priests can declare religous wars");
 			return false;
 		}
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-		String allyGodName = this.plugin.getGodManager().formatGodName(args[1]);
-		if (!this.plugin.getGodManager().godExist(args[1])) {
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
+		String allyGodName = GodManager.get().formatGodName(args[1]);
+		if (!GodManager.get().godExist(args[1])) {
 			player.sendMessage(ChatColor.RED + "There is no God with the name " + ChatColor.GOLD + args[1]);
 			return false;
 		}
-		List<?> wars = this.plugin.getGodManager().getWarRelations(godName);
+		List<?> wars = GodManager.get().getWarRelations(godName);
 		if (wars.contains(allyGodName)) {
 			player.sendMessage(ChatColor.RED + "You are in WAR with " + ChatColor.GOLD + args[1] + ChatColor.RED + "!");
 			return false;
 		}
-		if (this.plugin.getGodManager().toggleAllianceRelationForGod(godName, allyGodName)) {
-			this.plugin.getLanguageManager().setPlayerName(godName);
-			this.plugin.getGodManager().godSayToBelievers(allyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversAlliance, 10);
+		if (GodManager.get().toggleAllianceRelationForGod(godName, allyGodName)) {
+			LanguageManager.get().setPlayerName(godName);
+			GodManager.get().godSayToBelievers(allyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversAlliance, 10);
 
-			this.plugin.getLanguageManager().setPlayerName(allyGodName);
-			this.plugin.getGodManager().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversAlliance, 10);
+			LanguageManager.get().setPlayerName(allyGodName);
+			GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversAlliance, 10);
 		} else {
-			this.plugin.getLanguageManager().setPlayerName(godName);
-			this.plugin.getGodManager().godSayToBelievers(allyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversAllianceCancelled, 10);
+			LanguageManager.get().setPlayerName(godName);
+			GodManager.get().godSayToBelievers(allyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversAllianceCancelled, 10);
 
-			this.plugin.getLanguageManager().setPlayerName(allyGodName);
-			this.plugin.getGodManager().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversAllianceCancelled, 10);
+			LanguageManager.get().setPlayerName(allyGodName);
+			GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversAllianceCancelled, 10);
 		}
 		return true;
 	}
 
 	private boolean CommandAccess(Player player, String[] args) {
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.access"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.priest.access"))) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			player.sendMessage(ChatColor.RED + "Only priests can set religion access");
 			return false;
 		}
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-		if (!this.plugin.getGodManager().godExist(godName)) {
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
+		if (!GodManager.get().godExist(godName)) {
 			player.sendMessage(ChatColor.RED + "That God does not exist");
 			return false;
 		}
 		String access = args[0];
 		if (access.equalsIgnoreCase("open")) {
-			this.plugin.getGodManager().setPrivateAccess(godName, false);
-			this.plugin.log(player.getName() + " /gods open");
+			GodManager.get().setPrivateAccess(godName, false);
+			Gods.get().log(player.getName() + " /gods open");
 			player.sendMessage(ChatColor.AQUA + "You set the religion access to " + ChatColor.YELLOW + "open" + ChatColor.AQUA + ".");
 			player.sendMessage(ChatColor.AQUA + "Players can join religion by praying at altars.");
 		} else if (access.equalsIgnoreCase("close")) {
-			this.plugin.getGodManager().setPrivateAccess(godName, true);
-			this.plugin.log(player.getName() + " /gods close");
+			GodManager.get().setPrivateAccess(godName, true);
+			Gods.get().log(player.getName() + " /gods close");
 			player.sendMessage(ChatColor.AQUA + "You set the religion access to " + ChatColor.RED + "closed" + ChatColor.AQUA + ".");
 			player.sendMessage(ChatColor.AQUA + "Players can now only pray to this religion by invitation.");
 		} else {
@@ -908,17 +910,17 @@ public class Commands {
 	}
 
 	private boolean CommandInvite(Player player, String[] args) {
-		if (!player.isOp() && !this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.invite")) {
+		if (!player.isOp() && !PermissionsManager.get().hasPermission(player, "gods.priest.invite")) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			player.sendMessage(ChatColor.RED + "Only priests can invite players");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (godName == null) {
 			player.sendMessage(ChatColor.RED + "You dont believe in a god");
@@ -927,26 +929,26 @@ public class Commands {
 
 		String playerName = args[1];
 
-		Player invitedPlayer = this.plugin.getServer().getPlayer(playerName);
+		Player invitedPlayer = Gods.get().getServer().getPlayer(playerName);
 		if (invitedPlayer == null) {
 			player.sendMessage(ChatColor.RED + "There is no player with the name '" + ChatColor.YELLOW + playerName + ChatColor.RED + " online.");
 			return false;
 		}
 
-		String invitedPlayerGod = this.plugin.getBelieverManager().getGodForBeliever(invitedPlayer.getUniqueId());
+		String invitedPlayerGod = BelieverManager.get().getGodForBeliever(invitedPlayer.getUniqueId());
 
 		if ((invitedPlayerGod != null) && (invitedPlayerGod.equals(godName))) {
 			player.sendMessage(ChatColor.YELLOW + playerName + ChatColor.RED + " already believes in '" + ChatColor.GOLD + godName + ChatColor.RED + "!");
 			return false;
 		}
-		this.plugin.getBelieverManager().setInvitation(invitedPlayer.getUniqueId(), godName);
+		BelieverManager.get().setInvitation(invitedPlayer.getUniqueId(), godName);
 
-		this.plugin.log(godName + " invited to " + invitedPlayer.getName() + " to join the religion");
-		this.plugin.getLanguageManager().setPlayerName(invitedPlayer.getName());
+		Gods.get().log(godName + " invited to " + invitedPlayer.getName() + " to join the religion");
+		LanguageManager.get().setPlayerName(invitedPlayer.getName());
 
-		this.plugin.getGodManager().GodSay(godName, invitedPlayer, LanguageManager.LANGUAGESTRING.GodToPlayerInvite, 10);
+		GodManager.get().GodSay(godName, invitedPlayer, LanguageManager.LANGUAGESTRING.GodToPlayerInvite, 10);
 
-		this.plugin.sendInfo(invitedPlayer.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverQuestionHelp, ChatColor.AQUA, "/gods yes or /gods no", "/gods yes or /gods no", 40);
+		Gods.get().sendInfo(invitedPlayer.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverQuestionHelp, ChatColor.AQUA, "/gods yes or /gods no", "/gods yes or /gods no", 40);
 
 		player.sendMessage(ChatColor.AQUA + "You invited " + ChatColor.YELLOW + playerName + ChatColor.AQUA + " to join " + ChatColor.GOLD + godName + ChatColor.AQUA + "!");
 
@@ -954,15 +956,15 @@ public class Commands {
 	}
 
 	private boolean CommandMarry(Player player, String[] args) {
-		if (!this.plugin.marriageEnabled) {
+		if (!GodsConfiguration.get().isMarriageEnabled()) {
 			player.sendMessage(ChatColor.RED + "Marrige is not enabled on this server");
 			return false;
 		}
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.marry"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.marry"))) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		String thisGodName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String thisGodName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 		if (thisGodName == null) {
 			player.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
@@ -979,13 +981,13 @@ public class Commands {
 			return false;
 		}
 
-		Player otherPlayer = this.plugin.getServer().getPlayer(otherPlayerName);
+		Player otherPlayer = Gods.get().getServer().getPlayer(otherPlayerName);
 		if (otherPlayer == null) {
 			player.sendMessage(ChatColor.RED + "There is no player with the name '" + ChatColor.WHITE + otherPlayerName + ChatColor.RED + " online.");
 			return false;
 		}
 
-		String otherGodName = this.plugin.getBelieverManager().getGodForBeliever(otherPlayer.getUniqueId());
+		String otherGodName = BelieverManager.get().getGodForBeliever(otherPlayer.getUniqueId());
 
 		if (otherGodName == null) {
 			player.sendMessage(ChatColor.WHITE + otherPlayerName + ChatColor.RED + " does not believe in a God");
@@ -997,21 +999,21 @@ public class Commands {
 			return false;
 		}
 
-		String partnerName = this.plugin.getMarriageManager().getPartnerName(otherPlayer.getUniqueId());
+		String partnerName = MarriageManager.get().getPartnerName(otherPlayer.getUniqueId());
 		if (partnerName != null) {
 			player.sendMessage(ChatColor.WHITE + otherPlayerName + ChatColor.RED + " is already married to " + ChatColor.WHITE + partnerName + "!");
 			return false;
 		}
-		partnerName = this.plugin.getMarriageManager().getPartnerName(otherPlayer.getUniqueId());
+		partnerName = MarriageManager.get().getPartnerName(otherPlayer.getUniqueId());
 		if (partnerName != null) {
 			player.sendMessage(ChatColor.RED + "You are already married to " + ChatColor.WHITE + partnerName + "!");
 			return false;
 		}
 
-		this.plugin.getMarriageManager().proposeMarriage(player.getUniqueId(), otherPlayer.getUniqueId());
+		MarriageManager.get().proposeMarriage(player.getUniqueId(), otherPlayer.getUniqueId());
 
-		this.plugin.getLanguageManager().setPlayerName(player.getName());
-		this.plugin.getGodManager().GodSayWithQuestion(thisGodName, otherPlayer, LanguageManager.LANGUAGESTRING.GodToBelieverMarriageProposal, 1);
+		LanguageManager.get().setPlayerName(player.getName());
+		GodManager.get().GodSayWithQuestion(thisGodName, otherPlayer, LanguageManager.LANGUAGESTRING.GodToBelieverMarriageProposal, 1);
 
 		player.sendMessage(ChatColor.AQUA + "You proposed " + ChatColor.WHITE + otherPlayerName + ChatColor.AQUA + " to marry you in the name of " + ChatColor.GOLD + thisGodName + "!");
 
@@ -1019,31 +1021,31 @@ public class Commands {
 	}
 
 	private boolean CommandDivorce(Player player, String[] args) {
-		if (!this.plugin.marriageEnabled) {
+		if (!GodsConfiguration.get().isMarriageEnabled()) {
 			player.sendMessage(ChatColor.RED + "Marrige is not enabled on this server");
 			return false;
 		}
 
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.divorce"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.divorce"))) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String thisGodName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String thisGodName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (thisGodName == null) {
 			player.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		String partnerName = this.plugin.getMarriageManager().getPartnerName(player.getUniqueId());
+		String partnerName = MarriageManager.get().getPartnerName(player.getUniqueId());
 
 		if (partnerName == null) {
 			player.sendMessage(ChatColor.RED + "You are not married, bozo!");
 			return false;
 		}
 
-		this.plugin.getMarriageManager().divorce(player.getUniqueId());
+		MarriageManager.get().divorce(player.getUniqueId());
 
 		player.sendMessage(ChatColor.AQUA + "You divorced " + ChatColor.WHITE + partnerName + "!");
 
@@ -1051,58 +1053,58 @@ public class Commands {
 	}
 
 	private boolean CommandLove(Player player, String[] args) {
-		if (!this.plugin.marriageEnabled) {
+		if (!GodsConfiguration.get().isMarriageEnabled()) {
 			player.sendMessage(ChatColor.RED + "Marriage is not enabled on this server");
 			return false;
 		}
 
-		if (!player.isOp() && !this.plugin.getPermissionsManager().hasPermission(player, "gods.love")) {
+		if (!player.isOp() && !PermissionsManager.get().hasPermission(player, "gods.love")) {
 			player.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String thisGodName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String thisGodName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (thisGodName == null) {
 			player.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		UUID partnerId = this.plugin.getMarriageManager().getPartnerId(player.getUniqueId());
+		UUID partnerId = MarriageManager.get().getPartnerId(player.getUniqueId());
 
 		if (partnerId == null) {
 			player.sendMessage(ChatColor.RED + "You are not married, bozo!");
 			return false;
 		}
 
-		Player partner = this.plugin.getServer().getPlayer(partnerId);
+		Player partner = Gods.get().getServer().getPlayer(partnerId);
 
 		if (partner == null) {
-			player.sendMessage(ChatColor.WHITE + plugin.getServer().getOfflinePlayer(partnerId).getName() + ChatColor.RED + " is not online!");
+			player.sendMessage(ChatColor.WHITE + Gods.get().getServer().getOfflinePlayer(partnerId).getName() + ChatColor.RED + " is not online!");
 			return false;
 		}
 
-		this.plugin.getMarriageManager().love(player.getUniqueId());
+		MarriageManager.get().love(player.getUniqueId());
 
-		player.sendMessage(ChatColor.AQUA + "You love " + ChatColor.WHITE + plugin.getServer().getPlayer(partnerId).getDisplayName() + "!");
+		player.sendMessage(ChatColor.AQUA + "You love " + ChatColor.WHITE + Gods.get().getServer().getPlayer(partnerId).getDisplayName() + "!");
 
 		return true;
 	}
 
 	private boolean CommandSetDescription(CommandSender sender, String[] args) {
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.description"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.priest.description"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
 		Player player = (Player) sender;
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.RED + "Only priests can set religion info");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		String description = "";
 		for (String arg : args) {
@@ -1110,48 +1112,48 @@ public class Commands {
 				description = description + " " + arg;
 			}
 		}
-		this.plugin.getGodManager().setGodDescription(godName, description);
+		GodManager.get().setGodDescription(godName, description);
 
-		sender.sendMessage(ChatColor.AQUA + "You set your religion description to " + ChatColor.YELLOW + this.plugin.getGodManager().getGodDescription(godName));
+		sender.sendMessage(ChatColor.AQUA + "You set your religion description to " + ChatColor.YELLOW + GodManager.get().getGodDescription(godName));
 
 		return true;
 	}
 
 	private boolean CommandStartAttackHolyLand(CommandSender sender, String[] args) {
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.startattack"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.priest.startattack"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
 		Player player = (Player) sender;
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.RED + "Only priests can start attacks on Holy Lands!");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		if (this.plugin.getGodManager().getContestedHolyLandForGod(godName) != null) {
+		if (GodManager.get().getContestedHolyLandForGod(godName) != null) {
 			sender.sendMessage(ChatColor.RED + "You are already attacking a Holy Land!");
 			return false;
 		}
 
-		String otherGodName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String otherGodName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		if (!this.plugin.getGodManager().hasWarRelation(godName, otherGodName)) {
+		if (!GodManager.get().hasWarRelation(godName, otherGodName)) {
 			sender.sendMessage(ChatColor.RED + "You are not in war with " + ChatColor.GOLD + otherGodName + "!");
 			return false;
 		}
 
-		this.plugin.getGodManager().setContestedHolyLandForGod(godName, player.getLocation());
+		GodManager.get().setContestedHolyLandForGod(godName, player.getLocation());
 
 		sender.sendMessage(ChatColor.AQUA + "You started an attack on the Holy Land of " + ChatColor.GOLD + otherGodName);
 
-		this.plugin.getGodManager().sendInfoToBelievers(godName, LanguageManager.LANGUAGESTRING.AttackingHolyLandsHelp, ChatColor.AQUA, otherGodName, 10, 10, 80);
+		GodManager.get().sendInfoToBelievers(godName, LanguageManager.LANGUAGESTRING.AttackingHolyLandsHelp, ChatColor.AQUA, otherGodName, 10, 10, 80);
 
-		this.plugin.getLanguageManager().setPlayerName(otherGodName);
-		this.plugin.getGodManager().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversAttackStarted, 40);
+		LanguageManager.get().setPlayerName(otherGodName);
+		GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversAttackStarted, 40);
 
 		return true;
 	}
@@ -1159,18 +1161,18 @@ public class Commands {
 	private boolean CommandAttackHolyLand(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.attack"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.priest.attack"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		Location attackLocation = this.plugin.getGodManager().getContestedHolyLandAttackLocationForGod(godName);
+		Location attackLocation = GodManager.get().getContestedHolyLandAttackLocationForGod(godName);
 
 		player.teleport(attackLocation);
 
-		String otherGodName = this.plugin.getLandManager().getGodAtHolyLandLocation(attackLocation);
+		String otherGodName = HolyLandManager.get().getGodAtHolyLandLocation(attackLocation);
 
 		sender.sendMessage(ChatColor.AQUA + "You joined the attack on the Holy Land of " + ChatColor.GOLD + otherGodName);
 
@@ -1184,22 +1186,22 @@ public class Commands {
 	private boolean CommandKick(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if (!player.isOp() && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.kick"))) {
+		if (!player.isOp() && (!PermissionsManager.get().hasPermission((Player) sender, "gods.priest.kick"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.RED + "Only priests can kick believers from a religion");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		String believerName = args[1];
-		OfflinePlayer offlineBeliever = this.plugin.getServer().getOfflinePlayer(believerName);
+		OfflinePlayer offlineBeliever = Gods.get().getServer().getOfflinePlayer(believerName);
 
-		String believerGodName = this.plugin.getBelieverManager().getGodForBeliever(offlineBeliever.getUniqueId());
+		String believerGodName = BelieverManager.get().getGodForBeliever(offlineBeliever.getUniqueId());
 
 		if ((believerGodName == null) || (!believerGodName.equals(godName))) {
 			sender.sendMessage(ChatColor.RED + "There is no such believer called '" + believerName + "' in your religion");
@@ -1210,15 +1212,15 @@ public class Commands {
 			return false;
 		}
 
-		this.plugin.getBelieverManager().removeBeliever(godName, offlineBeliever.getUniqueId());
+		BelieverManager.get().removeBeliever(godName, offlineBeliever.getUniqueId());
 
 		sender.sendMessage(ChatColor.AQUA + "You kicked " + ChatColor.YELLOW + believerName + ChatColor.AQUA + " from your religion!");
 
-		Player believer = this.plugin.getServer().getPlayer(believerName);
+		Player believer = Gods.get().getServer().getPlayer(believerName);
 		if (believer != null) {
 			believer.sendMessage(ChatColor.RED + "You were kicked from the religion of " + ChatColor.YELLOW + godName + ChatColor.AQUA + "!");
 		}
-		this.plugin.log(sender.getName() + " /gods kick " + believerName);
+		Gods.get().log(sender.getName() + " /gods kick " + believerName);
 
 		return true;
 	}
@@ -1226,25 +1228,25 @@ public class Commands {
 	private boolean CommandTogglePvP(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.pvp"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.priest.pvp"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.RED + "Only priests can toggle pvp for a religion");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		boolean pvp = this.plugin.getGodManager().getGodPvP(godName);
+		boolean pvp = GodManager.get().getGodPvP(godName);
 		if (pvp) {
 			sender.sendMessage(ChatColor.AQUA + "You set PvP for your religion to " + ChatColor.YELLOW + " disabled");
-			this.plugin.getGodManager().setGodPvP(godName, false);
+			GodManager.get().setGodPvP(godName, false);
 		} else {
 			sender.sendMessage(ChatColor.AQUA + "You set PvP for your religion to " + ChatColor.YELLOW + " enabled");
-			this.plugin.getGodManager().setGodPvP(godName, true);
+			GodManager.get().setGodPvP(godName, true);
 		}
 		return true;
 	}
@@ -1252,38 +1254,38 @@ public class Commands {
 	private boolean CommandSetHome(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.sethome"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.sethome"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		if ((this.plugin.onlyPriestCanSetHome) && (!this.plugin.getGodManager().isPriest(player.getUniqueId()))) {
+		if ((GodsConfiguration.get().isOnlyPriestCanSetHome()) && (!GodManager.get().isPriest(player.getUniqueId()))) {
 			sender.sendMessage(ChatColor.RED + "Only your priest can set the home for your religion");
 			return false;
 		}
 
-		if (this.plugin.holyLandEnabled) {
-			if (this.plugin.getLandManager().isNeutralLandLocation(player.getLocation())) {
+		if (GodsConfiguration.get().isHolyLandEnabled()) {
+			if (HolyLandManager.get().isNeutralLandLocation(player.getLocation())) {
 				sender.sendMessage(ChatColor.RED + "You can only set religion home within your Holy Land");
 				return false;
 			}
-			String locationGod = this.plugin.getLandManager().getGodAtHolyLandLocation(player.getLocation());
+			String locationGod = HolyLandManager.get().getGodAtHolyLandLocation(player.getLocation());
 			if ((locationGod == null) || (!locationGod.equals(godName))) {
 				sender.sendMessage(ChatColor.RED + "You can only set religion home within your Holy Land");
 				return false;
 			}
 		}
-		this.plugin.getGodManager().setHomeForGod(godName, player.getLocation());
+		GodManager.get().setHomeForGod(godName, player.getLocation());
 
-		this.plugin.getLanguageManager().setPlayerName(player.getName());
-		this.plugin.getGodManager().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversSetHome, 2);
+		LanguageManager.get().setPlayerName(player.getName());
+		GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversSetHome, 2);
 
 		return true;
 	}
@@ -1291,18 +1293,18 @@ public class Commands {
 	private boolean CommandHome(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if (!player.isOp() && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.home"))) {
+		if (!player.isOp() && (!PermissionsManager.get().hasPermission(player, "gods.home"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
-		Location location = this.plugin.getGodManager().getHomeForGod(godName);
+		Location location = GodManager.get().getHomeForGod(godName);
 		if (location == null) {
 			return false;
 		}
@@ -1315,23 +1317,23 @@ public class Commands {
 	private boolean CommandChat(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.chat"))) {
+		if ((!player.isOp()) && (!PermissionsManager.get().hasPermission(player, "gods.chat"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		if (this.plugin.getBelieverManager().getReligionChat(player.getUniqueId())) {
-			this.plugin.getBelieverManager().setReligionChat(player.getUniqueId(), false);
+		if (BelieverManager.get().getReligionChat(player.getUniqueId())) {
+			BelieverManager.get().setReligionChat(player.getUniqueId(), false);
 			sender.sendMessage(ChatColor.AQUA + "You are now chatting public");
 		} else {
-			this.plugin.getBelieverManager().setReligionChat(player.getUniqueId(), true);
+			BelieverManager.get().setReligionChat(player.getUniqueId(), true);
 			sender.sendMessage(ChatColor.AQUA + "You are now only chatting with the believers of " + ChatColor.YELLOW + godName);
 		}
 
@@ -1341,19 +1343,19 @@ public class Commands {
 	private boolean CommandHunt(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.hunt"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.hunt"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
 		{
-			Location pilgrimageLocation = plugin.getQuestManager().getQuestLocation(godName);
+			Location pilgrimageLocation = QuestManager.get().getQuestLocation(godName);
 
 			if (player == null || player.isFlying()) {
 				sender.sendMessage(ChatColor.RED + "No flying allowed.");
@@ -1366,46 +1368,46 @@ public class Commands {
 			}
 
 			if (!pilgrimageLocation.getWorld().getName().equals(player.getWorld().getName())) {
-				this.plugin.logDebug("PilgrimageQuest for '" + player.getDisplayName() + "' is wrong world");
+				Gods.get().logDebug("PilgrimageQuest for '" + player.getDisplayName() + "' is wrong world");
 				return false;
 			}
 
 			Vector vector = pilgrimageLocation.toVector().subtract(player.getLocation().toVector());
 
-			this.plugin.getLanguageManager().setAmount((int) vector.length());
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.QuestTargetRange, ChatColor.AQUA, (int) vector.length(), "", 20);
+			LanguageManager.get().setAmount((int) vector.length());
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.QuestTargetRange, ChatColor.AQUA, (int) vector.length(), "", 20);
 		}
 
 		/*
-		 * if (this.plugin.getBelieverManager().isHunting(player.getUniqueId())) {
-		 * this.plugin.getBelieverManager().setHunting(player.getUniqueId(), false);
-		 * this.plugin.sendInfo(player.getUniqueId(),
+		 * if (BelieverManager.get().isHunting(player.getUniqueId())) {
+		 * BelieverManager.get().setHunting(player.getUniqueId(), false);
+		 * Gods.get().sendInfo(player.getUniqueId(),
 		 * LanguageManager.LANGUAGESTRING.NotHunting, ChatColor.AQUA, 0, "", 10); } else
-		 * { this.plugin.getBelieverManager().setHunting(player.getUniqueId(), true);
-		 * this.plugin.sendInfo(player.getUniqueId(),
+		 * { BelieverManager.get().setHunting(player.getUniqueId(), true);
+		 * Gods.get().sendInfo(player.getUniqueId(),
 		 * LanguageManager.LANGUAGESTRING.NowHunting, ChatColor.AQUA, 0, "", 10); }
 		 */
 		return true;
 	}
 
 	private boolean CommandSetNeutralLand(CommandSender sender, String[] args) {
-		if (!this.plugin.holyLandEnabled) {
+		if (!GodsConfiguration.get().isHolyLandEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Holy Land is not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
 
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.setsafe"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.setsafe"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		if (this.plugin.getLandManager().isNeutralLandLocation(player.getLocation())) {
-			this.plugin.getLandManager().clearNeutralLand(player.getLocation());
+		if (HolyLandManager.get().isNeutralLandLocation(player.getLocation())) {
+			HolyLandManager.get().clearNeutralLand(player.getLocation());
 			sender.sendMessage(ChatColor.AQUA + "You set cleared the neutral land in this location.");
 		} else {
-			this.plugin.getLandManager().setNeutralLand(player.getLocation());
+			HolyLandManager.get().setNeutralLand(player.getLocation());
 			sender.sendMessage(ChatColor.AQUA + "You set neutral land in this location.");
 		}
 		return true;
@@ -1416,24 +1418,24 @@ public class Commands {
 			sender.sendMessage(ChatColor.RED + "Not enough arguments");
 			return false;
 		}
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.setpriest"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.setpriest"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getGodManager().formatGodName(args[1]);
-		if (!this.plugin.getGodManager().godExist(godName)) {
+		String godName = GodManager.get().formatGodName(args[1]);
+		if (!GodManager.get().godExist(godName)) {
 			sender.sendMessage(ChatColor.RED + "There is no god called '" + ChatColor.GOLD + godName + ChatColor.AQUA + "'");
 			return false;
 		}
 
-		Player otherPlayer = this.plugin.getServer().getPlayer(args[2]);
+		Player otherPlayer = Gods.get().getServer().getPlayer(args[2]);
 		if (otherPlayer == null) {
 			sender.sendMessage(ChatColor.RED + "There is no such player online");
 			return false;
 		}
 
-		if (this.plugin.getGodManager().assignPriest(godName, otherPlayer.getUniqueId())) {
+		if (GodManager.get().assignPriest(godName, otherPlayer.getUniqueId())) {
 			sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + otherPlayer.getName() + ChatColor.AQUA + " as priest of " + ChatColor.GOLD + godName);
 		} else {
 			sender.sendMessage(ChatColor.GOLD + otherPlayer.getName() + ChatColor.RED + " was not assigned as a priest of " + ChatColor.GOLD + godName);
@@ -1444,7 +1446,7 @@ public class Commands {
 	private boolean CommandFollowers(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((sender != null) && (!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.followers"))) {
+		if ((sender != null) && (!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.followers"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
@@ -1454,9 +1456,9 @@ public class Commands {
 
 		String godName = "";
 		if (args.length >= 2) {
-			godName = this.plugin.getGodManager().formatGodName(args[1]);
+			godName = GodManager.get().formatGodName(args[1]);
 		} else {
-			godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+			godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 		}
 
 		if (godName == null) {
@@ -1464,10 +1466,10 @@ public class Commands {
 			return false;
 		}
 
-		Set<UUID> list = this.plugin.getBelieverManager().getBelieversForGod(godName);
+		Set<UUID> list = BelieverManager.get().getBelieversForGod(godName);
 
 		for (UUID believerId : list) {
-			Date lastPrayer = this.plugin.getBelieverManager().getLastPrayerTime(believerId);
+			Date lastPrayer = BelieverManager.get().getLastPrayerTime(believerId);
 
 			believers.add(new Believer(believerId, lastPrayer));
 		}
@@ -1476,16 +1478,16 @@ public class Commands {
 			if (sender != null) {
 				sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " has no believers!");
 			} else {
-				this.plugin.log("There are no Gods in " + this.plugin.serverName + "!");
+				Gods.get().log("There are no Gods in " + GodsConfiguration.get().getServerName() + "!");
 			}
 			return true;
 		}
 
 		if (sender != null) {
-			playerGod = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+			playerGod = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 			sender.sendMessage(ChatColor.YELLOW + "--------- The Followers of " + godName + " ---------");
 		} else {
-			this.plugin.log("--------- The Followers of " + godName + " ---------");
+			Gods.get().log("--------- The Followers of " + godName + " ---------");
 		}
 		Collections.sort(believers, new BelieversComparator());
 
@@ -1515,7 +1517,7 @@ public class Commands {
 				date = minutes + " min ago";
 			}
 
-			String believerName = plugin.getServer().getOfflinePlayer(believer.believerId).getName();
+			String believerName = Gods.get().getServer().getOfflinePlayer(believer.believerId).getName();
 
 			if (sender != null) {
 				if (playerGod != null && (believer.believerId.equals(player.getUniqueId()))) {
@@ -1525,13 +1527,13 @@ public class Commands {
 					sender.sendMessage(ChatColor.YELLOW + StringUtils.rightPad(believerName, 20) + ChatColor.AQUA + StringUtils.rightPad(new StringBuilder().append(" Prayed ").append(ChatColor.GOLD).append(date).toString(), 18));
 				}
 			} else {
-				this.plugin.log(StringUtils.rightPad(believerName, 20) + ChatColor.AQUA + StringUtils.rightPad(new StringBuilder().append(" Prayed ").append(ChatColor.GOLD).append(date).toString(), 18));
+				Gods.get().log(StringUtils.rightPad(believerName, 20) + ChatColor.AQUA + StringUtils.rightPad(new StringBuilder().append(" Prayed ").append(ChatColor.GOLD).append(date).toString(), 18));
 			}
 		}
 
 		if ((playerGod != null) && (!playerShown)) {
 			for (Believer believer : believers) {
-				String believerName = plugin.getServer().getOfflinePlayer(believer.believerId).getName();
+				String believerName = Gods.get().getServer().getOfflinePlayer(believer.believerId).getName();
 
 				if ((playerGod != null) && (believer.believerId.equals(player.getUniqueId()))) {
 					sender.sendMessage(ChatColor.GOLD + StringUtils.rightPad(believerName, 20) + StringUtils.rightPad(new StringBuilder().append(" Prayed ").append(believer.lastPrayer).toString(), 18));
@@ -1544,27 +1546,27 @@ public class Commands {
 	private boolean CommandMarriages(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
-		if ((sender != null) && (!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.marriages"))) {
+		if ((sender != null) && (!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.marriages"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		if (!this.plugin.marriageEnabled) {
+		if (!GodsConfiguration.get().isMarriageEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Marriages are not enabled on this server");
 			return false;
 		}
-		List<MarriageManager.MarriedCouple> couples = this.plugin.getMarriageManager().getMarriedCouples();
+		List<MarriageManager.MarriedCouple> couples = MarriageManager.get().getMarriedCouples();
 		if (couples.size() == 0) {
 			if (sender != null) {
 				sender.sendMessage("There are no married couples yet!");
 			} else {
-				this.plugin.log("There are no married couples in " + this.plugin.serverName + "!");
+				Gods.get().log("There are no married couples in " + GodsConfiguration.get().getServerName() + "!");
 			}
 			return true;
 		}
 		if (sender != null) {
-			sender.sendMessage(ChatColor.YELLOW + "--------- The Married Couples in " + this.plugin.serverName + " ---------");
+			sender.sendMessage(ChatColor.YELLOW + "--------- The Married Couples in " + GodsConfiguration.get().getServerName() + " ---------");
 		} else {
-			this.plugin.log("--------- The Married Couples in " + this.plugin.serverName + " ---------");
+			Gods.get().log("--------- The Married Couples in " + GodsConfiguration.get().getServerName() + " ---------");
 		}
 		int l = couples.size();
 
@@ -1591,8 +1593,8 @@ public class Commands {
 				date = minutes + " min ago";
 			}
 
-			String player1Name = plugin.getServer().getOfflinePlayer(couple.player1Id).getName();
-			String player2Name = plugin.getServer().getOfflinePlayer(couple.player2Id).getName();
+			String player1Name = Gods.get().getServer().getOfflinePlayer(couple.player1Id).getName();
+			String player2Name = Gods.get().getServer().getOfflinePlayer(couple.player2Id).getName();
 
 			if (sender != null) {
 
@@ -1605,7 +1607,7 @@ public class Commands {
 							+ StringUtils.rightPad(new StringBuilder().append(" Loved ").append(ChatColor.GOLD).append(date).toString(), 18));
 				}
 			} else {
-				this.plugin.log(StringUtils.rightPad(new StringBuilder(player1Name).append(" & ").append(player2Name).append(" (").append(couple.godName).append(")").toString(), 30) + ChatColor.AQUA + StringUtils.rightPad(new StringBuilder().append(
+				Gods.get().log(StringUtils.rightPad(new StringBuilder(player1Name).append(" & ").append(player2Name).append(" (").append(couple.godName).append(")").toString(), 30) + ChatColor.AQUA + StringUtils.rightPad(new StringBuilder().append(
 						" Loved ").append(ChatColor.GOLD).append(date).toString(), 18));
 			}
 			n++;
@@ -1615,8 +1617,8 @@ public class Commands {
 
 		if (!playerShown) {
 			for (MarriageManager.MarriedCouple couple : couples) {
-				String player1Name = plugin.getServer().getOfflinePlayer(couple.player1Id).getName();
-				String player2Name = plugin.getServer().getOfflinePlayer(couple.player2Id).getName();
+				String player1Name = Gods.get().getServer().getOfflinePlayer(couple.player1Id).getName();
+				String player2Name = Gods.get().getServer().getOfflinePlayer(couple.player2Id).getName();
 
 				if ((couple.player1Id.equals(player.getUniqueId())) || (couple.player2Id.equals(player.getUniqueId()))) {
 					sender.sendMessage("" + ChatColor.GOLD + n + " - " + StringUtils.rightPad(new StringBuilder(player1Name).append(" & ").append(player2Name).append(" (").append(couple.godName).append(")").toString(), 40) + StringUtils.rightPad(
@@ -1629,65 +1631,65 @@ public class Commands {
 	}
 
 	private boolean CommandBible(CommandSender sender, String[] args) {
-		if (!this.plugin.biblesEnabled) {
+		if (!GodsConfiguration.get().isBiblesEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Bibles are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
 
-		if (!sender.isOp() && !this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.bible")) {
+		if (!sender.isOp() && !PermissionsManager.get().hasPermission((Player) sender, "gods.priest.bible")) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.RED + "Only your priest can produce the Holy Book");
 			return false;
 		}
-		if (!this.plugin.getBibleManager().giveBible(godName, player.getName())) {
+		if (!HolyBookManager.get().giveBible(godName, player.getName())) {
 			sender.sendMessage(ChatColor.RED + "Could not produce a Holy Book for " + godName);
 			return false;
 		}
-		sender.sendMessage(ChatColor.AQUA + "You produced a copy of " + ChatColor.GOLD + this.plugin.getBibleManager().getBibleTitle(godName) + ChatColor.AQUA + "!");
+		sender.sendMessage(ChatColor.AQUA + "You produced a copy of " + ChatColor.GOLD + HolyBookManager.get().getBibleTitle(godName) + ChatColor.AQUA + "!");
 
 		return true;
 	}
 
 	private boolean CommandEditBible(CommandSender sender, String[] args) {
-		if (!this.plugin.biblesEnabled) {
+		if (!GodsConfiguration.get().isBiblesEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Bibles are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
 
-		if (!sender.isOp() && !this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.editbible")) {
+		if (!sender.isOp() && !PermissionsManager.get().hasPermission((Player) sender, "gods.priest.editbible")) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId())) {
 			sender.sendMessage(ChatColor.RED + "Only your priest can edit your Holy Book");
 			return false;
 		}
-		if (!this.plugin.getBibleManager().giveEditBible(godName, player.getName())) {
+		if (!HolyBookManager.get().giveEditBible(godName, player.getName())) {
 			sender.sendMessage(ChatColor.RED + "Could not produce a editable bible for " + godName);
 			return false;
 		}
-		sender.sendMessage(ChatColor.AQUA + "You produced a copy of " + ChatColor.GOLD + this.plugin.getBibleManager().getBibleTitle(godName) + ChatColor.AQUA + "!");
+		sender.sendMessage(ChatColor.AQUA + "You produced a copy of " + ChatColor.GOLD + HolyBookManager.get().getBibleTitle(godName) + ChatColor.AQUA + "!");
 
 		sender.sendMessage(ChatColor.AQUA + "After you have edited it, set this as your bible with " + ChatColor.WHITE + "/g setbible" + ChatColor.AQUA + "!");
 
@@ -1695,42 +1697,42 @@ public class Commands {
 	}
 
 	private boolean CommandSetBible(CommandSender sender, String[] args) {
-		if (!this.plugin.biblesEnabled) {
+		if (!GodsConfiguration.get().isBiblesEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Bibles are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
 
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.priest.setbible"))) {
+		if ((!sender.isOp()) && (!PermissionsManager.get().hasPermission((Player) sender, "gods.priest.setbible"))) {
 			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		if (godName == null) {
 			sender.sendMessage(ChatColor.RED + "You do not believe in a God");
 			return false;
 		}
 
-		if (!this.plugin.getGodManager().isPriestForGod(player.getUniqueId(), godName)) {
+		if (!GodManager.get().isPriestForGod(player.getUniqueId(), godName)) {
 			sender.sendMessage(ChatColor.RED + "Only your priest can set the Bible");
 			return false;
 		}
 
-		if (!this.plugin.getBibleManager().setBible(godName, player.getName())) {
+		if (!HolyBookManager.get().setBible(godName, player.getName())) {
 			sender.sendMessage(ChatColor.RED + "You cannot use that as the Bible for " + ChatColor.GOLD + godName);
 			return false;
 		}
 
-		sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + this.plugin.getBibleManager().getBibleTitle(godName) + ChatColor.AQUA + " as your holy scripture!");
+		sender.sendMessage(ChatColor.AQUA + "You set " + ChatColor.GOLD + HolyBookManager.get().getBibleTitle(godName) + ChatColor.AQUA + " as your holy scripture!");
 
 		return true;
 	}
 
 	private boolean CommandGiveHolyArtifact(CommandSender sender, String[] args) {
-		if (!this.plugin.holyArtifactsEnabled) {
+		if (!GodsConfiguration.get().isHolyArtifactsEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Holy Artifacts are not enabled on this server");
 			return false;
 		}
@@ -1742,9 +1744,9 @@ public class Commands {
 			return false;
 		}
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		this.plugin.getGodManager().blessPlayerWithHolyArtifact(godName, player);
+		GodManager.get().blessPlayerWithHolyArtifact(godName, player);
 
 		sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " gave " + player.getName() + ChatColor.AQUA + " a Holy artifact!");
 
@@ -1752,68 +1754,68 @@ public class Commands {
 	}
 
 	private boolean CommandPrayForItem(CommandSender sender) {
-		if (!this.plugin.itemBlessingEnabled) {
+		if (!GodsConfiguration.get().isItemBlessingEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Item blessings are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		int currentPrayerPower = plugin.getBelieverManager().getPrayerPower(player.getUniqueId());
+		int currentPrayerPower = BelieverManager.get().getPrayerPower(player.getUniqueId());
 
-		if (currentPrayerPower < this.plugin.prayerPowerForItem) {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, this.plugin.prayerPowerForItem - currentPrayerPower, godName, 1);
+		if (currentPrayerPower < GodsConfiguration.get().getPrayerPowerForItem()) {
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForItem() - currentPrayerPower, godName, 1);
 			return false;
 		}
 
-		if (this.plugin.getBelieverManager().hasRecentItemBlessing(player.getUniqueId())) {
-			// this.plugin.getGodManager().addMoodForGod(godName,
-			// this.plugin.getGodManager().getAngryModifierForGod(godName));
-			this.plugin.getGodManager().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerRecentItemBlessing);
+		if (BelieverManager.get().hasRecentItemBlessing(player.getUniqueId())) {
+			// GodManager.get().addMoodForGod(godName,
+			// GodManager.get().getAngryModifierForGod(godName));
+			GodManager.get().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerRecentItemBlessing);
 			return true;
 		}
 
-		if (this.plugin.getGodManager().blessPlayerWithItem(godName, player) == null) {
-			this.plugin.getGodManager().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerWhenNoItemNeed);
+		if (GodManager.get().blessPlayerWithItem(godName, player) == null) {
+			GodManager.get().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerWhenNoItemNeed);
 		} else {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForItem, ChatColor.AQUA, this.plugin.prayerPowerForItem - currentPrayerPower, godName, 1);
-			this.plugin.getBelieverManager().increasePrayerPower(player.getUniqueId(), -plugin.prayerPowerForItem);
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForItem, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForItem() - currentPrayerPower, godName, 1);
+			BelieverManager.get().increasePrayerPower(player.getUniqueId(), -GodsConfiguration.get().getPrayerPowerForItem());
 		}
 
 		return true;
 	}
 
 	private boolean CommandPrayForHealth(CommandSender sender) {
-		if (!this.plugin.blessingEnabled) {
+		if (!GodsConfiguration.get().isBlessingEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Blessings are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		int currentPrayerPower = plugin.getBelieverManager().getPrayerPower(player.getUniqueId());
+		int currentPrayerPower = BelieverManager.get().getPrayerPower(player.getUniqueId());
 
-		if (currentPrayerPower < this.plugin.prayerPowerForHealth) {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, this.plugin.prayerPowerForHealth - currentPrayerPower, godName, 1);
+		if (currentPrayerPower < GodsConfiguration.get().getPrayerPowerForHealth()) {
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForHealth() - currentPrayerPower, godName, 1);
 			return false;
 		}
 
-		if (this.plugin.getBelieverManager().hasRecentItemBlessing(player.getUniqueId())) {
-			this.plugin.getGodManager().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerTooSoon);
+		if (BelieverManager.get().hasRecentItemBlessing(player.getUniqueId())) {
+			GodManager.get().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerTooSoon);
 			return false;
 		}
 
-		this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForHealth, ChatColor.AQUA, this.plugin.prayerPowerForBlessing - currentPrayerPower, godName, 1);
+		Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForHealth, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForBlessing() - currentPrayerPower, godName, 1);
 
-		double healing = this.plugin.getGodManager().getHealthNeed(godName, player);
+		double healing = GodManager.get().getHealthNeed(godName, player);
 
 		if (healing > 1.0D) {
-			this.plugin.getGodManager().healPlayer(godName, player, this.plugin.getGodManager().getHealthBlessing(godName));
+			GodManager.get().healPlayer(godName, player, GodManager.get().getHealthBlessing(godName));
 
-			this.plugin.getBelieverManager().increasePrayerPower(player.getUniqueId(), -plugin.prayerPowerForHealth);
-			this.plugin.getBelieverManager().setItemBlessingTime(player.getUniqueId());
+			BelieverManager.get().increasePrayerPower(player.getUniqueId(), -GodsConfiguration.get().getPrayerPowerForHealth());
+			BelieverManager.get().setItemBlessingTime(player.getUniqueId());
 
 			return true;
 		}
@@ -1822,56 +1824,56 @@ public class Commands {
 	}
 
 	private boolean CommandPrayForBlessing(CommandSender sender) {
-		if (!this.plugin.blessingEnabled) {
+		if (!GodsConfiguration.get().isBlessingEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Blessings are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
-		int currentPrayerPower = plugin.getBelieverManager().getPrayerPower(player.getUniqueId());
+		int currentPrayerPower = BelieverManager.get().getPrayerPower(player.getUniqueId());
 
-		if (currentPrayerPower < this.plugin.prayerPowerForBlessing) {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, this.plugin.prayerPowerForBlessing - currentPrayerPower, godName, 1);
+		if (currentPrayerPower < GodsConfiguration.get().getPrayerPowerForBlessing()) {
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForBlessing() - currentPrayerPower, godName, 1);
 			return false;
 		}
 
-		this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForBlessing, ChatColor.AQUA, this.plugin.prayerPowerForBlessing - currentPrayerPower, godName, 1);
+		Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForBlessing, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForBlessing() - currentPrayerPower, godName, 1);
 
-		if (!this.plugin.getGodManager().blessPlayer(godName, player.getUniqueId(), this.plugin.getGodManager().getGodPower(godName))) {
-			this.plugin.getGodManager().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerTooSoon);
+		if (!GodManager.get().blessPlayer(godName, player.getUniqueId(), GodManager.get().getGodPower(godName))) {
+			GodManager.get().godSayToBeliever(godName, player.getUniqueId(), LanguageManager.LANGUAGESTRING.GodToBelieverPrayerTooSoon);
 		} else {
-			this.plugin.getBelieverManager().increasePrayerPower(player.getUniqueId(), -plugin.prayerPowerForBlessing);
+			BelieverManager.get().increasePrayerPower(player.getUniqueId(), -GodsConfiguration.get().getPrayerPowerForBlessing());
 		}
 
 		return true;
 	}
 
 	private boolean CommandPrayForQuest(CommandSender sender) {
-		if (!this.plugin.questsEnabled) {
+		if (!GodsConfiguration.get().isQuestsEnabled()) {
 			sender.sendMessage(ChatColor.RED + "Quests are not enabled on this server");
 			return false;
 		}
 
 		Player player = (Player) sender;
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-		int currentPrayerPower = plugin.getBelieverManager().getPrayerPower(player.getUniqueId());
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
+		int currentPrayerPower = BelieverManager.get().getPrayerPower(player.getUniqueId());
 
-		if (currentPrayerPower < this.plugin.prayerPowerForQuest) {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, this.plugin.prayerPowerForQuest - currentPrayerPower, godName, 1);
+		if (currentPrayerPower < GodsConfiguration.get().getPrayerPowerForQuest()) {
+			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForQuest() - currentPrayerPower, godName, 1);
 			return false;
 		}
 
-		if (this.plugin.getQuestManager().hasQuest(godName)) {
+		if (QuestManager.get().hasQuest(godName)) {
 			sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " already has given a quest!");
 			return false;
 		}
 
-		this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForQuest, ChatColor.AQUA, this.plugin.prayerPowerForQuest - currentPrayerPower, godName, 1);
+		Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForQuest, ChatColor.AQUA, GodsConfiguration.get().getPrayerPowerForQuest() - currentPrayerPower, godName, 1);
 
-		if (this.plugin.getQuestManager().generateQuest(godName)) {
-			this.plugin.getBelieverManager().increasePrayerPower(player.getUniqueId(), -plugin.prayerPowerForQuest);
+		if (QuestManager.get().generateQuest(godName)) {
+			BelieverManager.get().increasePrayerPower(player.getUniqueId(), -GodsConfiguration.get().getPrayerPowerForQuest());
 		}
 
 		return true;

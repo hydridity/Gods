@@ -7,6 +7,8 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 
+import com.dogonfire.gods.managers.HolyPowerManager;
+
 public class TaskLove extends Task {
 	private Player player1;
 	private Player player2;
@@ -39,7 +41,7 @@ public class TaskLove extends Task {
 			ocelot.remove();
 
 			if (firework) {
-				getPlugin().getHolyPowerManager().shootFirework(player, 16);
+				HolyPowerManager.get().shootFirework(player, 16);
 			}
 		}
 
@@ -51,7 +53,7 @@ public class TaskLove extends Task {
 			ocelot.remove();
 
 			if (firework) {
-				getPlugin().getHolyPowerManager().shootFirework(player, 16);
+				HolyPowerManager.get().shootFirework(player, 16);
 			}
 		}
 

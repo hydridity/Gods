@@ -12,23 +12,30 @@ import org.bukkit.inventory.ItemStack;
 
 import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.HolyBook;
+import com.dogonfire.gods.config.GodsConfiguration;
 
 public class HolyBookManager {
-	private Gods plugin = null;
+	private static HolyBookManager instance;
+
+	private HolyBookManager() {
+	}
+
+	public static HolyBookManager get() {
+		if (GodsConfiguration.get().isBiblesEnabled() && instance == null)
+			instance = new HolyBookManager();
+		return instance;
+	}
+
 	private FileConfiguration biblesConfig = null;
 	private File biblesConfigFile = null;
 
-	public HolyBookManager(Gods gods) {
-		this.plugin = gods;
-	}
-
 	public void load() {
 		if (this.biblesConfigFile == null) {
-			this.biblesConfigFile = new File(this.plugin.getDataFolder(), "bibles.yml");
+			this.biblesConfigFile = new File(Gods.get().getDataFolder(), "bibles.yml");
 		}
 		this.biblesConfig = YamlConfiguration.loadConfiguration(this.biblesConfigFile);
 
-		this.plugin.log("Loaded " + this.biblesConfig.getKeys(false).size() + " bibles.");
+		Gods.get().log("Loaded " + this.biblesConfig.getKeys(false).size() + " bibles.");
 	}
 
 	public void save() {
@@ -38,12 +45,12 @@ public class HolyBookManager {
 		try {
 			this.biblesConfig.save(this.biblesConfigFile);
 		} catch (Exception ex) {
-			this.plugin.log("Could not save config to " + this.biblesConfigFile.getName() + ": " + ex.getMessage());
+			Gods.get().log("Could not save config to " + this.biblesConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 
 	private void initBible(String godName) {
-		this.plugin.logDebug("Creating bible for '" + godName + "' ...");
+		Gods.get().logDebug("Creating bible for '" + godName + "' ...");
 
 		List<String> pages = new ArrayList<String>();
 
@@ -51,40 +58,40 @@ public class HolyBookManager {
 
 		this.biblesConfig.set(godName + ".Author", godName);
 
-		this.plugin.getLanguageManager().setPlayerName(godName);
+		LanguageManager.get().setPlayerName(godName);
 
-		pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText1));
+		pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText1));
 		try {
-			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getMobTypeName(this.plugin.getGodManager().getUnholyMobTypeForGod(godName)));
-			pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText2));
+			LanguageManager.get().setType(LanguageManager.get().getMobTypeName(GodManager.get().getUnholyMobTypeForGod(godName)));
+			pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText2));
 
-			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getItemTypeName(this.plugin.getGodManager().getEatFoodTypeForGod(godName)));
+			LanguageManager.get().setType(LanguageManager.get().getItemTypeName(GodManager.get().getEatFoodTypeForGod(godName)));
 
-			pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText3));
+			pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText3));
 
-			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getItemTypeName(this.plugin.getGodManager().getNotEatFoodTypeForGod(godName)));
+			LanguageManager.get().setType(LanguageManager.get().getItemTypeName(GodManager.get().getNotEatFoodTypeForGod(godName)));
 
-			pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText4));
+			pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText4));
 
-			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getMobTypeName(this.plugin.getGodManager().getHolyMobTypeForGod(godName)));
-			pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText5));
+			LanguageManager.get().setType(LanguageManager.get().getMobTypeName(GodManager.get().getHolyMobTypeForGod(godName)));
+			pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText5));
 
-			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getMobTypeName(this.plugin.getGodManager().getHolyMobTypeForGod(godName)));
-			pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText6));
+			LanguageManager.get().setType(LanguageManager.get().getMobTypeName(GodManager.get().getHolyMobTypeForGod(godName)));
+			pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText6));
 
-			this.plugin.getLanguageManager().setType(this.plugin.getLanguageManager().getMobTypeName(this.plugin.getGodManager().getHolyMobTypeForGod(godName)));
-			pages.add(this.plugin.getLanguageManager().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText7));
+			LanguageManager.get().setType(LanguageManager.get().getMobTypeName(GodManager.get().getHolyMobTypeForGod(godName)));
+			pages.add(LanguageManager.get().getLanguageStringForBook(godName, LanguageManager.LANGUAGESTRING.DefaultBibleText7));
 
 			this.biblesConfig.set(godName + ".Pages", pages);
 		} catch (Exception ex) {
-			this.plugin.logDebug(ex.getStackTrace().toString());
+			Gods.get().logDebug(ex.getStackTrace().toString());
 		}
 
 		save();
 
-		// if (this.plugin.propheciesEnabled)
+		// if (Gods.get().propheciesEnabled)
 		// {
-		// this.plugin.getProphecyManager().generateProphecies(godName);
+		// Gods.get().getProphecyManager().generateProphecies(godName);
 		// }
 	}
 
@@ -99,7 +106,7 @@ public class HolyBookManager {
 		try {
 			b = new HolyBook(book);
 		} catch (Exception ex) {
-			this.plugin.logDebug("ERROR: Could not set a bible for '" + godName + ": " + ex.getMessage());
+			Gods.get().logDebug("ERROR: Could not set a bible for '" + godName + ": " + ex.getMessage());
 		}
 		this.biblesConfig.set(godName + ".Title", b.getTitle());
 		this.biblesConfig.set(godName + ".Author", priestName);
@@ -109,7 +116,7 @@ public class HolyBookManager {
 	}
 
 	public boolean setBible(String godName, String priestName) {
-		Player player = this.plugin.getServer().getPlayer(priestName);
+		Player player = Gods.get().getServer().getPlayer(priestName);
 		if (player == null) {
 			return false;
 		}
@@ -145,7 +152,7 @@ public class HolyBookManager {
 
 			return b.getItem();
 		} catch (Exception ex) {
-			this.plugin.logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
+			Gods.get().logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
 		}
 		return null;
 	}
@@ -159,7 +166,7 @@ public class HolyBookManager {
 				}
 			}
 		} catch (Exception ex) {
-			this.plugin.log("ERROR: Could not get bible for " + book + ": " + ex.getMessage());
+			Gods.get().log("ERROR: Could not get bible for " + book + ": " + ex.getMessage());
 		}
 		return null;
 	}
@@ -183,7 +190,7 @@ public class HolyBookManager {
 
 			return b.getItem();
 		} catch (Exception ex) {
-			this.plugin.logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
+			Gods.get().logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
 		}
 		return null;
 	}
@@ -193,9 +200,9 @@ public class HolyBookManager {
 		if (bible == null) {
 			return false;
 		}
-		Player player = this.plugin.getServer().getPlayer(playerName);
+		Player player = Gods.get().getServer().getPlayer(playerName);
 		if (player == null) {
-			this.plugin.logDebug("ERROR: Could give bible to offline player '" + playerName);
+			Gods.get().logDebug("ERROR: Could give bible to offline player '" + playerName);
 			return false;
 		}
 		int amount = player.getPlayer().getInventory().getItemInMainHand().getAmount();
@@ -213,9 +220,9 @@ public class HolyBookManager {
 		if (bible == null) {
 			return false;
 		}
-		Player player = this.plugin.getServer().getPlayer(playerName);
+		Player player = Gods.get().getServer().getPlayer(playerName);
 		if (player == null) {
-			this.plugin.logDebug("ERROR: Could give editable bible to offline player '" + playerName);
+			Gods.get().logDebug("ERROR: Could give editable bible to offline player '" + playerName);
 			return false;
 		}
 		int amount = player.getPlayer().getInventory().getItemInMainHand().getAmount();

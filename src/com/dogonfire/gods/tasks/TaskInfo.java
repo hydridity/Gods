@@ -46,17 +46,17 @@ public class TaskInfo extends Task {
 			return;
 		}
 
-		getPlugin().getLanguageManager().setPlayerName(this.name1);
+		LanguageManager.get().setPlayerName(this.name1);
 
 		try {
-			getPlugin().getLanguageManager().setType(this.name2);
+			LanguageManager.get().setType(this.name2);
 		} catch (Exception ex) {
 			getPlugin().logDebug(ex.getStackTrace().toString());
 		}
 
-		getPlugin().getLanguageManager().setAmount(this.amount);
+		LanguageManager.get().setAmount(this.amount);
 
-		String questionMessage = getPlugin().getLanguageManager().getInfoString(this.message, this.color);
+		String questionMessage = LanguageManager.get().getInfoString(this.message, this.color);
 
 		player.sendMessage(
 

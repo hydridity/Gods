@@ -23,22 +23,28 @@ import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.HolyArtifact;
 
 public class HolyArtifactManager {
-	private Gods plugin;
+	private static HolyArtifactManager instance;
+
+	private HolyArtifactManager() {
+	}
+
+	public static HolyArtifactManager get() {
+		if (instance == null)
+			instance = new HolyArtifactManager();
+		return instance;
+	}
+
 	private FileConfiguration holyArtifactsConfig = null;
 	private File holyArtifactsConfigFile = null;
 	private Random random = new Random();
 
-	public HolyArtifactManager(Gods plugin) {
-		this.plugin = plugin;
-	}
-
 	public void load() {
 		if (this.holyArtifactsConfigFile == null) {
-			this.holyArtifactsConfigFile = new File(this.plugin.getDataFolder(), "holyartifacts.yml");
+			this.holyArtifactsConfigFile = new File(Gods.get().getDataFolder(), "holyartifacts.yml");
 		}
 		this.holyArtifactsConfig = YamlConfiguration.loadConfiguration(this.holyArtifactsConfigFile);
 
-		this.plugin.log("Loaded " + this.holyArtifactsConfig.getKeys(false).size() + " holy artifacts.");
+		Gods.get().log("Loaded " + this.holyArtifactsConfig.getKeys(false).size() + " holy artifacts.");
 	}
 
 	public void save() {
@@ -48,7 +54,7 @@ public class HolyArtifactManager {
 		try {
 			this.holyArtifactsConfig.save(this.holyArtifactsConfigFile);
 		} catch (Exception ex) {
-			this.plugin.log("Could not save config to " + this.holyArtifactsConfigFile.getName() + ": " + ex.getMessage());
+			Gods.get().log("Could not save config to " + this.holyArtifactsConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 
@@ -249,7 +255,7 @@ public class HolyArtifactManager {
 	public int getNumberOfHolyArtifacts() {
 		ConfigurationSection configSection = this.holyArtifactsConfig.getConfigurationSection("Player");
 		if (configSection != null) {
-			this.plugin.logDebug("NumberOfArtifacts = " + configSection.getKeys(false).size());
+			Gods.get().logDebug("NumberOfArtifacts = " + configSection.getKeys(false).size());
 			return configSection.getKeys(false).size();
 		}
 		return 0;
@@ -259,7 +265,7 @@ public class HolyArtifactManager {
 		if (!isHolyArtifact(item.getItemStack())) {
 			return;
 		}
-		this.plugin.logDebug(playerName + " dropped up a Holy artifact");
+		Gods.get().logDebug(playerName + " dropped up a Holy artifact");
 
 		save();
 	}
@@ -268,13 +274,13 @@ public class HolyArtifactManager {
 		if (!isHolyArtifact(item)) {
 			return;
 		}
-		HolyPowerManager.HolyPower holyPower = this.plugin.getHolyPowerManager().getHolyPowerFromDescription(((String) item.getItemMeta().getLore().get(2)).substring(2));
+		HolyPowerManager.HolyPower holyPower = HolyPowerManager.get().getHolyPowerFromDescription(((String) item.getItemMeta().getLore().get(2)).substring(2));
 
-		Player player = this.plugin.getServer().getPlayer(playerName);
+		Player player = Gods.get().getServer().getPlayer(playerName);
 		if (player == null) {
 			return;
 		}
-		this.plugin.getHolyPowerManager().activatePower(player, holyPower, 1);
+		HolyPowerManager.get().activatePower(player, holyPower, 1);
 
 		item.setDurability((short) (item.getDurability() - 1));
 	}
@@ -293,13 +299,13 @@ public class HolyArtifactManager {
 		if (!item.isHolyArtifact()) {
 			return 1.0F;
 		}
-		this.plugin.logDebug("Handling Holy Artifact damage for " + playerName);
+		Gods.get().logDebug("Handling Holy Artifact damage for " + playerName);
 
 		itemInHand.setDurability((short) -2);
 
 		int used = getHolyArtifactUsed(playerName);
 
-		this.plugin.logDebug("Holy Artifact doing " + (1.0F + used / 25.0F) + " damage");
+		Gods.get().logDebug("Holy Artifact doing " + (1.0F + used / 25.0F) + " damage");
 
 		return 1.0F + used / 25.0F;
 	}
@@ -356,7 +362,7 @@ public class HolyArtifactManager {
 			itemMeta.setDisplayName(artifactName);
 			item.setItemMeta(itemMeta);
 
-			this.plugin.getServer().broadcastMessage(ChatColor.AQUA + playerName + "'s " + ChatColor.WHITE + getHolyArtifactName(item.getType(), holyPower, godName, godType) + ChatColor.AQUA + " is now " + getArtifactRankName(uses));
+			Gods.get().getServer().broadcastMessage(ChatColor.AQUA + playerName + "'s " + ChatColor.WHITE + getHolyArtifactName(item.getType(), holyPower, godName, godType) + ChatColor.AQUA + " is now " + getArtifactRankName(uses));
 		}
 	}
 
@@ -504,7 +510,7 @@ public class HolyArtifactManager {
 			case LOVE:
 			case THUNDER:
 			default:
-				this.plugin.log("createHolyArtifact() : Unknown godType " + godType);
+				Gods.get().log("createHolyArtifact() : Unknown godType " + godType);
 				return null;
 		}
 		int powerValue = 1;
@@ -519,19 +525,19 @@ public class HolyArtifactManager {
 			itemMeta = item.getItemMeta();
 			itemMeta.setDisplayName(ChatColor.GOLD + itemName);
 		} catch (Exception ex) {
-			this.plugin.logDebug("createHolyArtifact(): Could not get or set item meta");
+			Gods.get().logDebug("createHolyArtifact(): Could not get or set item meta");
 		}
 		try {
 			if (lorePage != null) {
 				List<String> lorePages = new ArrayList();
 				lorePages.add(lorePage);
 				lorePages.add(ChatColor.WHITE + "Damage: 12");
-				lorePages.add(ChatColor.GREEN + this.plugin.getHolyPowerManager().describe(holyPower, powerValue));
+				lorePages.add(ChatColor.GREEN + HolyPowerManager.get().describe(holyPower, powerValue));
 
 				itemMeta.setLore(lorePages);
 			}
 		} catch (Exception ex) {
-			this.plugin.logDebug("createHolyArtifact(): Could not set meta lore pages");
+			Gods.get().logDebug("createHolyArtifact(): Could not set meta lore pages");
 			return null;
 		}
 		switch (this.random.nextInt(6)) {

@@ -9,15 +9,17 @@ import org.bukkit.entity.Player;
 import com.dogonfire.gods.Gods;
 
 public class ChatManager {
-	private Gods plugin;
+	private static ChatManager instance;
+	private ChatManager() {}
+	public static ChatManager get() {
+		if(instance == null) instance = new ChatManager();
+		return instance;
+	}
+	
 	private String chatTag = "[GOD]";
 	private String playerChatFormat = "";
 	private FileConfiguration chatConfig;
 	private File chatConfigFile;
-
-	public ChatManager(Gods plugin) {
-		this.plugin = plugin;
-	}
 
 	public void load() {
 
@@ -30,7 +32,7 @@ public class ChatManager {
 		try {
 			this.chatConfig.save(this.chatConfigFile);
 		} catch (Exception ex) {
-			this.plugin.log("Could not save config to " + this.chatConfigFile.getName() + ": " + ex.getMessage());
+			Gods.get().log("Could not save config to " + this.chatConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 

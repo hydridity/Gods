@@ -40,17 +40,17 @@ public class TaskGodSpeak extends Task {
 		if (player == null) {
 			return;
 		}
-		getPlugin().getLanguageManager().setAmount(this.amount);
+		LanguageManager.get().setAmount(this.amount);
 		try {
-			getPlugin().getLanguageManager().setType(this.typeString);
+			LanguageManager.get().setType(this.typeString);
 		} catch (Exception ex) {
 			getPlugin().logDebug(ex.getStackTrace().toString());
 		}
-		getPlugin().getLanguageManager().setPlayerName(this.playerNameString);
+		LanguageManager.get().setPlayerName(this.playerNameString);
 		if (this.message != null) {
 			player.sendMessage(ChatColor.GOLD + "<" + this.godName + ">: " + ChatColor.WHITE +
 
-					ChatColor.BOLD + getPlugin().getLanguageManager().getLanguageString(this.godName, this.message));
+					ChatColor.BOLD + LanguageManager.get().getLanguageString(this.godName, this.message));
 		} else {
 			String questionMessage = ChatColor.AQUA + "Use " + ChatColor.WHITE + "/gods yes" + ChatColor.AQUA + " or " + ChatColor.WHITE + "/gods no" + ChatColor.AQUA + " to answer your god.";
 

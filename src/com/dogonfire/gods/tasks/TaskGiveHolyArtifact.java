@@ -8,7 +8,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.dogonfire.gods.managers.GodManager;
 import com.dogonfire.gods.managers.GodManager.GodType;
+import com.dogonfire.gods.managers.HolyArtifactManager;
 import com.dogonfire.gods.managers.LanguageManager;
 
 public class TaskGiveHolyArtifact extends Task {
@@ -37,7 +39,7 @@ public class TaskGiveHolyArtifact extends Task {
 		try {
 			getPlugin().logDebug("Creating holy artifact for " + this.player.getName());
 
-			getPlugin().getHolyArtifactManager().createHolyArtifact(this.player.getName(), this.godType, this.godName, spawnLocation);
+			HolyArtifactManager.get().createHolyArtifact(this.player.getName(), this.godType, this.godName, spawnLocation);
 
 			spawnLocation.getWorld().playEffect(spawnLocation, Effect.MOBSPAWNER_FLAMES, 25);
 		} catch (Exception ex) {
@@ -51,8 +53,8 @@ public class TaskGiveHolyArtifact extends Task {
 		if (giveItem()) {
 			Random random = new Random();
 			if (this.speak) {
-				getPlugin().getLanguageManager().setPlayerName(this.player.getName());
-				getPlugin().getGodManager().GodSay(this.godName, this.player, LanguageManager.LANGUAGESTRING.GodToBelieverHolyArtifactBlessing, 2 + random.nextInt(10));
+				LanguageManager.get().setPlayerName(this.player.getName());
+				GodManager.get().GodSay(this.godName, this.player, LanguageManager.LANGUAGESTRING.GodToBelieverHolyArtifactBlessing, 2 + random.nextInt(10));
 			}
 		}
 	}

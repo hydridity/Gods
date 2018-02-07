@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.dogonfire.gods.managers.GodManager;
 import com.dogonfire.gods.managers.LanguageManager;
 
 public class TaskGiveItem extends Task {
@@ -49,13 +50,13 @@ public class TaskGiveItem extends Task {
 		if (giveItem()) {
 			Random random = new Random();
 			if (this.speak) {
-				getPlugin().getLanguageManager().setPlayerName(this.player.getName());
+				LanguageManager.get().setPlayerName(this.player.getName());
 				try {
-					getPlugin().getLanguageManager().setType(this.itemType.name());
+					LanguageManager.get().setType(this.itemType.name());
 				} catch (Exception ex) {
 					getPlugin().logDebug(ex.getStackTrace().toString());
 				}
-				getPlugin().getGodManager().GodSay(this.godName, this.player, LanguageManager.LANGUAGESTRING.GodToBelieverItemBlessing, 2 + random.nextInt(10));
+				GodManager.get().GodSay(this.godName, this.player, LanguageManager.LANGUAGESTRING.GodToBelieverItemBlessing, 2 + random.nextInt(10));
 			}
 		}
 	}

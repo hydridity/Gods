@@ -33,17 +33,23 @@ import com.dogonfire.gods.tasks.TaskHealRadius;
 import com.dogonfire.gods.tasks.ThunderStormTask;
 
 public class HolyPowerManager {
-	private Gods plugin;
+
+	private static HolyPowerManager instance;
+
+	public static HolyPowerManager get() {
+		if (instance == null)
+			instance = new HolyPowerManager();
+		return instance;
+	}
+
+	private HolyPowerManager() {
+	}
 
 	public static enum HolyPower {
 		KNOWLEDGE, CALLMOON, CALLSUN, HEALING, TAME, LIGHTNING, LIGHTNING_STORM, TELEPORT, FREEZE, ICE, FIREBALL, EARTHQUAKE, NATURE, FIREWORK, DRUNK;
 	}
 
 	private Random random = new Random();
-
-	public HolyPowerManager(Gods p) {
-		this.plugin = p;
-	}
 
 	public String describe(HolyPower power, int value) {
 		String descriptionText = "";
@@ -100,7 +106,7 @@ public class HolyPowerManager {
 		HolyPower holyPower = null;
 		String[] text = description.split(" ");
 
-		this.plugin.logDebug(description);
+		Gods.get().logDebug(description);
 		if (text[0].equals("Boosts")) {
 			holyPower = HolyPower.KNOWLEDGE;
 		} else if (text[0].equals("Heals")) {
@@ -229,7 +235,7 @@ public class HolyPowerManager {
 				drunk(player, powerStrength);
 				break;
 			default:
-				this.plugin.log("Unknown holy power");
+				Gods.get().log("Unknown holy power");
 		}
 	}
 
@@ -341,7 +347,7 @@ public class HolyPowerManager {
 				this.count += 1;
 			}
 		};
-		task.runTaskTimer(this.plugin, 0L, 3L);
+		task.runTaskTimer(Gods.get(), 0L, 3L);
 	}
 
 	public void fireBall(Player player, int power) {
@@ -492,11 +498,11 @@ public class HolyPowerManager {
 								c.setData((byte) (int) (data >> 16));
 							}
 						}
-					}.runTaskTimer(HolyPowerManager.this.plugin, 80 + new Random().nextInt(40), 3L);
+					}.runTaskTimer(Gods.get(), 80 + new Random().nextInt(40), 3L);
 				}
 			}
 		};
-		run.runTaskTimer(this.plugin, 0L, 1L);
+		run.runTaskTimer(Gods.get(), 0L, 1L);
 	}
 
 	public void lightningStorm(Player player, int powerValue) {
@@ -504,44 +510,44 @@ public class HolyPowerManager {
 
 		player.getWorld().setStorm(true);
 
-		this.plugin.logDebug("Starting thunderstorm for " + powerValue + " minutes");
+		Gods.get().logDebug("Starting thunderstorm for " + powerValue + " minutes");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new ThunderStormTask(player, System.currentTimeMillis() + powerValue * 60000), 60L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new ThunderStormTask(player, System.currentTimeMillis() + powerValue * 60000), 60L);
 	}
 
 	public void shootFirework(Player player, int powerValue) {
-		this.plugin.logDebug("Starting fireworks with " + powerValue + " rockets");
+		Gods.get().logDebug("Starting fireworks with " + powerValue + " rockets");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskFirework(player, powerValue), 1L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskFirework(player, powerValue), 1L);
 	}
 
 	public void callSun(Player player, int powerValue) {
-		this.plugin.logDebug("Starting call sun " + powerValue + " rockets");
+		Gods.get().logDebug("Starting call sun " + powerValue + " rockets");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallSun(player, powerValue), 1L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskCallSun(player, powerValue), 1L);
 	}
 
 	public void callMoon(Player player, int powerValue) {
-		this.plugin.logDebug("Starting call moon " + powerValue + " ");
+		Gods.get().logDebug("Starting call moon " + powerValue + " ");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskCallMoon(player, powerValue), 1L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskCallMoon(player, powerValue), 1L);
 	}
 
 	public void healing(Player player, int powerValue) {
-		this.plugin.logDebug("Healing up to " + powerValue + " creatures");
+		Gods.get().logDebug("Healing up to " + powerValue + " creatures");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskHealRadius(player, powerValue), 1L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskHealRadius(player, powerValue), 1L);
 	}
 
 	public void drunk(Player player, int powerValue) {
-		this.plugin.logDebug("Drunking " + powerValue + " creatures");
+		Gods.get().logDebug("Drunking " + powerValue + " creatures");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskDrunk(player, powerValue), 1L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskDrunk(player, powerValue), 1L);
 	}
 
 	public void boostKnowledge(Player player, int powerValue) {
-		this.plugin.logDebug("Boosting " + powerValue + " xp of knowledge");
+		Gods.get().logDebug("Boosting " + powerValue + " xp of knowledge");
 
-		this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new TaskBoostKnowledge(player, powerValue), 1L);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskBoostKnowledge(player, powerValue), 1L);
 	}
 }

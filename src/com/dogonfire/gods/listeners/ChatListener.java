@@ -7,39 +7,38 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.config.GodsConfiguration;
+import com.dogonfire.gods.managers.BelieverManager;
+import com.dogonfire.gods.managers.ChatManager;
+import com.dogonfire.gods.managers.GodManager;
 
 public class ChatListener implements Listener {
-	private Gods plugin;
-
-	public ChatListener(Gods p) {
-		this.plugin = p;
-	}
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
 
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-		if (this.plugin.chatFormattingEnabled) {
-			event.setFormat(this.plugin.getChatManager().formatChat(event.getPlayer(), godName, event.getFormat()));
+		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
+		if (GodsConfiguration.get().isChatFormattingEnabled()) {
+			event.setFormat(ChatManager.get().formatChat(event.getPlayer(), godName, event.getFormat()));
 		}
 
 		if (godName == null) {
 			return;
 		}
-		if (this.plugin.getBelieverManager().getReligionChat(player.getUniqueId())) {
+		if (BelieverManager.get().getReligionChat(player.getUniqueId())) {
 			event.setCancelled(true);
-			for (Player otherPlayer : this.plugin.getServer().getOnlinePlayers()) {
-				String otherGod = this.plugin.getBelieverManager().getGodForBeliever(otherPlayer.getUniqueId());
+			for (Player otherPlayer : Gods.get().getServer().getOnlinePlayers()) {
+				String otherGod = BelieverManager.get().getGodForBeliever(otherPlayer.getUniqueId());
 				if ((otherGod != null) && (otherGod.equals(godName))) {
-					if (this.plugin.getGodManager().isPriest(player.getUniqueId())) {
+					if (GodManager.get().isPriest(player.getUniqueId())) {
 						otherPlayer.sendMessage(ChatColor.YELLOW + "[" + godName + "Chat] " + player.getName() + ": " + ChatColor.WHITE + event.getMessage());
 					} else {
 						otherPlayer.sendMessage(ChatColor.YELLOW + "[" + godName + "Chat] " + ChatColor.RED + player.getName() + ChatColor.YELLOW + ": " + ChatColor.WHITE + event.getMessage());
 					}
 				}
 			}
-			this.plugin.log(player.getName() + "(GODCHAT): " + event.getMessage());
+			Gods.get().log(player.getName() + "(GODCHAT): " + event.getMessage());
 		}
 	}
 }

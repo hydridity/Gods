@@ -15,25 +15,32 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.config.GodsConfiguration;
 import com.dogonfire.gods.managers.LanguageManager.LANGUAGESTRING;
 
 public class BelieverManager {
-	private Gods plugin = null;
+	private static BelieverManager instance;
+
+	private BelieverManager() {
+	}
+
+	public static BelieverManager get() {
+		if (instance == null)
+			instance = new BelieverManager();
+		return instance;
+	}
+
 	private FileConfiguration believersConfig = null;
 	private File believersConfigFile = null;
 	private long lastSaveTime;
 
-	public BelieverManager(Gods p) {
-		this.plugin = p;
-	}
-
 	public void load() {
 		if (this.believersConfigFile == null) {
-			this.believersConfigFile = new File(this.plugin.getDataFolder(), "believers.yml");
+			this.believersConfigFile = new File(Gods.get().getDataFolder(), "believers.yml");
 		}
 		this.believersConfig = YamlConfiguration.loadConfiguration(this.believersConfigFile);
 
-		this.plugin.log("Loaded " + this.believersConfig.getKeys(false).size() + " believers.");
+		Gods.get().log("Loaded " + this.believersConfig.getKeys(false).size() + " believers.");
 	}
 
 	public void save() {
@@ -44,7 +51,7 @@ public class BelieverManager {
 		try {
 			this.believersConfig.save(this.believersConfigFile);
 		} catch (Exception ex) {
-			this.plugin.log("Could not save config to " + this.believersConfigFile.getName() + ": " + ex.getMessage());
+			Gods.get().log("Could not save config to " + this.believersConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 
@@ -84,7 +91,7 @@ public class BelieverManager {
 		double minLength = 5.0D;
 		Player minPlayer = null;
 		for (String believerName : allBelievers) {
-			Player player = this.plugin.getServer().getPlayer(believerName);
+			Player player = Gods.get().getServer().getPlayer(believerName);
 			if ((player != null) && (player.getWorld() == location.getWorld())) {
 				double length = player.getLocation().subtract(location).length();
 				if (length < minLength) {
@@ -123,7 +130,7 @@ public class BelieverManager {
 		for (String believer : allBelievers) {
 			UUID believerId = UUID.fromString(believer);
 
-			if (this.plugin.getServer().getPlayer(believerId) != null) {
+			if (Gods.get().getServer().getPlayer(believerId) != null) {
 				String believerGod = getGodForBeliever(believerId);
 				if ((believerGod != null) && (believerGod.equals(godName))) {
 					believers.add(believerId);
@@ -182,7 +189,7 @@ public class BelieverManager {
 			long diff = thisDate.getTime() - joinedGodDate.getTime();
 			long diffSeconds = diff / 1000L;
 
-			joinedRecently = diffSeconds <= plugin.minSecondsBetweenChangingGod;
+			joinedRecently = diffSeconds <= GodsConfiguration.get().getMinSecondsBetweenChangingGod();
 		} catch (Exception ex) {
 			joinedRecently = false;
 		}
@@ -237,7 +244,7 @@ public class BelieverManager {
 	}
 
 	public void setHunting(UUID believerId, boolean hunting) {
-		this.plugin.logDebug("Setting hunting string to '" + hunting + "' for " + believerId);
+		Gods.get().logDebug("Setting hunting string to '" + hunting + "' for " + believerId);
 
 		this.believersConfig.set(believerId + ".Hunting", Boolean.valueOf(hunting));
 
@@ -267,7 +274,7 @@ public class BelieverManager {
 			lastPrayerDate = new Date();
 			lastPrayerDate.setTime(0L);
 		}
-		long diff = this.plugin.minBelieverPrayerTime * 60 * 1000 + lastPrayerDate.getTime() - thisDate.getTime();
+		long diff = GodsConfiguration.get().getMinBelieverPrayerTime() * 60 * 1000 + lastPrayerDate.getTime() - thisDate.getTime();
 		long diffSeconds = diff / 1000L;
 		int diffMinutes = (int) (diffSeconds / 60L);
 
@@ -305,7 +312,7 @@ public class BelieverManager {
 		long diff = thisDate.getTime() - lastPrayerDate.getTime();
 		long diffMinutes = diff / 60000L;
 
-		return diffMinutes <= this.plugin.minBelieverPrayerTime;
+		return diffMinutes <= GodsConfiguration.get().getMinBelieverPrayerTime();
 	}
 
 	public void setItemBlessingTime(UUID believerId) {
@@ -364,7 +371,7 @@ public class BelieverManager {
 		long diff = thisDate.getTime() - lastItemBlessingDate.getTime();
 		long diffMinutes = diff / 60000L;
 
-		return diffMinutes < this.plugin.minItemBlessingTime;
+		return diffMinutes < GodsConfiguration.get().getMinItemBlessingTime();
 	}
 
 	public boolean hasRecentHolyArtifactBlessing(UUID believerId) {
@@ -383,7 +390,7 @@ public class BelieverManager {
 		long diff = thisDate.getTime() - lastItemBlessingDate.getTime();
 		long diffMinutes = diff / 60000L;
 
-		return diffMinutes < this.plugin.minHolyArtifactBlessingTime;
+		return diffMinutes < GodsConfiguration.get().getMinHolyArtifactBlessingTime();
 	}
 
 	public boolean hasRecentBlessing(UUID believerId) {
@@ -403,7 +410,7 @@ public class BelieverManager {
 
 		long diffSeconds = diff / 1000L;
 
-		return diffSeconds < this.plugin.minBlessingTime;
+		return diffSeconds < GodsConfiguration.get().getMinBlessingTime();
 	}
 
 	public boolean hasRecentCursing(UUID believerId) {
@@ -422,7 +429,7 @@ public class BelieverManager {
 		long diff = thisDate.getTime() - lastItemBlessingDate.getTime();
 		long diffSeconds = diff / 1000L;
 
-		return diffSeconds < this.plugin.minCursingTime;
+		return diffSeconds < GodsConfiguration.get().getMinCursingTime();
 	}
 
 	public void setInvitation(UUID believerId, String godName) {
@@ -496,7 +503,7 @@ public class BelieverManager {
 
 		this.believersConfig.set(believerId.toString(), null);
 
-		this.plugin.log(godName + " lost " + believerId + " as believer");
+		Gods.get().log(godName + " lost " + believerId + " as believer");
 
 		saveTimed();
 	}
@@ -504,9 +511,9 @@ public class BelieverManager {
 	public float getBelieverPower(UUID believerId) {
 		Date date = new Date();
 
-		float time = 1.0F + 2.5E-008F * (float) (date.getTime() - this.plugin.getBelieverManager().getLastPrayerTime(believerId).getTime());
+		float time = 1.0F + 2.5E-008F * (float) (date.getTime() - getLastPrayerTime(believerId).getTime());
 
-		return this.plugin.getBelieverManager().getPrayers(believerId) / time;
+		return getPrayers(believerId) / time;
 	}
 
 	public int getPrayerPower(UUID believerId) {
@@ -528,7 +535,7 @@ public class BelieverManager {
 
 		saveTimed();
 
-		plugin.sendInfo(believerId, LANGUAGESTRING.YourPrayerPower, ChatColor.AQUA, prayerPower, "", 10);
+		Gods.get().sendInfo(believerId, LANGUAGESTRING.YourPrayerPower, ChatColor.AQUA, prayerPower, "", 10);
 	}
 
 	public void clearPrayerPower(UUID believerId) {
@@ -536,7 +543,7 @@ public class BelieverManager {
 
 		saveTimed();
 
-		plugin.sendInfo(believerId, LANGUAGESTRING.YourPrayerPower, ChatColor.AQUA, 0, "", 10);
+		Gods.get().sendInfo(believerId, LANGUAGESTRING.YourPrayerPower, ChatColor.AQUA, 0, "", 10);
 	}
 
 	public void believerLeave(String godName, UUID believerId) {
@@ -577,7 +584,7 @@ public class BelieverManager {
 		long diff = thisDate.getTime() - lastPrayerDate.getTime();
 
 		long diffMinutes = diff / 60000L;
-		if (diffMinutes < this.plugin.minBelieverPrayerTime) {
+		if (diffMinutes < GodsConfiguration.get().getMinBelieverPrayerTime()) {
 			return false;
 		}
 		prayers += incPrayers;
@@ -616,7 +623,7 @@ public class BelieverManager {
 		long diff = thisDate.getTime() - lastPrayerDate.getTime();
 
 		long diffMinutes = diff / 60000L;
-		if (diffMinutes < this.plugin.minBelieverPrayerTime) {
+		if (diffMinutes < GodsConfiguration.get().getMinBelieverPrayerTime()) {
 			return false;
 		}
 

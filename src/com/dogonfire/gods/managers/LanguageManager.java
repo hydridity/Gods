@@ -18,9 +18,20 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
 import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.config.GodsConfiguration;
 
 public class LanguageManager {
-	private Gods plugin;
+	private static LanguageManager instance;
+
+	private LanguageManager() {
+	}
+
+	public static LanguageManager get() {
+		if (instance == null)
+			instance = new LanguageManager();
+		return instance;
+	}
+
 	private String generalLanguageFileName = null;
 	private HashMap<String, FileConfiguration> languageConfigs = new HashMap<String, FileConfiguration>();
 	private Random random = new Random();
@@ -31,7 +42,7 @@ public class LanguageManager {
 	private void downloadLanguageFile(String fileName) throws IOException {
 		BufferedInputStream in = new BufferedInputStream(new URL("https://raw.githubusercontent.com/DogOnFire/Gods/master/lang/" + fileName).openStream());
 
-		FileOutputStream fos = new FileOutputStream(this.plugin.getDataFolder() + "/lang/" + fileName);
+		FileOutputStream fos = new FileOutputStream(Gods.get().getDataFolder() + "/lang/" + fileName);
 
 		BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
 
@@ -47,93 +58,93 @@ public class LanguageManager {
 	}
 
 	private boolean loadLanguageFile(String fileName) {
-		File languageConfigFile = new File(this.plugin.getDataFolder() + "/lang/" + fileName);
+		File languageConfigFile = new File(Gods.get().getDataFolder() + "/lang/" + fileName);
 		if (!languageConfigFile.exists()) {
-			this.plugin.log("Could not load " + this.plugin.getDataFolder() + "/lang/" + fileName);
+			Gods.get().log("Could not load " + Gods.get().getDataFolder() + "/lang/" + fileName);
 			return false;
 		}
 		FileConfiguration languageConfig = YamlConfiguration.loadConfiguration(languageConfigFile);
 
 		this.languageConfigs.put(fileName, languageConfig);
 
-		this.plugin.log("Loaded " + languageConfig.getString("Version.Name") + " by " + languageConfig.getString("Version.Author") + " version " + languageConfig.getString("Version.Version"));
+		Gods.get().log("Loaded " + languageConfig.getString("Version.Name") + " by " + languageConfig.getString("Version.Author") + " version " + languageConfig.getString("Version.Version"));
 
 		return true;
 	}
 
 	public void load() {
-		this.generalLanguageFileName = (this.plugin.languageIdentifier + "_general.yml");
+		this.generalLanguageFileName = (GodsConfiguration.get().getLanguageIdentifier() + "_general.yml");
 
-		this.plugin.logDebug("generalFileName is " + this.generalLanguageFileName);
-		this.plugin.logDebug("plugin.language is " + this.plugin.languageIdentifier);
+		Gods.get().logDebug("generalFileName is " + this.generalLanguageFileName);
+		Gods.get().logDebug("GodsConfiguration.get().language is " + GodsConfiguration.get().getLanguageIdentifier());
 
-		File directory = new File(this.plugin.getDataFolder() + "/lang");
+		File directory = new File(Gods.get().getDataFolder() + "/lang");
 		if (!directory.exists()) {
 			System.out.println("Creating language file directory '/lang'...");
 
 			boolean result = directory.mkdir();
 			if (result) {
-				this.plugin.logDebug("Directory created");
+				Gods.get().logDebug("Directory created");
 			} else {
-				this.plugin.logDebug("Directory FAILED!");
+				Gods.get().logDebug("Directory FAILED!");
 				return;
 			}
 		}
 		if (!loadLanguageFile(this.generalLanguageFileName)) {
-			this.plugin.log("Could not load " + this.generalLanguageFileName + " from the /lang folder!");
-			if (this.plugin.downloadLanguageFile) {
-				this.plugin.log("Downloading " + this.generalLanguageFileName + " from DogOnFire...");
+			Gods.get().log("Could not load " + this.generalLanguageFileName + " from the /lang folder!");
+			if (GodsConfiguration.get().isDownloadLanguageFile()) {
+				Gods.get().log("Downloading " + this.generalLanguageFileName + " from DogOnFire...");
 				try {
 					downloadLanguageFile(this.generalLanguageFileName);
 				} catch (Exception ex) {
-					this.plugin.log("Could not download " + this.generalLanguageFileName + " language file from DogOnFire: " + ex.getMessage());
+					Gods.get().log("Could not download " + this.generalLanguageFileName + " language file from DogOnFire: " + ex.getMessage());
 					return;
 				}
 				if (loadLanguageFile(this.generalLanguageFileName)) {
-					this.plugin.logDebug(this.generalLanguageFileName + " loaded.");
+					Gods.get().logDebug(this.generalLanguageFileName + " loaded.");
 				}
 			} else {
-				this.plugin.log("Will NOT download from DogOnFire. Please place a valid language file in your /lang folder!");
+				Gods.get().log("Will NOT download from DogOnFire. Please place a valid language file in your /lang folder!");
 			}
 		}
 		for (GodManager.GodType godType : GodManager.GodType.values()) {
 			for (GodManager.GodGender godGender : GodManager.GodGender.values()) {
 				if (godGender != GodManager.GodGender.None) {
-					String fileName = this.plugin.languageIdentifier + "_" + godType.name().toLowerCase() + "_" + godGender.name().toLowerCase() + ".yml";
+					String fileName = GodsConfiguration.get().getLanguageIdentifier() + "_" + godType.name().toLowerCase() + "_" + godGender.name().toLowerCase() + ".yml";
 					if (!loadLanguageFile(fileName)) {
-						this.plugin.log("Could not load language file " + fileName + " from the /lang folder!");
-						this.plugin.log("Downloading english files from doggycraft.dk...");
+						Gods.get().log("Could not load language file " + fileName + " from the /lang folder!");
+						Gods.get().log("Downloading english files from doggycraft.dk...");
 						try {
 							downloadLanguageFile(fileName);
 						} catch (Exception ex) {
-							this.plugin.log("Could not download language file " + fileName + " from bukkit: " + ex.getMessage());
+							Gods.get().log("Could not download language file " + fileName + " from bukkit: " + ex.getMessage());
 							continue;
 						}
 						loadLanguageFile(fileName);
 					}
-					this.plugin.log("Loaded " + fileName + ".");
+					Gods.get().log("Loaded " + fileName + ".");
 				}
 			}
 		}
 	}
 
 	private String getLanguageFileForGod(String godName) {
-		return this.plugin.getGodManager().getLanguageFileForGod(godName);
+		return GodManager.get().getLanguageFileForGod(godName);
 	}
 
 	public String getLanguageString(String godName, LANGUAGESTRING type) {
 		FileConfiguration languageConfig = (FileConfiguration) this.languageConfigs.get(getLanguageFileForGod(godName));
 		if (languageConfig == null) {
-			GodManager.GodType godType = this.plugin.getGodManager().getDivineForceForGod(godName);
+			GodManager.GodType godType = GodManager.get().getDivineForceForGod(godName);
 
-			this.plugin.log("No languageConfig found for " + godName + " of type " + godType.name() + "!");
+			Gods.get().log("No languageConfig found for " + godName + " of type " + godType.name() + "!");
 			return "MISSING LANGUAGEFILE " + type.name();
 		}
 
 		List<String> strings = languageConfig.getStringList(type.name());
 
 		if (strings == null || strings.size() == 0) {
-			this.plugin.log("No language strings found for " + godName + "," + type.name() + "!");
+			Gods.get().log("No language strings found for " + godName + "," + type.name() + "!");
 			return type.name() + " MISSING in " + getLanguageFileForGod(godName);
 		}
 
@@ -145,7 +156,7 @@ public class LanguageManager {
 	public String getLanguageStringForBook(String godName, LANGUAGESTRING type) {
 		List<String> strings = ((FileConfiguration) this.languageConfigs.get(getLanguageFileForGod(godName))).getStringList(type.name());
 		if (strings.size() == 0) {
-			this.plugin.log("No language strings found for " + type.name() + "!");
+			Gods.get().log("No language strings found for " + type.name() + "!");
 			return type.name() + " MISSING in " + getLanguageFileForGod(godName);
 		}
 		String text = (String) strings.toArray()[this.random.nextInt(strings.size())];
@@ -155,10 +166,6 @@ public class LanguageManager {
 
 	public boolean setDefault() {
 		return true;
-	}
-
-	public LanguageManager(Gods p) {
-		this.plugin = p;
 	}
 
 	public String getPriestAssignCommand(UUID playerName) {
@@ -172,7 +179,7 @@ public class LanguageManager {
 	public String parseString(String id) {
 		String string = id;
 		if (string.contains("$ServerName")) {
-			string = string.replace("$ServerName", ChatColor.GOLD + this.plugin.serverName + ChatColor.WHITE + ChatColor.BOLD);
+			string = string.replace("$ServerName", ChatColor.GOLD + GodsConfiguration.get().getServerName() + ChatColor.WHITE + ChatColor.BOLD);
 		}
 		if (string.contains("$PlayerName")) {
 			string = string.replace("$PlayerName", ChatColor.GOLD + this.playerName + ChatColor.WHITE + ChatColor.BOLD);
@@ -189,7 +196,7 @@ public class LanguageManager {
 	public String parseString(String id, ChatColor defaultColor) {
 		String string = id;
 		if (string.contains("$ServerName")) {
-			string = string.replace("$ServerName", ChatColor.GOLD + this.plugin.serverName + defaultColor);
+			string = string.replace("$ServerName", ChatColor.GOLD + GodsConfiguration.get().getServerName() + defaultColor);
 		}
 		if (string.contains("$PlayerName")) {
 			string = string.replace("$PlayerName", ChatColor.GOLD + this.playerName + defaultColor);
@@ -206,7 +213,7 @@ public class LanguageManager {
 	public String parseStringForBook(String id) {
 		String string = id;
 		if (string.contains("$ServerName")) {
-			string = string.replace("$ServerName", this.plugin.serverName);
+			string = string.replace("$ServerName", GodsConfiguration.get().getServerName());
 		}
 		if (string.contains("$PlayerName")) {
 			string = string.replace("$PlayerName", this.playerName);
@@ -226,7 +233,7 @@ public class LanguageManager {
 
 	public void setPlayerName(String name) {
 		if (name == null) {
-			this.plugin.logDebug("WARNING: Setting null playername");
+			Gods.get().logDebug("WARNING: Setting null playername");
 		}
 		this.playerName = name;
 	}
@@ -245,7 +252,7 @@ public class LanguageManager {
 
 	public void setType(String t) throws Exception {
 		if (t == null) {
-			this.plugin.logDebug("WARNING: Setting null type");
+			Gods.get().logDebug("WARNING: Setting null type");
 			throw new Exception("WARNING: Setting null type");
 		}
 		this.type = t;
@@ -258,7 +265,7 @@ public class LanguageManager {
 		}
 		String itemTypeName = configuration.getString("Items." + material.name());
 		if (itemTypeName == null) {
-			this.plugin.logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the item '" + material.name() + "'");
+			Gods.get().logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the item '" + material.name() + "'");
 			return material.name();
 		}
 		return itemTypeName;
@@ -267,7 +274,7 @@ public class LanguageManager {
 	public String getMobTypeName(EntityType type) {
 		String mobTypeName = ((FileConfiguration) this.languageConfigs.get(this.generalLanguageFileName)).getString("Mobs." + type.name());
 		if (mobTypeName == null) {
-			this.plugin.logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the mob type '" + type.name() + "'");
+			Gods.get().logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the mob type '" + type.name() + "'");
 			return type.name();
 		}
 		return mobTypeName;
@@ -293,7 +300,7 @@ public class LanguageManager {
 		String text = ((FileConfiguration) this.languageConfigs.get(this.generalLanguageFileName)).getString("Info." + languageString.name());
 
 		if (text == null) {
-			this.plugin.logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the info type '" + languageString.name() + "'");
+			Gods.get().logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the info type '" + languageString.name() + "'");
 			return languageString.name() + " MISSING in " + this.generalLanguageFileName;
 		}
 		return parseString(text, defaultColor);

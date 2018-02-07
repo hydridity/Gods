@@ -6,27 +6,34 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.dogonfire.gods.Gods;
+import com.dogonfire.gods.config.GodsConfiguration;
 
 public class WhitelistManager {
-	private Gods plugin = null;
+	private static WhitelistManager instance;
+
+	private WhitelistManager() {
+	}
+
+	public static WhitelistManager get() {
+		if (instance == null)
+			instance = new WhitelistManager();
+		return instance;
+	}
+
 	private FileConfiguration whiteList = null;
 	private File whiteListFile = null;
 	private FileConfiguration blackList = null;
 	private File blackListFile = null;
 
-	public WhitelistManager(Gods p) {
-		this.plugin = p;
-	}
-
 	public void load() {
-		if (this.plugin.useWhitelist) {
+		if (GodsConfiguration.get().isUseWhitelist()) {
 			if (this.whiteListFile == null) {
-				this.whiteListFile = new File(this.plugin.getDataFolder(), "whitelist.yml");
+				this.whiteListFile = new File(Gods.get().getDataFolder(), "whitelist.yml");
 			}
 
 			this.whiteList = YamlConfiguration.loadConfiguration(this.whiteListFile);
 
-			this.plugin.log("Loaded " + this.whiteList.getKeys(false).size() + " whitelisted Gods.");
+			Gods.get().log("Loaded " + this.whiteList.getKeys(false).size() + " whitelisted Gods.");
 
 			if (this.whiteList.getKeys(false).size() == 0) {
 				this.whiteList.set("TheExampleGodName.MinPower", Integer.valueOf(0));
@@ -34,26 +41,26 @@ public class WhitelistManager {
 				save();
 			}
 
-			this.plugin.useBlacklist = false;
+			GodsConfiguration.get().setUseBlacklist(false);
 
-			this.plugin.log("Using whitelist");
+			Gods.get().log("Using whitelist");
 		}
 
-		if (this.plugin.useBlacklist) {
+		if (GodsConfiguration.get().isUseBlacklist()) {
 			if (this.blackListFile == null) {
-				this.blackListFile = new File(this.plugin.getDataFolder(), "blacklist.yml");
+				this.blackListFile = new File(Gods.get().getDataFolder(), "blacklist.yml");
 			}
 			this.blackList = YamlConfiguration.loadConfiguration(this.blackListFile);
 
-			this.plugin.log("Loaded " + this.blackList.getKeys(false).size() + " blacklisted Gods.");
+			Gods.get().log("Loaded " + this.blackList.getKeys(false).size() + " blacklisted Gods.");
 			if (this.blackList.getKeys(false).size() == 0) {
 				this.blackList.set("TheExampleGodName", "");
 
 				save();
 			}
-			this.plugin.useWhitelist = false;
+			GodsConfiguration.get().setUseWhitelist(false);
 
-			this.plugin.log("Using blacklist");
+			Gods.get().log("Using blacklist");
 		}
 	}
 
@@ -61,12 +68,12 @@ public class WhitelistManager {
 		try {
 			this.whiteList.save(this.whiteListFile);
 		} catch (Exception ex) {
-			this.plugin.log("Could not save whitelist to " + this.whiteListFile + ": " + ex.getMessage());
+			Gods.get().log("Could not save whitelist to " + this.whiteListFile + ": " + ex.getMessage());
 		}
 		try {
 			this.blackList.save(this.blackListFile);
 		} catch (Exception ex) {
-			this.plugin.log("Could not save blacklist to " + this.blackListFile + ": " + ex.getMessage());
+			Gods.get().log("Could not save blacklist to " + this.blackListFile + ": " + ex.getMessage());
 		}
 	}
 
