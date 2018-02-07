@@ -83,40 +83,34 @@ public class HolyArtifact {
 		return name;
 	}
 
-	public boolean hasTitle() {
-		return (this.s.hasItemMeta()) && (this.s.getItemMeta().hasDisplayName());
+	public int getCooldown() {
+		net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
+		return nms.getTag().getInt("cooldown");
 	}
 
-	public boolean hasPages() {
-		return (this.s.hasItemMeta()) && (this.s.getItemMeta().hasLore());
-	}
-
-	public String getTitle() {
-		return this.s.getItemMeta().getDisplayName();
+	public org.bukkit.inventory.ItemStack getItemStack() {
+		return this.s;
 	}
 
 	public List<String> getPages() {
 		return this.s.getItemMeta().getLore();
 	}
 
-	public void setTitle(String title) {
-		ItemMeta itemMeta = this.s.getItemMeta();
-
-		itemMeta.setDisplayName(title);
-
-		this.s.setItemMeta(itemMeta);
+	public String getTitle() {
+		return this.s.getItemMeta().getDisplayName();
 	}
 
-	public void setPages(List<String> pages) {
-		ItemMeta itemMeta = this.s.getItemMeta();
-
-		itemMeta.setLore(pages);
-
-		this.s.setItemMeta(itemMeta);
+	public int getXP() {
+		net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
+		return nms.getTag().getInt("xp");
 	}
 
-	public org.bukkit.inventory.ItemStack getItemStack() {
-		return this.s;
+	public boolean hasPages() {
+		return (this.s.hasItemMeta()) && (this.s.getItemMeta().hasLore());
+	}
+
+	public boolean hasTitle() {
+		return (this.s.hasItemMeta()) && (this.s.getItemMeta().hasDisplayName());
 	}
 
 	public boolean isHolyArtifact() {
@@ -140,13 +134,19 @@ public class HolyArtifact {
 		return CraftItemStack.asCraftMirror(nms);
 	}
 
-	public int getCooldown() {
-		net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
-		return nms.getTag().getInt("cooldown");
+	public void setPages(List<String> pages) {
+		ItemMeta itemMeta = this.s.getItemMeta();
+
+		itemMeta.setLore(pages);
+
+		this.s.setItemMeta(itemMeta);
 	}
 
-	public int getXP() {
-		net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(this.s);
-		return nms.getTag().getInt("xp");
+	public void setTitle(String title) {
+		ItemMeta itemMeta = this.s.getItemMeta();
+
+		itemMeta.setDisplayName(title);
+
+		this.s.setItemMeta(itemMeta);
 	}
 }

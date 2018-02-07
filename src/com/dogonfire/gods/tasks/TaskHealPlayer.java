@@ -28,6 +28,7 @@ public class TaskHealPlayer extends Task {
 		return true;
 	}
 
+	@Override
 	public void run() {
 		Random random = new Random();
 		if (healPlayer()) {

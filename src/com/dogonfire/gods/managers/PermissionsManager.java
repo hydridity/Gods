@@ -32,35 +32,99 @@ public class PermissionsManager {
 		return instance;
 	}
 
-	private PermissionsManager() {
-	}
-
 	private String pluginName = "null";
+
 	private PluginManager pluginManager = null;
 	private PermissionManager pex = null;
 	private GroupManager groupManager = null;
 
-	public void load() {
-		this.pluginManager = Gods.get().getServer().getPluginManager();
-		if (this.pluginManager.getPlugin("PermissionsEx") != null) {
-			Gods.get().log("Using PermissionsEx.");
-			this.pluginName = "PermissionsEx";
-			this.pex = PermissionsEx.getPermissionManager();
-		} else if (this.pluginManager.getPlugin("GroupManager") != null) {
-			Gods.get().log("Using GroupManager");
-			this.pluginName = "GroupManager";
-			this.groupManager = ((GroupManager) this.pluginManager.getPlugin("GroupManager"));
-		} else if (this.pluginManager.getPlugin("bPermissions") != null) {
-			Gods.get().log("Using bPermissions.");
-			this.pluginName = "bPermissions";
-		} else {
-			Gods.get().log("No permissions plugin detected! Defaulting to superperm");
-			this.pluginName = "SuperPerm";
+	private PermissionsManager() {
+	}
+
+	public String getGroup(String playerName) {
+		if (this.pluginName.equals("PermissionsEx")) {
+			if ((this.pex.getUser(playerName).getGroups() == null) || (this.pex.getUser(playerName).getGroups().length == 0)) {
+				return "";
+			}
+			return this.pex.getUser(playerName).getGroups()[0].getName();
 		}
+		if (this.pluginName.equals("GroupManager")) {
+			AnjoPermissionsHandler handler = this.groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
+			if (handler == null) {
+				Gods.get().logDebug("PermissionManager(): No handler for player " + playerName);
+				return "";
+			}
+			return handler.getGroup(playerName);
+		}
+		if (this.pluginName.equals("bPermissions")) {
+			de.bananaco.bpermissions.api.World w = WorldManager.getInstance().getWorld(playerName);
+			if (w == null) {
+				return "";
+			}
+			if (w.getUser(playerName).getGroupsAsString().size() == 0) {
+				return "";
+			}
+			return (String) w.getUser(playerName).getGroupsAsString().toArray()[0];
+		}
+		return "";
+	}
+
+	public List<String> getGroups() {
+		List<String> list = new ArrayList<String>();
+		if (this.pluginName.equals("PermissionsEx")) {
+			for (PermissionGroup group : this.pex.getGroupList()) {
+				list.add(group.getName());
+			}
+			return list;
+		}
+
+		Object owh;
+
+		if (this.pluginName.equals("GroupManager")) {
+			for (org.bukkit.World world : Bukkit.getServer().getWorlds()) {
+				owh = this.groupManager.getWorldsHolder().getWorldData(world.getName());
+				if (owh != null) {
+					Collection<Group> groups = ((OverloadedWorldHolder) owh).getGroupList();
+
+					if (groups != null) {
+						for (org.anjocaido.groupmanager.data.Group group : groups) {
+							list.add(group.getName());
+						}
+					}
+				}
+			}
+			return list;
+		}
+
+		return list;
 	}
 
 	public String getPermissionPluginName() {
 		return this.pluginName;
+	}
+
+	public String getPrefix(String playerName) {
+		if (this.pluginName.equals("PermissionsBukkit")) {
+			return "";
+		}
+		if (this.pluginName.equals("PermissionsEx")) {
+			return this.pex.getUser(this.pluginName).getOwnSuffix();
+		}
+		if (this.pluginName.equals("GroupManager")) {
+			AnjoPermissionsHandler handler = this.groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
+			if (handler == null) {
+				return "";
+			}
+			return handler.getUserPrefix(playerName);
+		}
+		if (this.pluginName.equals("bPermissions")) {
+			de.bananaco.bpermissions.api.World w = WorldManager.getInstance().getWorld(playerName);
+			if (w == null) {
+				return "";
+			}
+			return "";
+		}
+		return "";
 	}
 
 	public boolean hasPermission(Player player, String node) {
@@ -97,86 +161,23 @@ public class PermissionsManager {
 		return false;
 	}
 
-	public List<String> getGroups() {
-		List<String> list = new ArrayList<String>();
-		if (this.pluginName.equals("PermissionsEx")) {
-			for (PermissionGroup group : this.pex.getGroupList()) {
-				list.add(group.getName());
-			}
-			return list;
+	public void load() {
+		this.pluginManager = Gods.get().getServer().getPluginManager();
+		if (this.pluginManager.getPlugin("PermissionsEx") != null) {
+			Gods.get().log("Using PermissionsEx.");
+			this.pluginName = "PermissionsEx";
+			this.pex = PermissionsEx.getPermissionManager();
+		} else if (this.pluginManager.getPlugin("GroupManager") != null) {
+			Gods.get().log("Using GroupManager");
+			this.pluginName = "GroupManager";
+			this.groupManager = ((GroupManager) this.pluginManager.getPlugin("GroupManager"));
+		} else if (this.pluginManager.getPlugin("bPermissions") != null) {
+			Gods.get().log("Using bPermissions.");
+			this.pluginName = "bPermissions";
+		} else {
+			Gods.get().log("No permissions plugin detected! Defaulting to superperm");
+			this.pluginName = "SuperPerm";
 		}
-
-		Object owh;
-
-		if (this.pluginName.equals("GroupManager")) {
-			for (org.bukkit.World world : Bukkit.getServer().getWorlds()) {
-				owh = this.groupManager.getWorldsHolder().getWorldData(world.getName());
-				if (owh != null) {
-					Collection<Group> groups = ((OverloadedWorldHolder) owh).getGroupList();
-
-					if (groups != null) {
-						for (org.anjocaido.groupmanager.data.Group group : groups) {
-							list.add(group.getName());
-						}
-					}
-				}
-			}
-			return list;
-		}
-
-		return list;
-	}
-
-	public String getGroup(String playerName) {
-		if (this.pluginName.equals("PermissionsEx")) {
-			if ((this.pex.getUser(playerName).getGroups() == null) || (this.pex.getUser(playerName).getGroups().length == 0)) {
-				return "";
-			}
-			return this.pex.getUser(playerName).getGroups()[0].getName();
-		}
-		if (this.pluginName.equals("GroupManager")) {
-			AnjoPermissionsHandler handler = this.groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
-			if (handler == null) {
-				Gods.get().logDebug("PermissionManager(): No handler for player " + playerName);
-				return "";
-			}
-			return handler.getGroup(playerName);
-		}
-		if (this.pluginName.equals("bPermissions")) {
-			de.bananaco.bpermissions.api.World w = WorldManager.getInstance().getWorld(playerName);
-			if (w == null) {
-				return "";
-			}
-			if (w.getUser(playerName).getGroupsAsString().size() == 0) {
-				return "";
-			}
-			return (String) w.getUser(playerName).getGroupsAsString().toArray()[0];
-		}
-		return "";
-	}
-
-	public String getPrefix(String playerName) {
-		if (this.pluginName.equals("PermissionsBukkit")) {
-			return "";
-		}
-		if (this.pluginName.equals("PermissionsEx")) {
-			return this.pex.getUser(this.pluginName).getOwnSuffix();
-		}
-		if (this.pluginName.equals("GroupManager")) {
-			AnjoPermissionsHandler handler = this.groupManager.getWorldsHolder().getWorldPermissionsByPlayerName(playerName);
-			if (handler == null) {
-				return "";
-			}
-			return handler.getUserPrefix(playerName);
-		}
-		if (this.pluginName.equals("bPermissions")) {
-			de.bananaco.bpermissions.api.World w = WorldManager.getInstance().getWorld(playerName);
-			if (w == null) {
-				return "";
-			}
-			return "";
-		}
-		return "";
 	}
 
 	public void setGroup(String playerName, String groupName) {

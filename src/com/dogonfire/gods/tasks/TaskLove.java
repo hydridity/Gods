@@ -25,6 +25,7 @@ public class TaskLove extends Task {
 		this.cycle = cycle;
 	}
 
+	@Override
 	public void run() {
 		if ((!this.player1.isOnline()) || (!this.player2.isOnline())) {
 			return;

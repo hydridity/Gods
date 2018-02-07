@@ -22,6 +22,7 @@ public class TaskFirework extends Task {
 		this.numberOfRockets = numberOfRockets;
 	}
 
+	@Override
 	public void run() {
 		int a = (int) this.player.getLocation().getX();
 		int y = (int) this.player.getLocation().getY();
@@ -98,7 +99,7 @@ public class TaskFirework extends Task {
 			fireworks.setFireworkMeta(fireworkmeta);
 		}
 
-		int n = (int) (((float) this.numberOfRockets) / 1.50f);
+		int n = (int) ((this.numberOfRockets) / 1.50f);
 
 		if (n > 0) {
 			getPlugin().getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), new TaskFirework(this.player, n), 20 + this.random.nextInt(80));

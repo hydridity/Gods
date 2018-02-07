@@ -17,9 +17,6 @@ import com.dogonfire.gods.config.GodsConfiguration;
 public class HolyBookManager {
 	private static HolyBookManager instance;
 
-	private HolyBookManager() {
-	}
-
 	public static HolyBookManager get() {
 		if (GodsConfiguration.get().isBiblesEnabled() && instance == null)
 			instance = new HolyBookManager();
@@ -27,26 +24,123 @@ public class HolyBookManager {
 	}
 
 	private FileConfiguration biblesConfig = null;
+
 	private File biblesConfigFile = null;
 
-	public void load() {
-		if (this.biblesConfigFile == null) {
-			this.biblesConfigFile = new File(Gods.get().getDataFolder(), "bibles.yml");
-		}
-		this.biblesConfig = YamlConfiguration.loadConfiguration(this.biblesConfigFile);
-
-		Gods.get().log("Loaded " + this.biblesConfig.getKeys(false).size() + " bibles.");
+	private HolyBookManager() {
 	}
 
-	public void save() {
-		if ((this.biblesConfig == null) || (this.biblesConfigFile == null)) {
-			return;
+	public void clearBible(String godName) {
+		this.biblesConfig.set(godName, null);
+
+		save();
+	}
+
+	public ItemStack getBible(String godName) {
+		List<String> pages = this.biblesConfig.getStringList(godName + ".Pages");
+		if (pages.size() == 0) {
+			initBible(godName);
+			pages = this.biblesConfig.getStringList(godName + ".Pages");
 		}
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
 		try {
-			this.biblesConfig.save(this.biblesConfigFile);
+			HolyBook b = new HolyBook(book);
+
+			b.setTitle(this.biblesConfig.getString(godName + ".Title"));
+
+			b.setAuthor(godName);
+			b.setPages(pages);
+
+			return b.getItem();
 		} catch (Exception ex) {
-			Gods.get().log("Could not save config to " + this.biblesConfigFile.getName() + ": " + ex.getMessage());
+			Gods.get().logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
 		}
+		return null;
+	}
+
+	public String getBibleTitle(String godName) {
+		return this.biblesConfig.getString(godName + ".Title");
+	}
+
+	public ItemStack getEditBible(String godName) {
+		List<String> pages = this.biblesConfig.getStringList(godName + ".Pages");
+		if (pages.size() == 0) {
+			initBible(godName);
+			pages = this.biblesConfig.getStringList(godName + ".Pages");
+		}
+		ItemStack book = new ItemStack(Material.BOOK_AND_QUILL);
+		try {
+			HolyBook b = new HolyBook(book);
+
+			b.setTitle(this.biblesConfig.getString(godName + ".Title"));
+			b.setAuthor(godName);
+			for (int i = 0; i < pages.size(); i++) {
+				pages.set(i, pages.get(i));
+			}
+			b.setPages(pages);
+
+			return b.getItem();
+		} catch (Exception ex) {
+			Gods.get().logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
+		}
+		return null;
+	}
+
+	public String getGodForBible(ItemStack book) {
+		try {
+			HolyBook bible = new HolyBook(book);
+			for (String god : this.biblesConfig.getKeys(false)) {
+				if (god.equals(bible.getAuthor())) {
+					return god;
+				}
+			}
+		} catch (Exception ex) {
+			Gods.get().log("ERROR: Could not get bible for " + book + ": " + ex.getMessage());
+		}
+		return null;
+	}
+
+	public boolean giveBible(String godName, String playerName) {
+		ItemStack bible = getBible(godName);
+		if (bible == null) {
+			return false;
+		}
+		Player player = Gods.get().getServer().getPlayer(playerName);
+		if (player == null) {
+			Gods.get().logDebug("ERROR: Could give bible to offline player '" + playerName);
+			return false;
+		}
+		int amount = player.getPlayer().getInventory().getItemInMainHand().getAmount();
+		ItemStack[] itemStack = { player.getPlayer().getInventory().getItemInMainHand() };
+		itemStack[0].setAmount(amount);
+		player.getInventory().addItem(itemStack);
+
+		player.getInventory().setItemInMainHand(bible);
+
+		return true;
+	}
+
+	public boolean giveEditBible(String godName, String playerName) {
+		ItemStack bible = getEditBible(godName);
+		if (bible == null) {
+			return false;
+		}
+		Player player = Gods.get().getServer().getPlayer(playerName);
+		if (player == null) {
+			Gods.get().logDebug("ERROR: Could give editable bible to offline player '" + playerName);
+			return false;
+		}
+		int amount = player.getPlayer().getInventory().getItemInMainHand().getAmount();
+		ItemStack[] itemStack = { player.getPlayer().getInventory().getItemInMainHand() };
+		itemStack[0].setAmount(amount);
+		player.getInventory().addItem(itemStack);
+
+		player.getInventory().setItemInMainHand(bible);
+
+		return true;
+	}
+
+	public void handleQuestCompleted(String godName, QuestManager.QUESTTYPE type, String playerName) {
 	}
 
 	private void initBible(String godName) {
@@ -95,24 +189,24 @@ public class HolyBookManager {
 		// }
 	}
 
-	public void clearBible(String godName) {
-		this.biblesConfig.set(godName, null);
+	public void load() {
+		if (this.biblesConfigFile == null) {
+			this.biblesConfigFile = new File(Gods.get().getDataFolder(), "bibles.yml");
+		}
+		this.biblesConfig = YamlConfiguration.loadConfiguration(this.biblesConfigFile);
 
-		save();
+		Gods.get().log("Loaded " + this.biblesConfig.getKeys(false).size() + " bibles.");
 	}
 
-	private void setBible(String godName, String priestName, ItemStack book) {
-		HolyBook b = null;
-		try {
-			b = new HolyBook(book);
-		} catch (Exception ex) {
-			Gods.get().logDebug("ERROR: Could not set a bible for '" + godName + ": " + ex.getMessage());
+	public void save() {
+		if ((this.biblesConfig == null) || (this.biblesConfigFile == null)) {
+			return;
 		}
-		this.biblesConfig.set(godName + ".Title", b.getTitle());
-		this.biblesConfig.set(godName + ".Author", priestName);
-		this.biblesConfig.set(godName + ".Pages", b.getPages());
-
-		save();
+		try {
+			this.biblesConfig.save(this.biblesConfigFile);
+		} catch (Exception ex) {
+			Gods.get().log("Could not save config to " + this.biblesConfigFile.getName() + ": " + ex.getMessage());
+		}
 	}
 
 	public boolean setBible(String godName, String priestName) {
@@ -131,111 +225,18 @@ public class HolyBookManager {
 		return true;
 	}
 
-	public String getBibleTitle(String godName) {
-		return this.biblesConfig.getString(godName + ".Title");
-	}
-
-	public ItemStack getBible(String godName) {
-		List<String> pages = this.biblesConfig.getStringList(godName + ".Pages");
-		if (pages.size() == 0) {
-			initBible(godName);
-			pages = this.biblesConfig.getStringList(godName + ".Pages");
-		}
-		ItemStack book = new ItemStack(Material.WRITTEN_BOOK, 1);
+	private void setBible(String godName, String priestName, ItemStack book) {
+		HolyBook b = null;
 		try {
-			HolyBook b = new HolyBook(book);
-
-			b.setTitle(this.biblesConfig.getString(godName + ".Title"));
-
-			b.setAuthor(godName);
-			b.setPages(pages);
-
-			return b.getItem();
+			b = new HolyBook(book);
 		} catch (Exception ex) {
-			Gods.get().logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
+			Gods.get().logDebug("ERROR: Could not set a bible for '" + godName + ": " + ex.getMessage());
 		}
-		return null;
-	}
+		this.biblesConfig.set(godName + ".Title", b.getTitle());
+		this.biblesConfig.set(godName + ".Author", priestName);
+		this.biblesConfig.set(godName + ".Pages", b.getPages());
 
-	public String getGodForBible(ItemStack book) {
-		try {
-			HolyBook bible = new HolyBook(book);
-			for (String god : this.biblesConfig.getKeys(false)) {
-				if (god.equals(bible.getAuthor())) {
-					return god;
-				}
-			}
-		} catch (Exception ex) {
-			Gods.get().log("ERROR: Could not get bible for " + book + ": " + ex.getMessage());
-		}
-		return null;
-	}
-
-	public ItemStack getEditBible(String godName) {
-		List<String> pages = this.biblesConfig.getStringList(godName + ".Pages");
-		if (pages.size() == 0) {
-			initBible(godName);
-			pages = this.biblesConfig.getStringList(godName + ".Pages");
-		}
-		ItemStack book = new ItemStack(Material.BOOK_AND_QUILL);
-		try {
-			HolyBook b = new HolyBook(book);
-
-			b.setTitle(this.biblesConfig.getString(godName + ".Title"));
-			b.setAuthor(godName);
-			for (int i = 0; i < pages.size(); i++) {
-				pages.set(i, (String) pages.get(i));
-			}
-			b.setPages(pages);
-
-			return b.getItem();
-		} catch (Exception ex) {
-			Gods.get().logDebug("ERROR: Could not instance a bible for '" + godName + ": " + ex.getMessage());
-		}
-		return null;
-	}
-
-	public boolean giveBible(String godName, String playerName) {
-		ItemStack bible = getBible(godName);
-		if (bible == null) {
-			return false;
-		}
-		Player player = Gods.get().getServer().getPlayer(playerName);
-		if (player == null) {
-			Gods.get().logDebug("ERROR: Could give bible to offline player '" + playerName);
-			return false;
-		}
-		int amount = player.getPlayer().getInventory().getItemInMainHand().getAmount();
-		ItemStack[] itemStack = { player.getPlayer().getInventory().getItemInMainHand() };
-		itemStack[0].setAmount(amount);
-		player.getInventory().addItem(itemStack);
-
-		player.getInventory().setItemInMainHand(bible);
-
-		return true;
-	}
-
-	public boolean giveEditBible(String godName, String playerName) {
-		ItemStack bible = getEditBible(godName);
-		if (bible == null) {
-			return false;
-		}
-		Player player = Gods.get().getServer().getPlayer(playerName);
-		if (player == null) {
-			Gods.get().logDebug("ERROR: Could give editable bible to offline player '" + playerName);
-			return false;
-		}
-		int amount = player.getPlayer().getInventory().getItemInMainHand().getAmount();
-		ItemStack[] itemStack = { player.getPlayer().getInventory().getItemInMainHand() };
-		itemStack[0].setAmount(amount);
-		player.getInventory().addItem(itemStack);
-
-		player.getInventory().setItemInMainHand(bible);
-
-		return true;
-	}
-
-	public void handleQuestCompleted(String godName, QuestManager.QUESTTYPE type, String playerName) {
+		save();
 	}
 
 	public void setProphecyPages(String godName, List<String> prophecyPages) {

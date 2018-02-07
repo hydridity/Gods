@@ -11,9 +11,6 @@ import com.dogonfire.gods.config.GodsConfiguration;
 public class WhitelistManager {
 	private static WhitelistManager instance;
 
-	private WhitelistManager() {
-	}
-
 	public static WhitelistManager get() {
 		if (instance == null)
 			instance = new WhitelistManager();
@@ -21,9 +18,31 @@ public class WhitelistManager {
 	}
 
 	private FileConfiguration whiteList = null;
+
 	private File whiteListFile = null;
 	private FileConfiguration blackList = null;
 	private File blackListFile = null;
+
+	private WhitelistManager() {
+	}
+
+	public float getMinGodPower(String godName) {
+		int power = this.whiteList.getInt(godName + ".MinPower");
+
+		return power;
+	}
+
+	public boolean isBlacklistedGod(String godName) {
+		String name = this.blackList.getString(godName);
+
+		return name != null;
+	}
+
+	public boolean isWhitelistedGod(String godName) {
+		String name = this.whiteList.getString(godName);
+
+		return name != null;
+	}
 
 	public void load() {
 		if (GodsConfiguration.get().isUseWhitelist()) {
@@ -75,23 +94,5 @@ public class WhitelistManager {
 		} catch (Exception ex) {
 			Gods.get().log("Could not save blacklist to " + this.blackListFile + ": " + ex.getMessage());
 		}
-	}
-
-	public boolean isWhitelistedGod(String godName) {
-		String name = this.whiteList.getString(godName);
-
-		return name != null;
-	}
-
-	public boolean isBlacklistedGod(String godName) {
-		String name = this.blackList.getString(godName);
-
-		return name != null;
-	}
-
-	public float getMinGodPower(String godName) {
-		int power = this.whiteList.getInt(godName + ".MinPower");
-
-		return power;
 	}
 }

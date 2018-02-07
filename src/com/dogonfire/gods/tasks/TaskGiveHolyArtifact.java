@@ -49,6 +49,7 @@ public class TaskGiveHolyArtifact extends Task {
 		return true;
 	}
 
+	@Override
 	public void run() {
 		if (giveItem()) {
 			Random random = new Random();

@@ -12,6 +12,7 @@ public class TaskCallMoon extends Task {
 		this.player = player;
 	}
 
+	@Override
 	public void run() {
 		long time = this.player.getWorld().getFullTime() % 24000L;
 		if ((time < 14000L) || (time > 1000L)) {

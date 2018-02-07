@@ -10,16 +10,34 @@ import com.dogonfire.gods.Gods;
 
 public class ChatManager {
 	private static ChatManager instance;
-	private ChatManager() {}
+
 	public static ChatManager get() {
-		if(instance == null) instance = new ChatManager();
+		if (instance == null)
+			instance = new ChatManager();
 		return instance;
 	}
-	
+
 	private String chatTag = "[GOD]";
+
 	private String playerChatFormat = "";
 	private FileConfiguration chatConfig;
 	private File chatConfigFile;
+
+	private ChatManager() {
+	}
+
+	public String addColor(String string) {
+		return ChatColor.translateAlternateColorCodes('&', string);
+	}
+
+	public String formatChat(Player player, String godName, String message) {
+		if (godName != null) {
+			this.playerChatFormat = message.replace(this.chatTag, godName + " ");
+		} else {
+			this.playerChatFormat = message.replace(this.chatTag, "");
+		}
+		return this.playerChatFormat;
+	}
 
 	public void load() {
 
@@ -34,18 +52,5 @@ public class ChatManager {
 		} catch (Exception ex) {
 			Gods.get().log("Could not save config to " + this.chatConfigFile.getName() + ": " + ex.getMessage());
 		}
-	}
-
-	public String addColor(String string) {
-		return ChatColor.translateAlternateColorCodes('&', string);
-	}
-
-	public String formatChat(Player player, String godName, String message) {
-		if (godName != null) {
-			this.playerChatFormat = message.replace(this.chatTag, godName + " ");
-		} else {
-			this.playerChatFormat = message.replace(this.chatTag, "");
-		}
-		return this.playerChatFormat;
 	}
 }

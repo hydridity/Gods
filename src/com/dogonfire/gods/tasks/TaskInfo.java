@@ -23,14 +23,6 @@ public class TaskInfo extends Task {
 		this.color = color;
 	}
 
-	public TaskInfo(ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name1, String name2) {
-		this.playerId = playerId;
-		this.name1 = name1;
-		this.name2 = name2;
-		this.message = m;
-		this.color = color;
-	}
-
 	public TaskInfo(ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name, int amount1, int amount2) {
 		this.playerId = playerId;
 		this.name2 = String.valueOf(amount1);
@@ -39,6 +31,15 @@ public class TaskInfo extends Task {
 		this.color = color;
 	}
 
+	public TaskInfo(ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name1, String name2) {
+		this.playerId = playerId;
+		this.name1 = name1;
+		this.name2 = name2;
+		this.message = m;
+		this.color = color;
+	}
+
+	@Override
 	public void run() {
 		Player player = getPlugin().getServer().getPlayer(this.playerId);
 

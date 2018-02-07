@@ -25,22 +25,6 @@ import com.dogonfire.gods.config.GodsConfiguration;
 import com.dogonfire.gods.tasks.TaskLove;
 
 public class MarriageManager {
-	private FileConfiguration marriagesConfig = null;
-	private File marriagesConfigFile = null;
-	private Random random = new Random();
-	private Material marriageTokenType = Material.GOLD_NUGGET;
-
-	private static MarriageManager instance;
-
-	public static MarriageManager get() {
-		if (GodsConfiguration.get().isMarriageEnabled() && instance == null)
-			instance = new MarriageManager();
-		return instance;
-	}
-
-	private MarriageManager() {
-	}
-
 	public class MarriedCouple {
 		public UUID player1Id;
 		public UUID player2Id;
@@ -59,6 +43,7 @@ public class MarriageManager {
 		public MarriedCoupleComparator() {
 		}
 
+		@Override
 		public int compare(MarriageManager.MarriedCouple object1, MarriageManager.MarriedCouple object2) {
 			MarriageManager.MarriedCouple b1 = object1;
 			MarriageManager.MarriedCouple b2 = object2;
@@ -67,119 +52,38 @@ public class MarriageManager {
 		}
 	}
 
-	public void load() {
-		if (this.marriagesConfigFile == null) {
-			this.marriagesConfigFile = new File(Gods.get().getDataFolder(), "marriages.yml");
-		}
+	private static MarriageManager instance;
 
-		this.marriagesConfig = YamlConfiguration.loadConfiguration(this.marriagesConfigFile);
-
-		Gods.get().log("Loaded " + this.marriagesConfig.getKeys(false).size() + " marriages.");
+	public static MarriageManager get() {
+		if (GodsConfiguration.get().isMarriageEnabled() && instance == null)
+			instance = new MarriageManager();
+		return instance;
 	}
 
-	public void save() {
-		if ((this.marriagesConfig == null) || (this.marriagesConfigFile == null)) {
-			return;
-		}
-		try {
-			this.marriagesConfig.save(this.marriagesConfigFile);
-		} catch (Exception ex) {
-			Gods.get().log("Could not save config to " + this.marriagesConfigFile.getName() + ": " + ex.getMessage());
-		}
+	private FileConfiguration marriagesConfig = null;
+
+	private File marriagesConfigFile = null;
+
+	private Random random = new Random();
+
+	private Material marriageTokenType = Material.GOLD_NUGGET;
+
+	private MarriageManager() {
 	}
 
-	public UUID getProposal(UUID believerId) {
-		String pattern = "HH:mm:ss dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-		Date thisDate = new Date();
-		Date offerDate = null;
+	public void divorce(UUID believerId) {
+		String partnerId = this.marriagesConfig.getString(believerId.toString() + ".Married.Partner");
 
-		String offerDateString = this.marriagesConfig.getString(believerId + ".MarriageProposal.Time");
-		try {
-			offerDate = formatter.parse(offerDateString);
-		} catch (Exception ex) {
-			Gods.get().logDebug("Could no parse marriage proposal time: " + ex.getMessage());
-			offerDate = new Date();
-			offerDate.setTime(0L);
+		this.marriagesConfig.set(believerId.toString(), null);
+
+		if (partnerId != null) {
+			this.marriagesConfig.set(partnerId, null);
+
+			Player partner = Gods.get().getServer().getPlayer(partnerId);
+			if (partner != null) {
+				Gods.get().sendInfo(partner.getUniqueId(), LanguageManager.LANGUAGESTRING.DivorcedYou, ChatColor.RED, "DIVORCED", Gods.get().getServer().getPlayer(partnerId).getDisplayName(), 1);
+			}
 		}
-
-		long diff = thisDate.getTime() - offerDate.getTime();
-		long diffSeconds = diff / 1000L;
-
-		if (diffSeconds > 30L) {
-			Gods.get().logDebug("getProposal DiffSeconds is " + diffSeconds);
-
-			this.marriagesConfig.set(believerId + ".MarriageProposal", null);
-
-			save();
-
-			return null;
-		}
-
-		return UUID.fromString(this.marriagesConfig.getString(believerId.toString() + ".MarriageProposal.Partner"));
-	}
-
-	public UUID getPartnerId(UUID believerId) {
-		String partner = this.marriagesConfig.getString(believerId.toString() + ".Married.Partner");
-
-		if (partner == null) {
-			return null;
-		}
-
-		return UUID.fromString(partner);
-	}
-
-	public void setMarriageProposal(UUID player1, UUID player2) {
-		String pattern = "HH:mm:ss dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-		Date thisDate = new Date();
-
-		this.marriagesConfig.set(player1.toString() + ".Married", null);
-		this.marriagesConfig.set(player2.toString() + ".Married", null);
-		this.marriagesConfig.set(player1.toString() + ".GettingMarried", null);
-		this.marriagesConfig.set(player2.toString() + ".GettingMarried", null);
-
-		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Partner", player2.toString());
-		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Partner", player1.toString());
-
-		save();
-	}
-
-	public void setGettingMarried(UUID player1, UUID player2) {
-		String pattern = "HH:mm:ss dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-		Date thisDate = new Date();
-
-		this.marriagesConfig.set(player1.toString() + ".Married", null);
-		this.marriagesConfig.set(player2.toString() + ".Married", null);
-		this.marriagesConfig.set(player1.toString() + ".MarriageProposal", null);
-		this.marriagesConfig.set(player2.toString() + ".MarriageProposal", null);
-
-		this.marriagesConfig.set(player1.toString() + ".GettingMarried.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player1.toString() + ".GettingMarried.Partner", player2.toString());
-		this.marriagesConfig.set(player2.toString() + ".GettingMarried.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player2.toString() + ".GettingMarried.Partner", player1.toString());
-
-		save();
-	}
-
-	public void setMarried(UUID player1, UUID player2) {
-		String pattern = "HH:mm:ss dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-		Date thisDate = new Date();
-
-		this.marriagesConfig.set(player1.toString() + ".GettingMarried", null);
-		this.marriagesConfig.set(player2.toString() + ".GettingMarried", null);
-		this.marriagesConfig.set(player1.toString() + ".MarriageProposal", null);
-		this.marriagesConfig.set(player2.toString() + ".MarriageProposal", null);
-
-		this.marriagesConfig.set(player1.toString() + ".Married.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player1.toString() + ".Married.Partner", player2.toString());
-		this.marriagesConfig.set(player2.toString() + ".Married.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player2.toString() + ".Married.Partner", player1.toString());
-
 		save();
 	}
 
@@ -191,16 +95,6 @@ public class MarriageManager {
 		}
 
 		return UUID.fromString(partnerId);
-	}
-
-	public String getPartnerName(UUID playerId) {
-		String partnerId = this.marriagesConfig.getString(playerId.toString() + ".Married.Partner");
-
-		if (partnerId == null) {
-			return null;
-		}
-
-		return Gods.get().getServer().getOfflinePlayer(UUID.fromString(partnerId)).getName();
 	}
 
 	public List<MarriedCouple> getMarriedCouples() {
@@ -246,16 +140,55 @@ public class MarriageManager {
 		return couples;
 	}
 
-	public boolean hasPickupWeddingRing(UUID playerId) {
-		if (playerId == null) {
-			Gods.get().log("playerId==null");
+	public UUID getPartnerId(UUID believerId) {
+		String partner = this.marriagesConfig.getString(believerId.toString() + ".Married.Partner");
+
+		if (partner == null) {
+			return null;
 		}
 
-		if (this.marriagesConfig.getString(playerId.toString() + ".GettingMarried.HasPickupWeddingToken") == null) {
-			return false;
+		return UUID.fromString(partner);
+	}
+
+	public String getPartnerName(UUID playerId) {
+		String partnerId = this.marriagesConfig.getString(playerId.toString() + ".Married.Partner");
+
+		if (partnerId == null) {
+			return null;
 		}
 
-		return true;
+		return Gods.get().getServer().getOfflinePlayer(UUID.fromString(partnerId)).getName();
+	}
+
+	public UUID getProposal(UUID believerId) {
+		String pattern = "HH:mm:ss dd-MM-yyyy";
+		DateFormat formatter = new SimpleDateFormat(pattern);
+		Date thisDate = new Date();
+		Date offerDate = null;
+
+		String offerDateString = this.marriagesConfig.getString(believerId + ".MarriageProposal.Time");
+		try {
+			offerDate = formatter.parse(offerDateString);
+		} catch (Exception ex) {
+			Gods.get().logDebug("Could no parse marriage proposal time: " + ex.getMessage());
+			offerDate = new Date();
+			offerDate.setTime(0L);
+		}
+
+		long diff = thisDate.getTime() - offerDate.getTime();
+		long diffSeconds = diff / 1000L;
+
+		if (diffSeconds > 30L) {
+			Gods.get().logDebug("getProposal DiffSeconds is " + diffSeconds);
+
+			this.marriagesConfig.set(believerId + ".MarriageProposal", null);
+
+			save();
+
+			return null;
+		}
+
+		return UUID.fromString(this.marriagesConfig.getString(believerId.toString() + ".MarriageProposal.Partner"));
 	}
 
 	public void handleAcceptProposal(UUID playerId1, UUID playerId2, String godName) {
@@ -346,38 +279,26 @@ public class MarriageManager {
 		save();
 	}
 
-	public void proposeMarriage(UUID player1, UUID player2) {
-		String pattern = "HH:mm:ss dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-		Date thisDate = new Date();
+	public boolean hasPickupWeddingRing(UUID playerId) {
+		if (playerId == null) {
+			Gods.get().log("playerId==null");
+		}
 
-		this.marriagesConfig.set(player1.toString() + ".GettingMarried", null);
-		this.marriagesConfig.set(player2.toString() + ".GettingMarried", null);
-		this.marriagesConfig.set(player1.toString() + ".Married", null);
-		this.marriagesConfig.set(player2.toString() + ".Married", null);
+		if (this.marriagesConfig.getString(playerId.toString() + ".GettingMarried.HasPickupWeddingToken") == null) {
+			return false;
+		}
 
-		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Partner", player2.toString());
-		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
-		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Partner", player1.toString());
-
-		save();
+		return true;
 	}
 
-	public void divorce(UUID believerId) {
-		String partnerId = this.marriagesConfig.getString(believerId.toString() + ".Married.Partner");
-
-		this.marriagesConfig.set(believerId.toString(), null);
-
-		if (partnerId != null) {
-			this.marriagesConfig.set(partnerId, null);
-
-			Player partner = Gods.get().getServer().getPlayer(partnerId);
-			if (partner != null) {
-				Gods.get().sendInfo(partner.getUniqueId(), LanguageManager.LANGUAGESTRING.DivorcedYou, ChatColor.RED, "DIVORCED", Gods.get().getServer().getPlayer(partnerId).getDisplayName(), 1);
-			}
+	public void load() {
+		if (this.marriagesConfigFile == null) {
+			this.marriagesConfigFile = new File(Gods.get().getDataFolder(), "marriages.yml");
 		}
-		save();
+
+		this.marriagesConfig = YamlConfiguration.loadConfiguration(this.marriagesConfigFile);
+
+		Gods.get().log("Loaded " + this.marriagesConfig.getKeys(false).size() + " marriages.");
 	}
 
 	public void love(UUID playerId) {
@@ -398,6 +319,89 @@ public class MarriageManager {
 				Gods.get().sendInfo(partner.getUniqueId(), LanguageManager.LANGUAGESTRING.MarrigeLovesYou, ChatColor.GREEN, Gods.get().getServer().getPlayer(playerId).getDisplayName(), ChatColor.DARK_RED + "LOVES", 1);
 			}
 		}
+
+		save();
+	}
+
+	public void proposeMarriage(UUID player1, UUID player2) {
+		String pattern = "HH:mm:ss dd-MM-yyyy";
+		DateFormat formatter = new SimpleDateFormat(pattern);
+		Date thisDate = new Date();
+
+		this.marriagesConfig.set(player1.toString() + ".GettingMarried", null);
+		this.marriagesConfig.set(player2.toString() + ".GettingMarried", null);
+		this.marriagesConfig.set(player1.toString() + ".Married", null);
+		this.marriagesConfig.set(player2.toString() + ".Married", null);
+
+		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Partner", player2.toString());
+		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Partner", player1.toString());
+
+		save();
+	}
+
+	public void save() {
+		if ((this.marriagesConfig == null) || (this.marriagesConfigFile == null)) {
+			return;
+		}
+		try {
+			this.marriagesConfig.save(this.marriagesConfigFile);
+		} catch (Exception ex) {
+			Gods.get().log("Could not save config to " + this.marriagesConfigFile.getName() + ": " + ex.getMessage());
+		}
+	}
+
+	public void setGettingMarried(UUID player1, UUID player2) {
+		String pattern = "HH:mm:ss dd-MM-yyyy";
+		DateFormat formatter = new SimpleDateFormat(pattern);
+		Date thisDate = new Date();
+
+		this.marriagesConfig.set(player1.toString() + ".Married", null);
+		this.marriagesConfig.set(player2.toString() + ".Married", null);
+		this.marriagesConfig.set(player1.toString() + ".MarriageProposal", null);
+		this.marriagesConfig.set(player2.toString() + ".MarriageProposal", null);
+
+		this.marriagesConfig.set(player1.toString() + ".GettingMarried.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player1.toString() + ".GettingMarried.Partner", player2.toString());
+		this.marriagesConfig.set(player2.toString() + ".GettingMarried.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player2.toString() + ".GettingMarried.Partner", player1.toString());
+
+		save();
+	}
+
+	public void setMarriageProposal(UUID player1, UUID player2) {
+		String pattern = "HH:mm:ss dd-MM-yyyy";
+		DateFormat formatter = new SimpleDateFormat(pattern);
+		Date thisDate = new Date();
+
+		this.marriagesConfig.set(player1.toString() + ".Married", null);
+		this.marriagesConfig.set(player2.toString() + ".Married", null);
+		this.marriagesConfig.set(player1.toString() + ".GettingMarried", null);
+		this.marriagesConfig.set(player2.toString() + ".GettingMarried", null);
+
+		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player1.toString() + ".MarriageProposal.Partner", player2.toString());
+		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player2.toString() + ".MarriageProposal.Partner", player1.toString());
+
+		save();
+	}
+
+	public void setMarried(UUID player1, UUID player2) {
+		String pattern = "HH:mm:ss dd-MM-yyyy";
+		DateFormat formatter = new SimpleDateFormat(pattern);
+		Date thisDate = new Date();
+
+		this.marriagesConfig.set(player1.toString() + ".GettingMarried", null);
+		this.marriagesConfig.set(player2.toString() + ".GettingMarried", null);
+		this.marriagesConfig.set(player1.toString() + ".MarriageProposal", null);
+		this.marriagesConfig.set(player2.toString() + ".MarriageProposal", null);
+
+		this.marriagesConfig.set(player1.toString() + ".Married.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player1.toString() + ".Married.Partner", player2.toString());
+		this.marriagesConfig.set(player2.toString() + ".Married.Time", formatter.format(thisDate));
+		this.marriagesConfig.set(player2.toString() + ".Married.Partner", player1.toString());
 
 		save();
 	}

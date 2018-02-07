@@ -20,6 +20,7 @@ public class TaskSpawnGuideMob extends Task {
 		this.mobType = entityType;
 	}
 
+	@Override
 	public void run() {
 		if (this.runs == 0) {
 			Vector dir = this.targetLocation.subtract(this.player.getLocation().toVector()).toVector();

@@ -26,16 +26,13 @@ import com.dogonfire.gods.tasks.TaskInfo;
 public class Gods extends JavaPlugin {
 	private static Gods pluginInstance;
 
+	public static Gods get() {
+		return pluginInstance;
+	}
+
 	private Commands commands = null;
 
 	private GodsConfiguration godsConfig;
-
-	public boolean isWhitelistedGod(String godName) {
-		if (godsConfig.isUseWhitelist()) {
-			return WhitelistManager.get().isWhitelistedGod(godName);
-		}
-		return true;
-	}
 
 	public boolean isBlacklistedGod(String godName) {
 		if (godsConfig.isUseBlacklist()) {
@@ -48,6 +45,13 @@ public class Gods extends JavaPlugin {
 		return godsConfig.getWorlds().contains(world.getName());
 	}
 
+	public boolean isWhitelistedGod(String godName) {
+		if (godsConfig.isUseWhitelist()) {
+			return WhitelistManager.get().isWhitelistedGod(godName);
+		}
+		return true;
+	}
+
 	public void log(String message) {
 		Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 	}
@@ -58,44 +62,28 @@ public class Gods extends JavaPlugin {
 		}
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, int amount, String name, int delay) {
-		Player player = getServer().getPlayer(playerId);
-
-		if (player == null) {
-			logDebug("sendInfo can not find online player with id " + playerId);
-			return;
-		}
-
-		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, amount, name), delay);
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		return this.commands.onCommand(sender, cmd, label, args);
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay) {
-		Player player = getServer().getPlayer(playerId);
-		if (player == null) {
-			logDebug("sendInfo can not find online player with id " + playerId);
-			return;
-		}
+	@Override
+	public void onDisable() {
+		reloadSettings();
 
-		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name1, name2), delay);
+		GodManager.get().save();
+		QuestManager.get().save();
+		BelieverManager.get().save();
+		if ((GodsConfiguration.get().isUseBlacklist()) || (GodsConfiguration.get().isUseWhitelist()))
+			WhitelistManager.get().save();
+		if (GodsConfiguration.get().isHolyLandEnabled())
+			HolyLandManager.get().save();
+		if (GodsConfiguration.get().isBiblesEnabled())
+			HolyBookManager.get().save();
+		pluginInstance = null;
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay) {
-		Player player = getServer().getPlayer(playerId);
-		if (player == null) {
-			logDebug("sendInfo can not find online player with id " + playerId);
-			return;
-		}
-		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name, amount1, amount2), delay);
-	}
-
-	public void reloadSettings() {
-		reloadConfig();
-
-		GodsConfiguration.get().loadSettings();
-
-		WhitelistManager.get().load();
-	}
-
+	@Override
 	public void onEnable() {
 		pluginInstance = this;
 		this.commands = new Commands();
@@ -114,6 +102,7 @@ public class Gods extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChatListener(), this);
 
 		Runnable updateTask = new Runnable() {
+			@Override
 			public void run() {
 				GodManager.get().update();
 			}
@@ -122,26 +111,41 @@ public class Gods extends JavaPlugin {
 
 	}
 
-	public void onDisable() {
-		reloadSettings();
+	public void reloadSettings() {
+		reloadConfig();
 
-		GodManager.get().save();
-		QuestManager.get().save();
-		BelieverManager.get().save();
-		if ((GodsConfiguration.get().isUseBlacklist()) || (GodsConfiguration.get().isUseWhitelist()))
-			WhitelistManager.get().save();
-		if (GodsConfiguration.get().isHolyLandEnabled())
-			HolyLandManager.get().save();
-		if (GodsConfiguration.get().isBiblesEnabled())
-			HolyBookManager.get().save();
-		pluginInstance = null;
+		GodsConfiguration.get().loadSettings();
+
+		WhitelistManager.get().load();
 	}
 
-	public static Gods get() {
-		return pluginInstance;
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, int amount, String name, int delay) {
+		Player player = getServer().getPlayer(playerId);
+
+		if (player == null) {
+			logDebug("sendInfo can not find online player with id " + playerId);
+			return;
+		}
+
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, amount, name), delay);
 	}
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		return this.commands.onCommand(sender, cmd, label, args);
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay) {
+		Player player = getServer().getPlayer(playerId);
+		if (player == null) {
+			logDebug("sendInfo can not find online player with id " + playerId);
+			return;
+		}
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name, amount1, amount2), delay);
+	}
+
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay) {
+		Player player = getServer().getPlayer(playerId);
+		if (player == null) {
+			logDebug("sendInfo can not find online player with id " + playerId);
+			return;
+		}
+
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name1, name2), delay);
 	}
 }

@@ -34,6 +34,10 @@ import com.dogonfire.gods.tasks.ThunderStormTask;
 
 public class HolyPowerManager {
 
+	public static enum HolyPower {
+		KNOWLEDGE, CALLMOON, CALLSUN, HEALING, TAME, LIGHTNING, LIGHTNING_STORM, TELEPORT, FREEZE, ICE, FIREBALL, EARTHQUAKE, NATURE, FIREWORK, DRUNK;
+	}
+
 	private static HolyPowerManager instance;
 
 	public static HolyPowerManager get() {
@@ -42,149 +46,9 @@ public class HolyPowerManager {
 		return instance;
 	}
 
-	private HolyPowerManager() {
-	}
-
-	public static enum HolyPower {
-		KNOWLEDGE, CALLMOON, CALLSUN, HEALING, TAME, LIGHTNING, LIGHTNING_STORM, TELEPORT, FREEZE, ICE, FIREBALL, EARTHQUAKE, NATURE, FIREWORK, DRUNK;
-	}
-
 	private Random random = new Random();
 
-	public String describe(HolyPower power, int value) {
-		String descriptionText = "";
-		switch (power) {
-			case CALLMOON:
-				descriptionText = "Boosts " + value + " levels of xp";
-				break;
-			case EARTHQUAKE:
-				descriptionText = "Heals up to " + value + " other players";
-				break;
-			case CALLSUN:
-				descriptionText = "Calls the moon for " + value + " min";
-				break;
-			case DRUNK:
-				descriptionText = "Calls the sun for " + value + " min";
-				break;
-			case TAME:
-				descriptionText = "Shoots " + value + " firework rockets";
-				break;
-			case NATURE:
-				descriptionText = "Grows nature in a radius of " + value + " blocks";
-				break;
-			case LIGHTNING_STORM:
-				descriptionText = "Earthquake in " + value + " block radius";
-				break;
-			case FIREBALL:
-				descriptionText = "Tame all beasts within " + 2 * value + " blocks";
-				break;
-			case FIREWORK:
-				descriptionText = "Lightning strikes up to " + value + " enemies";
-				break;
-			case FREEZE:
-				descriptionText = "Creates a thunderstorm lasting " + value + " minutes";
-				break;
-			case HEALING:
-				descriptionText = "Teleport up to " + value + " blocks";
-				break;
-			case KNOWLEDGE:
-				descriptionText = "Shoots ice spike which freezes a target on hit";
-				break;
-			case ICE:
-				descriptionText = "Freezes all water within a " + value + " block radius";
-				break;
-			case LIGHTNING:
-				descriptionText = "Fires a fireball with a " + value + " seconds cooldown";
-				break;
-			case TELEPORT:
-				descriptionText = "Gets you drunk for " + value + " seconds!";
-		}
-		return descriptionText;
-	}
-
-	public HolyPower getHolyPowerFromDescription(String description) {
-		HolyPower holyPower = null;
-		String[] text = description.split(" ");
-
-		Gods.get().logDebug(description);
-		if (text[0].equals("Boosts")) {
-			holyPower = HolyPower.KNOWLEDGE;
-		} else if (text[0].equals("Heals")) {
-			holyPower = HolyPower.HEALING;
-		} else if ((text[0].equals("Shoots")) && (text[1].equals("1"))) {
-			holyPower = HolyPower.FIREWORK;
-		} else if (text[0].equals("Gets")) {
-			holyPower = HolyPower.DRUNK;
-		} else if (text[0].equals("Freezes")) {
-			holyPower = HolyPower.FREEZE;
-		} else if ((text[0].equals("Shoots")) && (text[1].equals("ice"))) {
-			holyPower = HolyPower.ICE;
-		} else if ((text[0].equals("Fires")) && (text[1].equals("a"))) {
-			holyPower = HolyPower.FIREBALL;
-		}
-		return holyPower;
-	}
-
-	public Entity[] getNearbyEntities(Location l, double radius) {
-		int iRadius = (int) radius;
-		int chunkRadius = iRadius < 16 ? 1 : (iRadius - iRadius % 16) / 16;
-		HashSet<Entity> radiusEntities = new HashSet<Entity>();
-		for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
-			for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
-				int x = (int) l.getX();
-				int y = (int) l.getY();
-				int z = (int) l.getZ();
-				for (Entity e : new Location(l.getWorld(), x + chX * 16, y, z + chZ * 16).getChunk().getEntities()) {
-					if ((e.getLocation().distance(l) <= radius) && (e.getLocation().getBlock() != l.getBlock())) {
-						radiusEntities.add(e);
-					}
-				}
-			}
-		}
-		return (Entity[]) radiusEntities.toArray(new Entity[radiusEntities.size()]);
-	}
-
-	public Entity[] getNearbyLivingEntities(Location l, double radius) {
-		int iRadius = (int) radius;
-		int chunkRadius = iRadius < 16 ? 1 : (iRadius - iRadius % 16) / 16;
-		HashSet<Entity> radiusEntities = new HashSet<Entity>();
-		for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
-			for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
-				int x = (int) l.getX();
-				int y = (int) l.getY();
-				int z = (int) l.getZ();
-				for (Entity e : new Location(l.getWorld(), x + chX * 16, y, z + chZ * 16).getChunk().getEntities()) {
-					if ((e instanceof LivingEntity)) {
-						if ((e.getLocation().distance(l) <= radius) && (e.getLocation().getBlock() != l.getBlock())) {
-							radiusEntities.add(e);
-						}
-					}
-				}
-			}
-		}
-		return (Entity[]) radiusEntities.toArray(new Entity[radiusEntities.size()]);
-	}
-
-	private boolean checkBlock(double x1, double y1, double z1, double w1, double h1, double d1, double x2, double y2, double z2, double w2, double h2, double d2) {
-		if (x1 + w1 < x2) {
-			return false;
-		}
-		if (x2 + w2 < x1) {
-			return false;
-		}
-		if (y1 + h1 < y2) {
-			return false;
-		}
-		if (y2 + h2 < y1) {
-			return false;
-		}
-		if (z1 + d1 < z2) {
-			return false;
-		}
-		if (z2 + d2 < z1) {
-			return false;
-		}
-		return true;
+	private HolyPowerManager() {
 	}
 
 	public void activatePower(Player player, HolyPower powerType, int powerStrength) {
@@ -239,60 +103,101 @@ public class HolyPowerManager {
 		}
 	}
 
-	private void tame(Player player, int powerStrength) {
-		for (Entity entity : getNearbyEntities(player.getLocation(), powerStrength * 2)) {
-			if ((entity instanceof Tameable)) {
-				Tameable creature = (Tameable) entity;
+	public void boostKnowledge(Player player, int powerValue) {
+		Gods.get().logDebug("Boosting " + powerValue + " xp of knowledge");
 
-				creature.setOwner(player);
-				creature.setTamed(true);
-			}
-		}
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskBoostKnowledge(player, powerValue), 1L);
 	}
 
-	void lightning(Player player, int powerStrength) {
-		int maxStrikes = 10;
-		int strikes = 0;
-		for (Entity entity : getNearbyEntities(player.getLocation(), 10.0D)) {
-			if (entity.getEntityId() != player.getEntityId()) {
-				if (strikes >= maxStrikes) {
-					break;
-				}
-				entity.getWorld().strikeLightning(entity.getLocation());
+	public void callMoon(Player player, int powerValue) {
+		Gods.get().logDebug("Starting call moon " + powerValue + " ");
 
-				strikes++;
-			}
-		}
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskCallMoon(player, powerValue), 1L);
 	}
 
-	public void teleport(Player player, int powerStrength) {
-		int distance = 100 * powerStrength;
+	public void callSun(Player player, int powerValue) {
+		Gods.get().logDebug("Starting call sun " + powerValue + " rockets");
 
-		World world = player.getWorld();
-		Location start = player.getLocation();
-		start.setY(start.getY() + 1.6D);
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskCallSun(player, powerValue), 1L);
+	}
 
-		Block lastSafe = world.getBlockAt(start);
+	private boolean checkBlock(double x1, double y1, double z1, double w1, double h1, double d1, double x2, double y2, double z2, double w2, double h2, double d2) {
+		if (x1 + w1 < x2) {
+			return false;
+		}
+		if (x2 + w2 < x1) {
+			return false;
+		}
+		if (y1 + h1 < y2) {
+			return false;
+		}
+		if (y2 + h2 < y1) {
+			return false;
+		}
+		if (z1 + d1 < z2) {
+			return false;
+		}
+		if (z2 + d2 < z1) {
+			return false;
+		}
+		return true;
+	}
 
-		BlockIterator bi = new BlockIterator(player, distance);
-		while (bi.hasNext()) {
-			Block block = bi.next();
-			if ((block.getType().isSolid()) && (block.getType() != Material.AIR)) {
+	public String describe(HolyPower power, int value) {
+		String descriptionText = "";
+		switch (power) {
+			case CALLMOON:
+				descriptionText = "Boosts " + value + " levels of xp";
 				break;
-			}
-			lastSafe = block;
+			case EARTHQUAKE:
+				descriptionText = "Heals up to " + value + " other players";
+				break;
+			case CALLSUN:
+				descriptionText = "Calls the moon for " + value + " min";
+				break;
+			case DRUNK:
+				descriptionText = "Calls the sun for " + value + " min";
+				break;
+			case TAME:
+				descriptionText = "Shoots " + value + " firework rockets";
+				break;
+			case NATURE:
+				descriptionText = "Grows nature in a radius of " + value + " blocks";
+				break;
+			case LIGHTNING_STORM:
+				descriptionText = "Earthquake in " + value + " block radius";
+				break;
+			case FIREBALL:
+				descriptionText = "Tame all beasts within " + 2 * value + " blocks";
+				break;
+			case FIREWORK:
+				descriptionText = "Lightning strikes up to " + value + " enemies";
+				break;
+			case FREEZE:
+				descriptionText = "Creates a thunderstorm lasting " + value + " minutes";
+				break;
+			case HEALING:
+				descriptionText = "Teleport up to " + value + " blocks";
+				break;
+			case KNOWLEDGE:
+				descriptionText = "Shoots ice spike which freezes a target on hit";
+				break;
+			case ICE:
+				descriptionText = "Freezes all water within a " + value + " block radius";
+				break;
+			case LIGHTNING:
+				descriptionText = "Fires a fireball with a " + value + " seconds cooldown";
+				break;
+			case TELEPORT:
+				descriptionText = "Gets you drunk for " + value + " seconds!";
 		}
-		Location newLoc = lastSafe.getLocation();
-		newLoc.setPitch(start.getPitch());
-		newLoc.setYaw(start.getYaw());
-		player.teleport(newLoc);
-		world.playEffect(newLoc, Effect.ENDER_SIGNAL, 0);
-		world.playSound(newLoc, Sound.ENTITY_ENDERMEN_AMBIENT, 1.0F, 0.3F);
+		return descriptionText;
 	}
 
-	public void magicArrow(Player player, int powerStrength) {
-		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1.0F, 1.0F);
-		player.launchProjectile(Arrow.class);
+	public void drunk(Player player, int powerValue) {
+		Gods.get().logDebug("Drunking " + powerValue + " creatures");
+
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskDrunk(player, powerValue), 1L);
 	}
 
 	public void earthQuake(final Player player, int value) {
@@ -303,6 +208,7 @@ public class HolyPowerManager {
 		BukkitRunnable task = new BukkitRunnable() {
 			private int count = 0;
 
+			@Override
 			public void run() {
 				Location above = location.clone().add(0.0D, 1.0D, 0.0D);
 				if ((above.getBlock().getType().isSolid()) || (!location.getBlock().getType().isSolid())) {
@@ -369,6 +275,69 @@ public class HolyPowerManager {
 		}
 	}
 
+	public HolyPower getHolyPowerFromDescription(String description) {
+		HolyPower holyPower = null;
+		String[] text = description.split(" ");
+
+		Gods.get().logDebug(description);
+		if (text[0].equals("Boosts")) {
+			holyPower = HolyPower.KNOWLEDGE;
+		} else if (text[0].equals("Heals")) {
+			holyPower = HolyPower.HEALING;
+		} else if ((text[0].equals("Shoots")) && (text[1].equals("1"))) {
+			holyPower = HolyPower.FIREWORK;
+		} else if (text[0].equals("Gets")) {
+			holyPower = HolyPower.DRUNK;
+		} else if (text[0].equals("Freezes")) {
+			holyPower = HolyPower.FREEZE;
+		} else if ((text[0].equals("Shoots")) && (text[1].equals("ice"))) {
+			holyPower = HolyPower.ICE;
+		} else if ((text[0].equals("Fires")) && (text[1].equals("a"))) {
+			holyPower = HolyPower.FIREBALL;
+		}
+		return holyPower;
+	}
+
+	public Entity[] getNearbyEntities(Location l, double radius) {
+		int iRadius = (int) radius;
+		int chunkRadius = iRadius < 16 ? 1 : (iRadius - iRadius % 16) / 16;
+		HashSet<Entity> radiusEntities = new HashSet<Entity>();
+		for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
+			for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
+				int x = (int) l.getX();
+				int y = (int) l.getY();
+				int z = (int) l.getZ();
+				for (Entity e : new Location(l.getWorld(), x + chX * 16, y, z + chZ * 16).getChunk().getEntities()) {
+					if ((e.getLocation().distance(l) <= radius) && (e.getLocation().getBlock() != l.getBlock())) {
+						radiusEntities.add(e);
+					}
+				}
+			}
+		}
+		return radiusEntities.toArray(new Entity[radiusEntities.size()]);
+	}
+
+	public Entity[] getNearbyLivingEntities(Location l, double radius) {
+		int iRadius = (int) radius;
+		int chunkRadius = iRadius < 16 ? 1 : (iRadius - iRadius % 16) / 16;
+		HashSet<Entity> radiusEntities = new HashSet<Entity>();
+		for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
+			for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
+				int x = (int) l.getX();
+				int y = (int) l.getY();
+				int z = (int) l.getZ();
+				for (Entity e : new Location(l.getWorld(), x + chX * 16, y, z + chZ * 16).getChunk().getEntities()) {
+					if ((e instanceof LivingEntity)) {
+						if ((e.getLocation().distance(l) <= radius) && (e.getLocation().getBlock() != l.getBlock())) {
+							radiusEntities.add(e);
+						}
+					}
+				}
+			}
+		}
+		return radiusEntities.toArray(new Entity[radiusEntities.size()]);
+	}
+
 	public void growNature(Player player, int power) {
 		player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1.0F, 0.1F);
 		for (int x = -10 * power; x < 10 * power; x++) {
@@ -414,6 +383,12 @@ public class HolyPowerManager {
 		}
 	}
 
+	public void healing(Player player, int powerValue) {
+		Gods.get().logDebug("Healing up to " + powerValue + " creatures");
+
+		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskHealRadius(player, powerValue), 1L);
+	}
+
 	public void ice(final Player player, int power) {
 		player.playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0F, 0.1F);
 
@@ -423,6 +398,7 @@ public class HolyPowerManager {
 		block.setDropItem(false);
 
 		BukkitRunnable run = new BukkitRunnable() {
+			@Override
 			public void run() {
 				boolean hit = false;
 				World world = block.getWorld();
@@ -481,6 +457,7 @@ public class HolyPowerManager {
 					new BukkitRunnable() {
 						Random random = new Random();
 
+						@Override
 						public void run() {
 							for (int i = 0; i < 4; i++) {
 								if (changedBlocks.isEmpty()) {
@@ -505,6 +482,21 @@ public class HolyPowerManager {
 		run.runTaskTimer(Gods.get(), 0L, 1L);
 	}
 
+	void lightning(Player player, int powerStrength) {
+		int maxStrikes = 10;
+		int strikes = 0;
+		for (Entity entity : getNearbyEntities(player.getLocation(), 10.0D)) {
+			if (entity.getEntityId() != player.getEntityId()) {
+				if (strikes >= maxStrikes) {
+					break;
+				}
+				entity.getWorld().strikeLightning(entity.getLocation());
+
+				strikes++;
+			}
+		}
+	}
+
 	public void lightningStorm(Player player, int powerValue) {
 		player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 1.0F, 0.1F);
 
@@ -515,39 +507,50 @@ public class HolyPowerManager {
 		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new ThunderStormTask(player, System.currentTimeMillis() + powerValue * 60000), 60L);
 	}
 
+	public void magicArrow(Player player, int powerStrength) {
+		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1.0F, 1.0F);
+		player.launchProjectile(Arrow.class);
+	}
+
 	public void shootFirework(Player player, int powerValue) {
 		Gods.get().logDebug("Starting fireworks with " + powerValue + " rockets");
 
 		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskFirework(player, powerValue), 1L);
 	}
 
-	public void callSun(Player player, int powerValue) {
-		Gods.get().logDebug("Starting call sun " + powerValue + " rockets");
+	private void tame(Player player, int powerStrength) {
+		for (Entity entity : getNearbyEntities(player.getLocation(), powerStrength * 2)) {
+			if ((entity instanceof Tameable)) {
+				Tameable creature = (Tameable) entity;
 
-		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskCallSun(player, powerValue), 1L);
+				creature.setOwner(player);
+				creature.setTamed(true);
+			}
+		}
 	}
 
-	public void callMoon(Player player, int powerValue) {
-		Gods.get().logDebug("Starting call moon " + powerValue + " ");
+	public void teleport(Player player, int powerStrength) {
+		int distance = 100 * powerStrength;
 
-		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskCallMoon(player, powerValue), 1L);
-	}
+		World world = player.getWorld();
+		Location start = player.getLocation();
+		start.setY(start.getY() + 1.6D);
 
-	public void healing(Player player, int powerValue) {
-		Gods.get().logDebug("Healing up to " + powerValue + " creatures");
+		Block lastSafe = world.getBlockAt(start);
 
-		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskHealRadius(player, powerValue), 1L);
-	}
-
-	public void drunk(Player player, int powerValue) {
-		Gods.get().logDebug("Drunking " + powerValue + " creatures");
-
-		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskDrunk(player, powerValue), 1L);
-	}
-
-	public void boostKnowledge(Player player, int powerValue) {
-		Gods.get().logDebug("Boosting " + powerValue + " xp of knowledge");
-
-		Gods.get().getServer().getScheduler().scheduleSyncDelayedTask(Gods.get(), new TaskBoostKnowledge(player, powerValue), 1L);
+		BlockIterator bi = new BlockIterator(player, distance);
+		while (bi.hasNext()) {
+			Block block = bi.next();
+			if ((block.getType().isSolid()) && (block.getType() != Material.AIR)) {
+				break;
+			}
+			lastSafe = block;
+		}
+		Location newLoc = lastSafe.getLocation();
+		newLoc.setPitch(start.getPitch());
+		newLoc.setYaw(start.getYaw());
+		player.teleport(newLoc);
+		world.playEffect(newLoc, Effect.ENDER_SIGNAL, 0);
+		world.playSound(newLoc, Sound.ENTITY_ENDERMEN_AMBIENT, 1.0F, 0.3F);
 	}
 }

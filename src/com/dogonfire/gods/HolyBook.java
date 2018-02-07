@@ -18,12 +18,24 @@ public class HolyBook {
 		this.s = itemStack;
 	}
 
+	public String getAuthor() {
+		return ((BookMeta) this.s.getItemMeta()).getAuthor();
+	}
+
 	public ItemStack getItem() {
 		return this.s;
 	}
 
-	public boolean hasTitle() {
-		return this.s.getItemMeta().hasDisplayName();
+	public ItemStack getItemStack() {
+		return this.s;
+	}
+
+	public List<String> getPages() {
+		return ((BookMeta) this.s.getItemMeta()).getPages();
+	}
+
+	public String getTitle() {
+		return ((BookMeta) this.s.getItemMeta()).getTitle();
 	}
 
 	public boolean hasAuthor() {
@@ -34,23 +46,8 @@ public class HolyBook {
 		return ((BookMeta) this.s.getItemMeta()).hasPages();
 	}
 
-	public String getTitle() {
-		return ((BookMeta) this.s.getItemMeta()).getTitle();
-	}
-
-	public String getAuthor() {
-		return ((BookMeta) this.s.getItemMeta()).getAuthor();
-	}
-
-	public List<String> getPages() {
-		return ((BookMeta) this.s.getItemMeta()).getPages();
-	}
-
-	public void setTitle(String name) {
-		ItemMeta meta = this.s.getItemMeta();
-		BookMeta bookMeta = (BookMeta) meta;
-		bookMeta.setTitle(ChatColor.GOLD + name);
-		this.s.setItemMeta(bookMeta);
+	public boolean hasTitle() {
+		return this.s.getItemMeta().hasDisplayName();
 	}
 
 	public void setAuthor(String author) {
@@ -67,7 +64,10 @@ public class HolyBook {
 		this.s.setItemMeta(bookMeta);
 	}
 
-	public ItemStack getItemStack() {
-		return this.s;
+	public void setTitle(String name) {
+		ItemMeta meta = this.s.getItemMeta();
+		BookMeta bookMeta = (BookMeta) meta;
+		bookMeta.setTitle(ChatColor.GOLD + name);
+		this.s.setItemMeta(bookMeta);
 	}
 }
