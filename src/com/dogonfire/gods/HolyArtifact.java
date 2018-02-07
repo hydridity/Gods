@@ -7,6 +7,8 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.dogonfire.gods.managers.HolyPowerManager;
+
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 
 public class HolyArtifact {

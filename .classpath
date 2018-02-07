@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/bPermissions-2.10.9m.jar"/>
-	<classpathentry kind="lib" path="lib/EssentialsGroupManager.jar"/>
-	<classpathentry kind="lib" path="lib/PermissionsBukkit-2.3.jar"/>
-	<classpathentry kind="lib" path="lib/PermissionsEx-1.23.1.jar"/>
-	<classpathentry kind="lib" path="lib/worldedit-5.6.2.jar"/>
-	<classpathentry kind="lib" path="lib/WorldGuard.jar"/>
-	<classpathentry kind="lib" path="lib/zPermissions-1.2a.jar"/>
+	<classpathentry kind="lib" path="Z:/_EXT/bPermissions-2.12 (MC 1.10).jar"/>
+	<classpathentry kind="lib" path="Z:/_EXT/EssentialsXGroupManager-2.0.1 (MC 1.11).jar"/>
+	<classpathentry kind="lib" path="Z:/_EXT/PermissionsEx-1.23.4 (MC 1.11).jar"/>
+	<classpathentry kind="lib" path="Z:/_EXT/worldguard-6.2.1 (MC 1.12).jar"/>
+	<classpathentry kind="lib" path="Z:/_EXT/Spigot 1.12.2 (Build 1508).jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/CloudStation/minecraft/plugins/Gods/lib/spigot-1.10.2.jar"/>
-	<classpathentry kind="lib" path="D:/CloudStation/minecraft/plugins/Gods/lib/spigot-api-1.10.2-R0.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="Z:/_EXT/worldedit-bukkit-6.1.7.3 (MC 1.12.1).jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

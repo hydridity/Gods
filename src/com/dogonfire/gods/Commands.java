@@ -18,6 +18,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.dogonfire.gods.managers.GodManager;
+import com.dogonfire.gods.managers.GodManager.GodMood;
+import com.dogonfire.gods.managers.LanguageManager;
+import com.dogonfire.gods.managers.MarriageManager;
+
 public class Commands {
 	private Gods plugin = null;
 
@@ -502,7 +507,7 @@ public class Commands {
 		sender.sendMessage("" + ChatColor.DARK_PURPLE + ChatColor.ITALIC + this.plugin.getGodManager().getGodDescription(godName));
 
 		ChatColor moodColor = ChatColor.AQUA;
-		GodManager.GodMood godMood = this.plugin.getGodManager().getMoodForGod(godName);
+		GodMood godMood = this.plugin.getGodManager().getMoodForGod(godName);
 
 		switch (godMood) {
 			case EXALTED:
@@ -1176,30 +1181,6 @@ public class Commands {
 		return false;
 	}
 
-	private boolean CommandSetDivineForce(CommandSender sender, String[] args) {
-		Player player = (Player) sender;
-
-		if ((!player.isOp()) && (!this.plugin.getPermissionsManager().hasPermission(player, "gods.priest.setforce"))) {
-			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
-			return false;
-		}
-
-		if ((!this.plugin.getGodManager().isPriest(player.getUniqueId())) && (!player.isOp())) {
-			sender.sendMessage(ChatColor.RED + "Only priests can set the divine force");
-			return false;
-		}
-
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-
-		String divineForce = args[1].toUpperCase();
-
-		this.plugin.getGodManager().setDivineForceForGod(godName, GodManager.GodType.valueOf(divineForce));
-
-		sender.sendMessage(ChatColor.AQUA + "You set your religion's divine force to be " + ChatColor.YELLOW + this.plugin.getGodManager().getDivineForceForGod(godName).name());
-
-		return true;
-	}
-
 	private boolean CommandKick(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
@@ -1431,8 +1412,6 @@ public class Commands {
 	}
 
 	private boolean CommandSetPriest(CommandSender sender, String[] args) {
-		Player player = (Player) sender;
-
 		if (args.length < 3) {
 			sender.sendMessage(ChatColor.RED + "Not enough arguments");
 			return false;
@@ -1462,23 +1441,6 @@ public class Commands {
 		return true;
 	}
 
-	private boolean CommandPray(CommandSender sender, String[] args) {
-		if (!this.plugin.prayersEnabled) {
-			sender.sendMessage(ChatColor.RED + "Prayers are not enabled on this server");
-			return false;
-		}
-
-		Player player = (Player) sender;
-
-		if ((!sender.isOp()) && (!this.plugin.getPermissionsManager().hasPermission((Player) sender, "gods.pray"))) {
-			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
-			return false;
-		}
-		String prayerName = args[2];
-
-		return true;
-	}
-
 	private boolean CommandFollowers(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 
@@ -1505,7 +1467,6 @@ public class Commands {
 		Set<UUID> list = this.plugin.getBelieverManager().getBelieversForGod(godName);
 
 		for (UUID believerId : list) {
-			int power = (int) this.plugin.getGodManager().getGodPower(godName);
 			Date lastPrayer = this.plugin.getBelieverManager().getLastPrayerTime(believerId);
 
 			believers.add(new Believer(believerId, lastPrayer));
@@ -1536,7 +1497,6 @@ public class Commands {
 			believersList = ((List<Believer>) believersList).subList(0, 15);
 		}
 
-		int n = 1;
 		boolean playerShown = false;
 
 		Date thisDate = new Date();
@@ -1567,10 +1527,7 @@ public class Commands {
 			} else {
 				this.plugin.log(StringUtils.rightPad(believerName, 20) + ChatColor.AQUA + StringUtils.rightPad(new StringBuilder().append(" Prayed ").append(ChatColor.GOLD).append(date).toString(), 18));
 			}
-			n++;
 		}
-
-		n = 1;
 
 		if ((playerGod != null) && (!playerShown)) {
 			for (Believer believer : believers) {
@@ -1579,7 +1536,6 @@ public class Commands {
 				if ((playerGod != null) && (believer.believerId.equals(player.getUniqueId()))) {
 					sender.sendMessage(ChatColor.GOLD + StringUtils.rightPad(believerName, 20) + StringUtils.rightPad(new StringBuilder().append(" Prayed ").append(believer.lastPrayer).toString(), 18));
 				}
-				n++;
 			}
 		}
 		return true;
@@ -1791,38 +1747,6 @@ public class Commands {
 		this.plugin.getGodManager().blessPlayerWithHolyArtifact(godName, player);
 
 		sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " gave " + player.getName() + ChatColor.AQUA + " a Holy artifact!");
-
-		return true;
-	}
-
-	private boolean CommandPrayForArtifact(CommandSender sender, String[] args) {
-		if (!this.plugin.holyArtifactsEnabled) {
-			sender.sendMessage(ChatColor.RED + "Holy Artifacts are not enabled on this server");
-			return false;
-		}
-
-		if (!sender.isOp()) {
-			sender.sendMessage(ChatColor.RED + "You do not have permission for that");
-			return false;
-		}
-
-		Player player = (Player) sender;
-		String godName = this.plugin.getBelieverManager().getGodForBeliever(player.getUniqueId());
-
-		int currentPrayerPower = plugin.getBelieverManager().getPrayerPower(player.getUniqueId());
-
-		if (currentPrayerPower < this.plugin.prayerPowerForHolyArtifact) {
-			this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.NotEnoughPrayerPower, ChatColor.AQUA, this.plugin.prayerPowerForHolyArtifact - currentPrayerPower, godName, 1);
-			return false;
-		}
-
-		this.plugin.sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.PrayedForHolyArtifact, ChatColor.AQUA, this.plugin.prayerPowerForHolyArtifact - currentPrayerPower, godName, 1);
-
-		this.plugin.getGodManager().blessPlayerWithHolyArtifact(godName, player);
-
-		sender.sendMessage(ChatColor.GOLD + godName + ChatColor.AQUA + " gave " + player.getName() + ChatColor.AQUA + " a Holy artifact!");
-
-		this.plugin.getBelieverManager().increasePrayerPower(player.getUniqueId(), -plugin.prayerPowerForHolyArtifact);
 
 		return true;
 	}

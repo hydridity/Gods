@@ -18,8 +18,24 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.dogonfire.gods.GodManager.GodType;
-import com.dogonfire.gods.tasks.InfoTask;
+import com.dogonfire.gods.listeners.BlockListener;
+import com.dogonfire.gods.listeners.ChatListener;
+import com.dogonfire.gods.managers.AltarManager;
+import com.dogonfire.gods.managers.BelieverManager;
+import com.dogonfire.gods.managers.ChatManager;
+import com.dogonfire.gods.managers.GodManager;
+import com.dogonfire.gods.managers.GodManager.GodType;
+import com.dogonfire.gods.managers.HolyArtifactManager;
+import com.dogonfire.gods.managers.HolyBookManager;
+import com.dogonfire.gods.managers.HolyLandManager;
+import com.dogonfire.gods.managers.HolyPowerManager;
+import com.dogonfire.gods.managers.LanguageManager;
+import com.dogonfire.gods.managers.MarriageManager;
+import com.dogonfire.gods.managers.PermissionsManager;
+import com.dogonfire.gods.managers.PrayerManager;
+import com.dogonfire.gods.managers.QuestManager;
+import com.dogonfire.gods.managers.WhitelistManager;
+import com.dogonfire.gods.tasks.TaskInfo;
 
 public class Gods extends JavaPlugin {
 	private PrayerManager prayerManager = null;
@@ -236,7 +252,7 @@ public class Gods extends JavaPlugin {
 			return;
 		}
 
-		getServer().getScheduler().runTaskLater(this, new InfoTask(this, color, playerId, message, amount, name), delay);
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(this, color, playerId, message, amount, name), delay);
 	}
 
 	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay) {
@@ -246,7 +262,7 @@ public class Gods extends JavaPlugin {
 			return;
 		}
 
-		getServer().getScheduler().runTaskLater(this, new InfoTask(this, color, playerId, message, name1, name2), delay);
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(this, color, playerId, message, name1, name2), delay);
 	}
 
 	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay) {
@@ -255,7 +271,7 @@ public class Gods extends JavaPlugin {
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
-		getServer().getScheduler().runTaskLater(this, new InfoTask(this, color, playerId, message, name, amount1, amount2), delay);
+		getServer().getScheduler().runTaskLater(this, new TaskInfo(this, color, playerId, message, name, amount1, amount2), delay);
 	}
 
 	public void reloadSettings() {
