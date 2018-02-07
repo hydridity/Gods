@@ -57,8 +57,6 @@ public class Gods extends JavaPlugin {
 	public boolean propheciesEnabled = false;
 	public boolean chatFormattingEnabled = false;
 	public boolean useGodTitles = true;
-	public boolean useUpdateNotifications = true;
-	public boolean metricsOptOut = false;
 	public boolean marriageEnabled = false;
 	public boolean marriageFireworksEnabled = false;
 	public boolean cursingEnabled = true;
@@ -220,19 +218,6 @@ public class Gods extends JavaPlugin {
 		return this.worlds.contains(world.getName());
 	}
 
-	public Material getMaterialById(String materialString) {
-		String[] split = materialString.split(":");
-		if (split.length < 2) {
-			return null;
-		}
-		int id = Integer.valueOf(split[0]).intValue();
-		int data = Integer.valueOf(split[1]).intValue();
-
-		Material material = Material.getMaterial(id);
-
-		return material;
-	}
-
 	public void log(String message) {
 		Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 	}
@@ -290,8 +275,6 @@ public class Gods extends JavaPlugin {
 		this.config = getConfig();
 
 		this.debug = this.config.getBoolean("Settings.Debug", false);
-		this.useUpdateNotifications = this.config.getBoolean("Settings.DisplayUpdateNotifications", true);
-		this.metricsOptOut = this.config.getBoolean("Settings.MetricsOptOut", false);
 		this.downloadLanguageFile = this.config.getBoolean("Settings.DownloadLanguageFile", true);
 		this.languageIdentifier = this.config.getString("Settings.Language", "english");
 
@@ -483,8 +466,6 @@ public class Gods extends JavaPlugin {
 
 	public void saveSettings() {
 		this.config.set("Settings.Debug", Boolean.valueOf(this.debug));
-		this.config.set("Settings.DisplayUpdateNotifications", Boolean.valueOf(this.useUpdateNotifications));
-		this.config.set("Settings.MetricsOptOut", Boolean.valueOf(this.metricsOptOut));
 		this.config.set("Settings.DownloadLanguageFile", Boolean.valueOf(this.downloadLanguageFile));
 		this.config.set("Settings.Language", this.languageIdentifier);
 		this.config.set("Settings.Worlds", this.worlds);
@@ -616,9 +597,6 @@ public class Gods extends JavaPlugin {
 		// 200L);
 		getServer().getScheduler().runTaskTimer(this, updateTask, 20L, 200L);
 
-		if (!this.metricsOptOut) {
-			StartMetrics();
-		}
 	}
 
 	public void onDisable() {
@@ -637,133 +615,6 @@ public class Gods extends JavaPlugin {
 			this.bibleManager.save();
 		}
 		// this.bossManager.disable();
-	}
-
-	private void StartMetrics() {
-		try {
-			Metrics metrics = new Metrics(this);
-
-			metrics.addCustomData(new Metrics.Plotter("Servers") {
-				public int getValue() {
-					return 1;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using quests") {
-				public int getValue() {
-					if (Gods.this.questsEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using item blessings") {
-				public int getValue() {
-					if (Gods.this.itemBlessingEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using blessings") {
-				public int getValue() {
-					if (Gods.this.blessingEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using curses") {
-				public int getValue() {
-					if (Gods.this.cursingEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using whitelist") {
-				public int getValue() {
-					if (Gods.this.useWhitelist) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using blacklist") {
-				public int getValue() {
-					if (Gods.this.useBlacklist) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using commandments") {
-				public int getValue() {
-					if (Gods.this.commandmentsEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using holy land") {
-				public int getValue() {
-					if (Gods.this.holyLandEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using PermissionsBukkit") {
-				public int getValue() {
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("PermissionsBukkit")) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using PermissionsEx") {
-				public int getValue() {
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("PermissionsEx")) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using GroupManager") {
-				public int getValue() {
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("GroupManager")) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using bPermissions") {
-				public int getValue() {
-					if (Gods.this.getPermissionsManager().getPermissionPluginName().equals("bPermissions")) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using Bibles") {
-				public int getValue() {
-					if (Gods.this.biblesEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.addCustomData(new Metrics.Plotter("Using Marriages") {
-				public int getValue() {
-					if (Gods.this.marriageEnabled) {
-						return 1;
-					}
-					return 0;
-				}
-			});
-			metrics.start();
-		} catch (Exception ex) {
-			log("Failed to submit metrics :-(");
-		}
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

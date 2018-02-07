@@ -1,7 +1,5 @@
 package com.dogonfire.gods.tasks;
 
-import java.util.Random;
-
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -11,7 +9,6 @@ public class CallSunTask implements Runnable {
 	private Gods plugin;
 	private long stopTime;
 	private Player player;
-	private Random random = new Random();
 
 	public CallSunTask(Gods instance, Player player, long stopTime) {
 		this.plugin = instance;

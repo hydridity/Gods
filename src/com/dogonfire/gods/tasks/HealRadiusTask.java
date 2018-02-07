@@ -1,10 +1,9 @@
 package com.dogonfire.gods.tasks;
 
-import java.util.Random;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,12 +14,9 @@ import com.dogonfire.gods.LanguageManager.LANGUAGESTRING;
 public class HealRadiusTask implements Runnable {
 	private Gods plugin;
 	private Player player;
-	private long amount;
-	private Random random = new Random();
 
 	public HealRadiusTask(Gods instance, Player player, long amount) {
 		this.plugin = instance;
-		this.amount = amount;
 		this.player = player;
 	}
 
@@ -32,7 +28,7 @@ public class HealRadiusTask implements Runnable {
 		for (Entity entity : entities) {
 			if (this.player.getEntityId() != entity.getEntityId()) {
 				LivingEntity targetEntity = (LivingEntity) entity;
-				targetEntity.setHealth(targetEntity.getMaxHealth());
+				targetEntity.setHealth(targetEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 				targetEntity.getWorld().playEffect(targetEntity.getLocation(), Effect.ENDER_SIGNAL, 0);
 				n++;
 			}

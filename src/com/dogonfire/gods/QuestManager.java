@@ -73,8 +73,7 @@ public class QuestManager {
 	private FileConfiguration questsConfig = null;
 	private File questsConfigFile = null;
 	private Random random = new Random();
-	private HashMap<Material, Integer> rewardValues = new HashMap();
-	private Block foundGlobalQuestTargetBlock = null;
+	private HashMap<Material, Integer> rewardValues = new HashMap<Material, Integer>();
 
 	QuestManager(Gods p) {
 		this.plugin = p;
@@ -431,8 +430,6 @@ public class QuestManager {
 
 	boolean isQuestTarget(Location location) {
 		int hash = hashVector(location);
-		String world;
-
 		try {
 			String questTargetLocationWorld = this.questsConfig.getString("QuestTargets." + hash + ".Location.World");
 
@@ -506,7 +503,7 @@ public class QuestManager {
 		Block target = null;
 		Inventory contents = null;
 
-		List defaultspawnblocks = new ArrayList();
+		List<Material> defaultspawnblocks = new ArrayList<Material>();
 
 		defaultspawnblocks.add(Material.STONE);
 		defaultspawnblocks.add(Material.SMOOTH_BRICK);
@@ -725,71 +722,16 @@ public class QuestManager {
 		return "Holy mountain of " + generateHolyName();
 	}
 
-	private Location getPositionForLostCity(String godName, String worldName, int minDist, int maxDist, Location center) {
-		int run = 0;
-		Block target = null;
-		Inventory contents = null;
-
-		List defaultspawnblocks = new ArrayList();
-		defaultspawnblocks.add(Material.COBBLESTONE);
-
-		minDist = 1;
-		maxDist = 2000;
-		do {
-			run++;
-
-			int minLevel = 60;
-			int maxLevel = 80;
-			int maxLight = 4;
-			int minLight = 2;
-			int x;
-			int z;
-			do {
-				x = this.random.nextInt(maxDist * 2) - maxDist + center.getBlockX();
-				z = this.random.nextInt(maxDist * 2) - maxDist + center.getBlockZ();
-			} while ((Math.abs(x - center.getBlockX()) < minDist) || (Math.abs(z - center.getBlockZ()) < minDist));
-			int y;
-			do {
-				y = this.random.nextInt(maxLevel);
-			} while (
-
-			y < minLevel);
-			World world = this.plugin.getServer().getWorld(worldName);
-			target = world.getBlockAt(x, y, z);
-			if (target.getType() == Material.AIR) {
-				target = world.getBlockAt(x, y - 1, z);
-				if (defaultspawnblocks.contains(target.getType())) {
-					target.setType(Material.GLOWSTONE);
-
-					target = world.getBlockAt(x, y, z);
-					target.setType(Material.CHEST);
-
-					Chest tb = (Chest) target.getState();
-					contents = tb.getInventory();
-				}
-			}
-		} while ((contents == null) && (run < 1000));
-		if (run >= 1000) {
-			this.plugin.log("Lost city chest generation FAILED");
-			return null;
-		}
-		return target.getLocation();
-	}
-
 	Location getPositionForAncientTemple(String worldName, int minDist, int maxDist, Location center) {
 		int run = 0;
 		Block target = null;
-		Inventory contents = null;
-
-		List defaultspawnblocks = new ArrayList();
+		List<Material> defaultspawnblocks = new ArrayList<Material>();
 		defaultspawnblocks.add(Material.ENDER_PORTAL_FRAME);
 		do {
 			run++;
 
 			int minLevel = 4;
 			int maxLevel = 50;
-			int maxLight = 4;
-			int minLight = 0;
 			int x;
 			int z;
 			do {
@@ -825,7 +767,7 @@ public class QuestManager {
 		boolean placed = false;
 		Block target = null;
 
-		List defaultspawnblocks = new ArrayList();
+		List<Material> defaultspawnblocks = new ArrayList<Material>();
 		defaultspawnblocks.add(Material.GRASS);
 
 		minDist = 1;
@@ -876,10 +818,10 @@ public class QuestManager {
 		Block target = null;
 		boolean canBuild = true;
 
-		List<Material> defaultspawnblocks = new ArrayList();
+		List<Material> defaultspawnblocks = new ArrayList<Material>();
 		defaultspawnblocks.add(Material.GRASS);
 
-		List<Biome> biomeTypes = new ArrayList();
+		List<Biome> biomeTypes = new ArrayList<Biome>();
 		biomeTypes.add(Biome.EXTREME_HILLS);
 		biomeTypes.add(Biome.ICE_MOUNTAINS);
 		biomeTypes.add(Biome.DESERT_HILLS);
@@ -911,7 +853,7 @@ public class QuestManager {
 
 			target = world.getBlockAt(x, y, z);
 
-			if ((biomeTypes.contains(target.getType())) && (world.getBlockAt(x, y + 1, z).getType() == Material.AIR)) {
+			if ((biomeTypes.contains(target.getBiome())) && (world.getBlockAt(x, y + 1, z).getType() == Material.AIR)) {
 				// target = world.getBlockAt(x, y - 1, z);
 
 				if ((target.getBiome() == Biome.EXTREME_HILLS) && (defaultspawnblocks.contains(target.getType()))) {
@@ -951,10 +893,10 @@ public class QuestManager {
 
 		Block target = null;
 
-		List<Material> defaultspawnblocks = new ArrayList();
+		List<Material> defaultspawnblocks = new ArrayList<Material>();
 		defaultspawnblocks.add(Material.GRASS);
 
-		List<Biome> biomeTypes = new ArrayList();
+		List<Biome> biomeTypes = new ArrayList<Biome>();
 		biomeTypes.add(Biome.EXTREME_HILLS);
 		biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
 		biomeTypes.add(Biome.EXTREME_HILLS_WITH_TREES);
@@ -980,7 +922,7 @@ public class QuestManager {
 				}
 			} while ((Math.abs(x - center.getBlockX()) < minDist) || (Math.abs(z - center.getBlockZ()) < minDist) || (y < minLevel));
 			target = world.getBlockAt(x, y, z);
-			if ((biomeTypes.contains(target.getType())) && (world.getBlockAt(x, y + 1, z).getType() == Material.AIR)) {
+			if ((biomeTypes.contains(target.getBiome())) && (world.getBlockAt(x, y + 1, z).getType() == Material.AIR)) {
 				int flatBlocks = 0;
 				if ((defaultspawnblocks.contains(target.getRelative(BlockFace.NORTH).getType())) && (target.getRelative(BlockFace.NORTH).getRelative(BlockFace.UP).getType() == Material.AIR)) {
 					flatBlocks++;
@@ -1013,7 +955,7 @@ public class QuestManager {
 		boolean placed = false;
 		Block target = null;
 
-		List defaultspawnblocks = new ArrayList();
+		List<Material> defaultspawnblocks = new ArrayList<Material>();
 		defaultspawnblocks.add(Material.GRASS);
 
 		minDist = 1;
@@ -1054,118 +996,6 @@ public class QuestManager {
 			return null;
 		}
 		return target.getLocation();
-	}
-
-	private List<String> getGodsForGetHolyArtifactQuest() {
-		List<String> gods = this.plugin.getGodManager().getOnlineGods();
-		List<String> questGods = new ArrayList();
-		for (String godName : gods) {
-			if (hasQuest(godName)) {
-				return questGods;
-			}
-			questGods.add(godName);
-		}
-		if (questGods.size() < 2) {
-			questGods.clear();
-		}
-		return questGods;
-	}
-
-	private List<String> getGodsForHolyBattleQuest() {
-		Set<String> gods = this.plugin.getGodManager().getAllGods();
-		List<String> questGods = new ArrayList();
-		for (String godName : gods) {
-			List enemyGodNames = this.plugin.getGodManager().getEnemyGodsForGod(godName);
-			if ((enemyGodNames.size() != 0) && (this.plugin.getBelieverManager().getOnlineBelieversForGod(godName).size() != 0)) {
-				questGods.add(godName);
-				questGods.add((String) enemyGodNames.get(this.random.nextInt(questGods.size())));
-				return questGods;
-			}
-		}
-		return questGods;
-	}
-
-	private boolean generateGlobalGetHolyArtifactQuest(List<String> godNames) {
-		if (godNames.size() == 0) {
-			return false;
-		}
-
-		int questMaxDuration = 0;
-		Date thisDate = new Date();
-		String pattern = "HH:mm dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-
-		QUESTTYPE questType = QUESTTYPE.GETHOLYARTIFACT;
-		questMaxDuration = 90;
-
-		Location holyArtifactTarget = null;
-
-		String godName = (String) godNames.get(this.random.nextInt(godNames.size()));
-
-		Set<UUID> players = this.plugin.getBelieverManager().getOnlineBelieversForGod(godName);
-		if (players.size() == 0) {
-			return false;
-		}
-
-		Player player = this.plugin.getServer().getPlayer((UUID) (players.toArray()[0]));
-		String worldName = player.getWorld().getName();
-
-		Location center = player.getLocation();
-
-		ItemStack item = null;
-		switch (this.random.nextInt(9)) {
-			case 0:
-				item = new ItemStack(Material.SHEARS);
-				break;
-			case 1:
-				item = new ItemStack(Material.FISHING_ROD);
-				break;
-			case 2:
-				item = new ItemStack(Material.STICK);
-				break;
-			case 3:
-				item = new ItemStack(Material.GOLD_SPADE);
-				break;
-			case 4:
-				item = new ItemStack(Material.TORCH);
-				break;
-			case 5:
-				item = new ItemStack(Material.WATCH);
-				break;
-			case 6:
-				item = new ItemStack(Material.GOLD_SWORD);
-				break;
-			case 7:
-				item = new ItemStack(Material.GOLD_BOOTS);
-				break;
-			case 8:
-				item = new ItemStack(Material.GOLD_RECORD);
-		}
-		switch (this.random.nextInt(1)) {
-			case 0:
-				holyArtifactTarget = generateAncientCaveTemple(item, godName, worldName, 2500, 10000, center);
-				break;
-			case 1:
-				holyArtifactTarget = getPositionForLostCity(godName, worldName, 2500, 10000, center);
-		}
-		if (holyArtifactTarget == null) {
-			return false;
-		}
-		this.questsConfig.set("Global.Type", questType.toString());
-		this.questsConfig.set("Global.MaxDuration", Integer.valueOf(questMaxDuration));
-		this.questsConfig.set("Global.TargetType", godName);
-		this.questsConfig.set("Global.ItemType", item.getType().name().toUpperCase());
-		this.questsConfig.set("Global.CreatedTime", formatter.format(thisDate));
-		this.questsConfig.set("Global.Location.World", holyArtifactTarget.getWorld().getName());
-		this.questsConfig.set("Global.Location.X", Integer.valueOf(holyArtifactTarget.getBlockX()));
-		this.questsConfig.set("Global.Location.Y", Integer.valueOf(holyArtifactTarget.getBlockY()));
-		this.questsConfig.set("Global.Location.Z", Integer.valueOf(holyArtifactTarget.getBlockZ()));
-
-		save();
-
-		this.plugin.log("Global quest started: Get Holy Artifact at " + holyArtifactTarget.getBlockX() + "," + holyArtifactTarget.getBlockY() + "," + holyArtifactTarget.getBlockZ() + " in " + holyArtifactTarget.getWorld());
-
-		return true;
 	}
 
 	private boolean generateSlayQuest(String godName) {
@@ -1217,33 +1047,6 @@ public class QuestManager {
 		save();
 
 		this.plugin.log(godName + " issued a quest: Kill " + questAmount + " " + targetType.name());
-
-		return true;
-	}
-
-	private boolean generateHolyFeastQuest(String godName) {
-		String questTargetType = this.plugin.getGodManager().getEatFoodTypeForGod(godName).name();
-		int questAmount = 0;
-		int questMaxDuration = 0;
-		Date thisDate = new Date();
-		String pattern = "HH:mm dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-
-		QUESTTYPE questType = QUESTTYPE.HOLYFEAST;
-		questAmount = 1 + (int) this.plugin.getGodManager().getGodPower(godName) / 50 + 1 * this.plugin.getBelieverManager().getOnlineBelieversForGod(godName).size();
-
-		questMaxDuration = (1 + this.random.nextInt(5)) * questAmount;
-
-		this.questsConfig.set(godName + ".Type", questType.toString());
-		this.questsConfig.set(godName + ".Amount", Integer.valueOf(questAmount));
-		this.questsConfig.set(godName + ".TargetType", questTargetType);
-		this.questsConfig.set(godName + ".MaxDuration", Integer.valueOf(questMaxDuration));
-		this.questsConfig.set(godName + ".Progress", null);
-		this.questsConfig.set(godName + ".CreatedTime", formatter.format(thisDate));
-
-		save();
-
-		this.plugin.log(godName + " issued a quest: Feast " + questAmount + " of " + questTargetType);
 
 		return true;
 	}
@@ -1327,70 +1130,6 @@ public class QuestManager {
 		save();
 
 		this.plugin.log(godName + " issued a quest: Make " + questAmount + " non-believers read the Holy Book");
-
-		return true;
-	}
-
-	private boolean generateBurnBiblesQuest(String godName) {
-		String questTargetType = "NONE";
-		int questAmount = 0;
-		int questMaxDuration = 0;
-		Date thisDate = new Date();
-		String pattern = "HH:mm dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-
-		QUESTTYPE questType = QUESTTYPE.BURNBIBLES;
-		questAmount = 1 + 1 * this.plugin.getBelieverManager().getOnlineBelieversForGod(godName).size();
-		questMaxDuration = (1 + this.random.nextInt(5)) * questAmount;
-
-		List enemyGods = this.plugin.getGodManager().getEnemyGodsForGod(godName);
-		if (enemyGods.size() == 0) {
-			return false;
-		}
-		questTargetType = (String) enemyGods.get(this.random.nextInt(enemyGods.size()));
-
-		this.questsConfig.set(godName + ".Type", questType.toString());
-		this.questsConfig.set(godName + ".Amount", Integer.valueOf(questAmount));
-		this.questsConfig.set(godName + ".TargetType", questTargetType);
-		this.questsConfig.set(godName + ".MaxDuration", Integer.valueOf(questMaxDuration));
-		this.questsConfig.set(godName + ".Progress", null);
-		this.questsConfig.set(godName + ".CreatedTime", formatter.format(thisDate));
-
-		save();
-
-		this.plugin.log(godName + " issued a quest: Burn " + questAmount + " " + questTargetType);
-
-		return true;
-	}
-
-	private boolean generateCrusadeQuest(String godName) {
-		String questTargetType = "NONE";
-		int questAmount = 0;
-		int questMaxDuration = 0;
-		Date thisDate = new Date();
-		String pattern = "HH:mm dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-
-		QUESTTYPE questType = QUESTTYPE.CRUSADE;
-		questAmount = 1 + this.plugin.getBelieverManager().getOnlineBelieversForGod(godName).size();
-		questMaxDuration = (5 + this.random.nextInt(5)) * questAmount;
-
-		List<String> enemyGods = this.plugin.getGodManager().getEnemyGodsForGod(godName);
-		if (enemyGods.size() == 0) {
-			return false;
-		}
-		questTargetType = (String) enemyGods.get(this.random.nextInt(enemyGods.size()));
-
-		this.questsConfig.set(godName + ".Type", questType.toString());
-		this.questsConfig.set(godName + ".Amount", Integer.valueOf(questAmount));
-		this.questsConfig.set(godName + ".TargetType", questTargetType);
-		this.questsConfig.set(godName + ".MaxDuration", Integer.valueOf(questMaxDuration));
-		this.questsConfig.set(godName + ".Progress", null);
-		this.questsConfig.set(godName + ".CreatedTime", formatter.format(thisDate));
-
-		save();
-
-		this.plugin.log(godName + " issued a quest: Kill " + questAmount + " non-believers!");
 
 		return true;
 	}
@@ -1527,7 +1266,7 @@ public class QuestManager {
 		if (targetLocation == null) {
 			return false;
 		}
-		int hash = hashVector(targetLocation);
+		hashVector(targetLocation);
 
 		this.setQuestTarget(godName, targetLocation);
 
@@ -1795,7 +1534,7 @@ public class QuestManager {
 		}
 
 		QUESTTYPE questType = getQuestTypeForGod(godName);
-		String questTargetType = getQuestTargetTypeForGod(godName);
+		getQuestTargetTypeForGod(godName);
 
 		boolean complete = false;
 
@@ -2015,7 +1754,7 @@ public class QuestManager {
 	}
 
 	public List<ItemStack> getRewardsForQuestCompletion(String godName) {
-		List rewards = new ArrayList();
+		List<ItemStack> rewards = new ArrayList<ItemStack>();
 
 		int power = (int) this.plugin.getGodManager().getGodPower(godName);
 		int t = 0;
@@ -2036,7 +1775,7 @@ public class QuestManager {
 	}
 
 	public List<ItemStack> getRewardsForQuestCompletion(int power) {
-		List rewards = new ArrayList();
+		List<ItemStack> rewards = new ArrayList<ItemStack>();
 		while (power > 0) {
 			int r = this.random.nextInt(this.rewardValues.size());
 
@@ -2193,7 +1932,7 @@ public class QuestManager {
 							}
 
 							if (player == null) {
-								this.plugin.logDebug("PilgrimageQuest player '" + player.getDisplayName() + "' is null");
+								this.plugin.logDebug("PilgrimageQuest player is null");
 								return;
 							}
 
@@ -2300,7 +2039,7 @@ public class QuestManager {
 								return;
 							}
 							if (player == null) {
-								this.plugin.logDebug("GlobalArtifactQuest player '" + player.getDisplayName() + "' is null");
+								this.plugin.logDebug("GlobalArtifactQuest player is null");
 								return;
 							}
 							if (artifactLocation.getWorld().getName().equals(player.getWorld().getName())) {
@@ -2427,7 +2166,7 @@ public class QuestManager {
 							return;
 						}
 						if (player == null) {
-							this.plugin.logDebug("DragonQuest player '" + player.getDisplayName() + "' is null");
+							this.plugin.logDebug("DragonQuest player is null");
 							return;
 						}
 						if (!dragonLocation.getWorld().getName().equals(player.getWorld().getName())) {

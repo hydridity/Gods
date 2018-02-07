@@ -16,7 +16,6 @@ public class SpawnGuideMobTask implements Runnable {
 	private Player player;
 	private Creature spawnedMob = null;
 	private int runs = 0;
-	private int taskId = 0;
 
 	public SpawnGuideMobTask(Gods instance, Player p, Location location, EntityType entityType) {
 		this.targetLocation = location;
@@ -39,10 +38,10 @@ public class SpawnGuideMobTask implements Runnable {
 				this.spawnedMob = ((Creature) entity);
 				this.spawnedMob.setTarget(this.player);
 
-				this.taskId = this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, 40L);
+				this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, 40L);
 			}
 		} else if (this.runs < 2) {
-			this.taskId = this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, 40L);
+			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, this, 40L);
 			this.spawnedMob.setVelocity(new Vector(0.0F, 0.5F, 0.0F));
 		} else {
 			this.spawnedMob.remove();

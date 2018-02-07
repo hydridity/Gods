@@ -2,7 +2,6 @@ package com.dogonfire.gods;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -35,8 +34,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener {
 	private Gods plugin;
-	private Random random = new Random();
-	private HashMap<String, Long> lastEatTimes = new HashMap();
+	private HashMap<String, Long> lastEatTimes = new HashMap<String, Long>();
 
 	BlockListener(Gods p) {
 		this.plugin = p;
@@ -306,9 +304,6 @@ public class BlockListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		this.plugin.getGodManager().updateOnlineGods();
-		if ((this.plugin.useUpdateNotifications) && ((event.getPlayer().isOp()) || (this.plugin.getPermissionsManager().hasPermission(event.getPlayer(), "gods.updates")))) {
-			this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, new UpdateNotifier(this.plugin, event.getPlayer()));
-		}
 	}
 
 	@EventHandler

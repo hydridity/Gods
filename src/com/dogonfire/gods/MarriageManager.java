@@ -247,8 +247,6 @@ public class MarriageManager {
 			return false;
 		}
 
-		Player player = this.plugin.getServer().getPlayer(playerId);
-
 		return true;
 	}
 

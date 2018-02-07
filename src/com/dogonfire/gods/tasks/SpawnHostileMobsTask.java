@@ -7,17 +7,14 @@ import org.bukkit.entity.Player;
 import com.dogonfire.gods.Gods;
 
 public class SpawnHostileMobsTask implements Runnable {
-	private Gods plugin = null;
 	private EntityType mobType;
 	private int numberOfMobs = 0;
 	private Player player;
-	private String godName;
 
 	public SpawnHostileMobsTask(Gods instance, String god, Player p, EntityType entityType, int n) {
-		this.plugin = instance;
 		this.numberOfMobs = n;
 		this.player = p;
-		this.godName = new String(god);
+		new String(god);
 		this.mobType = entityType;
 	}
 

@@ -2,7 +2,6 @@ package com.dogonfire.gods;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.anjocaido.groupmanager.GroupManager;
@@ -10,13 +9,9 @@ import org.anjocaido.groupmanager.data.Group;
 import org.anjocaido.groupmanager.dataholder.OverloadedWorldHolder;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.tyrannyofheaven.bukkit.zPermissions.ZPermissionsService;
-
-import com.platymuus.bukkit.permissions.PermissionsPlugin;
 
 import de.bananaco.bpermissions.api.ApiLayer;
 import de.bananaco.bpermissions.api.CalculableType;
@@ -30,8 +25,7 @@ public class PermissionsManager {
 	private String pluginName = "null";
 	private PluginManager pluginManager = null;
 	private Gods plugin;
-	private PermissionsPlugin permissionsBukkit = null;
-	private ZPermissionsService zPermissions;
+
 	private PermissionManager pex = null;
 	private GroupManager groupManager = null;
 
@@ -41,11 +35,7 @@ public class PermissionsManager {
 
 	public void load() {
 		this.pluginManager = this.plugin.getServer().getPluginManager();
-		if (this.pluginManager.getPlugin("PermissionsBukkit") != null) {
-			this.plugin.log("Using PermissionsBukkit.");
-			this.pluginName = "PermissionsBukkit";
-			this.permissionsBukkit = ((PermissionsPlugin) this.pluginManager.getPlugin("PermissionsBukkit"));
-		} else if (this.pluginManager.getPlugin("PermissionsEx") != null) {
+		if (this.pluginManager.getPlugin("PermissionsEx") != null) {
 			this.plugin.log("Using PermissionsEx.");
 			this.pluginName = "PermissionsEx";
 			this.pex = PermissionsEx.getPermissionManager();
@@ -56,9 +46,6 @@ public class PermissionsManager {
 		} else if (this.pluginManager.getPlugin("bPermissions") != null) {
 			this.plugin.log("Using bPermissions.");
 			this.pluginName = "bPermissions";
-		} else if (this.pluginManager.getPlugin("zPermissions") != null) {
-			this.plugin.log("Using zPermissions.");
-			this.zPermissions = ((ZPermissionsService) this.plugin.getServer().getServicesManager().load(ZPermissionsService.class));
 		} else {
 			this.plugin.log("No permissions plugin detected! Defaulting to superperm");
 			this.pluginName = "SuperPerm";
@@ -91,12 +78,6 @@ public class PermissionsManager {
 	}
 
 	public boolean isGroup(String groupName) {
-		if (this.pluginName.equals("PermissionsBukkit")) {
-			if (this.permissionsBukkit.getGroup(groupName) == null) {
-				return false;
-			}
-			return true;
-		}
 		if (this.pluginName.equals("PermissionsEx")) {
 			if (this.pex.getGroup(groupName) == null) {
 				return false;
@@ -104,7 +85,7 @@ public class PermissionsManager {
 			return true;
 		}
 		if (this.pluginName.equals("GroupManager")) {
-			if (this.permissionsBukkit.getGroup(groupName) == null) {
+			if (GroupManager.getGlobalGroups().getGroup(groupName) == null) {
 				return false;
 			}
 			return true;
@@ -115,14 +96,8 @@ public class PermissionsManager {
 
 	public List<String> getGroups() {
 		List<String> list = new ArrayList<String>();
-		if (this.pluginName.equals("PermissionsBukkit")) {
-			for (com.platymuus.bukkit.permissions.Group group : this.permissionsBukkit.getAllGroups()) {
-				list.add(group.getName());
-			}
-			return list;
-		}
 		if (this.pluginName.equals("PermissionsEx")) {
-			for (PermissionGroup group : this.pex.getGroups()) {
+			for (PermissionGroup group : this.pex.getGroupList()) {
 				list.add(group.getName());
 			}
 			return list;
@@ -146,28 +121,10 @@ public class PermissionsManager {
 			return list;
 		}
 
-		Object group;
-		if (this.pluginName.equals("zPermissions")) {
-			for (group = this.zPermissions.getAllGroups().iterator(); ((Iterator<?>) group).hasNext();) {
-				String groupName = (String) ((Iterator<?>) group).next();
-
-				list.add(groupName);
-			}
-			return list;
-		}
 		return list;
 	}
 
 	public String getGroup(String playerName) {
-		if (this.pluginName.equals("PermissionsBukkit")) {
-			if (this.permissionsBukkit.getGroups(playerName) == null) {
-				return "";
-			}
-			if (this.permissionsBukkit.getGroups(playerName).size() == 0) {
-				return "";
-			}
-			return ((com.platymuus.bukkit.permissions.Group) this.permissionsBukkit.getGroups(playerName).get(0)).getName();
-		}
 		if (this.pluginName.equals("PermissionsEx")) {
 			if ((this.pex.getUser(playerName).getGroups() == null) || (this.pex.getUser(playerName).getGroups().length == 0)) {
 				return "";
@@ -191,9 +148,6 @@ public class PermissionsManager {
 				return "";
 			}
 			return (String) w.getUser(playerName).getGroupsAsString().toArray()[0];
-		}
-		if (this.pluginName.equals("zPermissions")) {
-			return this.zPermissions.getPlayerPrimaryGroup(playerName);
 		}
 		return "";
 	}
@@ -223,46 +177,38 @@ public class PermissionsManager {
 	}
 
 	public void setGroup(String playerName, String groupName) {
-		if (this.pluginName.equals("PermissionsBukkit")) {
-			if (this.permissionsBukkit.getServer().getPlayer(playerName) != null) {
-				if (this.permissionsBukkit.getServer().getPlayer(playerName).getGameMode() == GameMode.CREATIVE) {
-					this.permissionsBukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "gm " + playerName);
-				}
+		String[] groups;
+		if (this.pluginName.equals("PermissionsEx")) {
+			PermissionUser user = PermissionsEx.getPermissionManager().getUser(playerName);
+
+			groups = new String[] { groupName };
+			user.setGroups(groups);
+		} else if (this.pluginName.equals("bPermissions")) {
+			for (org.bukkit.World world : this.plugin.getServer().getWorlds()) {
+				ApiLayer.setGroup(world.getName(), CalculableType.USER, playerName, groupName);
 			}
-			this.permissionsBukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "perm player setgroup " + playerName + " " + groupName);
-		} else {
-			String[] groups;
-			if (this.pluginName.equals("PermissionsEx")) {
-				PermissionUser user = PermissionsEx.getPermissionManager().getUser(playerName);
+		} else if (this.pluginName.equals("GroupManager")) {
+			OverloadedWorldHolder owh = this.groupManager.getWorldsHolder().getWorldDataByPlayerName(playerName);
+			if (owh == null) {
+				return;
+			}
+			org.anjocaido.groupmanager.data.User user = owh.getUser(playerName);
+			if (user == null) {
+				this.plugin.log("No player with the name '" + groupName + "'");
+				return;
+			}
+			org.anjocaido.groupmanager.data.Group group = owh.getGroup(groupName);
+			if (group == null) {
+				this.plugin.log("No group with the name '" + groupName + "'");
+				return;
+			}
+			user.setGroup(group);
 
-				groups = new String[] { groupName };
-				user.setGroups(groups);
-			} else if (this.pluginName.equals("bPermissions")) {
-				for (org.bukkit.World world : this.plugin.getServer().getWorlds()) {
-					ApiLayer.setGroup(world.getName(), CalculableType.USER, playerName, groupName);
-				}
-			} else if (this.pluginName.equals("GroupManager")) {
-				OverloadedWorldHolder owh = this.groupManager.getWorldsHolder().getWorldDataByPlayerName(playerName);
-				if (owh == null) {
-					return;
-				}
-				org.anjocaido.groupmanager.data.User user = owh.getUser(playerName);
-				if (user == null) {
-					this.plugin.log("No player with the name '" + groupName + "'");
-					return;
-				}
-				org.anjocaido.groupmanager.data.Group group = owh.getGroup(groupName);
-				if (group == null) {
-					this.plugin.log("No group with the name '" + groupName + "'");
-					return;
-				}
-				user.setGroup(group);
-
-				Player p = Bukkit.getPlayer(playerName);
-				if (p != null) {
-					GroupManager.BukkitPermissions.updatePermissions(p);
-				}
+			Player p = Bukkit.getPlayer(playerName);
+			if (p != null) {
+				GroupManager.BukkitPermissions.updatePermissions(p);
 			}
 		}
+
 	}
 }

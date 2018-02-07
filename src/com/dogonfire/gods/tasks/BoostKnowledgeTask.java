@@ -6,12 +6,10 @@ import org.bukkit.entity.Player;
 import com.dogonfire.gods.Gods;
 
 public class BoostKnowledgeTask implements Runnable {
-	private Gods plugin;
 	private Player player;
 	private long amount;
 
 	public BoostKnowledgeTask(Gods instance, Player player, long amount) {
-		this.plugin = instance;
 		this.amount = amount;
 		this.player = player;
 	}

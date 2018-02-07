@@ -5,7 +5,6 @@ import java.util.Random;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -43,7 +42,7 @@ public class GiveHolyArtifactTask implements Runnable {
 		try {
 			this.plugin.logDebug("Creating holy artifact for " + this.player.getName());
 
-			Item artifact = this.plugin.getHolyArtifactManager().createHolyArtifact(this.player.getName(), this.godType, this.godName, spawnLocation);
+			this.plugin.getHolyArtifactManager().createHolyArtifact(this.player.getName(), this.godType, this.godName, spawnLocation);
 
 			spawnLocation.getWorld().playEffect(spawnLocation, Effect.MOBSPAWNER_FLAMES, 25);
 		} catch (Exception ex) {

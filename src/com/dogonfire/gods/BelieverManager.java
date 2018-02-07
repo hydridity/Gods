@@ -5,7 +5,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,7 +18,6 @@ import com.dogonfire.gods.LanguageManager.LANGUAGESTRING;
 
 public class BelieverManager {
 	private Gods plugin = null;
-	private Random random = new Random();
 	private FileConfiguration believersConfig = null;
 	private File believersConfigFile = null;
 	private long lastSaveTime;
@@ -119,7 +117,7 @@ public class BelieverManager {
 
 	public Set<UUID> getOnlineBelieversForGod(String godName) {
 		Set<String> allBelievers = this.believersConfig.getKeys(false);
-		Set<UUID> believers = new HashSet();
+		Set<UUID> believers = new HashSet<UUID>();
 
 		for (String believer : allBelievers) {
 			UUID believerId = UUID.fromString(believer);

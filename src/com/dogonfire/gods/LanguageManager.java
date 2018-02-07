@@ -115,9 +115,6 @@ public class LanguageManager {
 		}
 	}
 
-	private void save() {
-	}
-
 	private String getLanguageFileForGod(String godName) {
 		return this.plugin.getGodManager().getLanguageFileForGod(godName);
 	}

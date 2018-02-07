@@ -285,13 +285,10 @@ public class HolyPowerManager {
 
 	public void magicArrow(Player player, int powerStrength) {
 		player.playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 1.0F, 1.0F);
-		Arrow arrow = (Arrow) player.launchProjectile(Arrow.class);
+		player.launchProjectile(Arrow.class);
 	}
 
 	public void earthQuake(final Player player, int value) {
-		int earthQuakePower = 10;
-		int earthQuakeDistance = 10;
-
 		final Location location = player.getLocation().add(0.0D, -0.2D, 0.0D);
 		final Vector direction = player.getLocation().getDirection();
 		direction.setY(0);
@@ -344,9 +341,6 @@ public class HolyPowerManager {
 			}
 		};
 		task.runTaskTimer(this.plugin, 0L, 3L);
-	}
-
-	private void flames() {
 	}
 
 	public void fireBall(Player player, int power) {

@@ -32,7 +32,7 @@ public class FireworkTask implements Runnable {
 		int z = (int) this.player.getLocation().getZ();
 
 		int power = (int) (Math.random() * 2.0D) + 1;
-		List<Color> c = new ArrayList();
+		List<Color> c = new ArrayList<Color>();
 
 		for (int n = 0; n < 2; n++) {
 			switch (random.nextInt(19)) {

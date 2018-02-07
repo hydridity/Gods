@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 
 import com.dogonfire.gods.Gods;
@@ -30,7 +29,7 @@ public class ThunderStormTask implements Runnable {
 		if (targetEntity != this.player) {
 			Location strikeLocation = targetEntity.getLocation();
 			strikeLocation = strikeLocation.getWorld().getHighestBlockAt(strikeLocation).getLocation();
-			LightningStrike localLightningStrike = this.player.getWorld().strikeLightning(strikeLocation);
+			this.player.getWorld().strikeLightning(strikeLocation);
 		}
 		if (System.currentTimeMillis() < this.stopTime) {
 			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new ThunderStormTask(this.plugin, this.player, this.stopTime), 20 + this.random.nextInt(100));

@@ -22,7 +22,6 @@ public class InfoTask implements Runnable {
 		this.playerId = playerId;
 		this.message = m;
 		this.name1 = name1;
-		this.name2 = this.name2;
 		this.amount = amount;
 		this.color = color;
 	}
@@ -33,14 +32,12 @@ public class InfoTask implements Runnable {
 		this.name1 = name1;
 		this.name2 = name2;
 		this.message = m;
-		this.amount = this.amount;
 		this.color = color;
 	}
 
 	public InfoTask(Gods instance, ChatColor color, UUID playerId, LanguageManager.LANGUAGESTRING m, String name, int amount1, int amount2) {
 		this.plugin = instance;
 		this.playerId = playerId;
-		this.name1 = this.name1;
 		this.name2 = String.valueOf(amount1);
 		this.message = m;
 		this.amount = amount2;

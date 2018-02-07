@@ -5,14 +5,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -33,7 +29,6 @@ public class HolyLandManager implements Listener {
 	private HashMap<Location, Long> hashedLocations = new HashMap<Location, Long>();
 	private String pattern = "HH:mm dd-MM-yyyy";
 	private DateFormat formatter = new SimpleDateFormat(this.pattern);
-	private Random random = new Random();
 
 	HolyLandManager(Gods p) {
 		this.plugin = p;
@@ -126,23 +121,6 @@ public class HolyLandManager implements Listener {
 		return minPlayer.getName();
 	}
 
-	private Date getFirstPrayerTime(String holylandHash) {
-		String firstPrayerString = this.landConfig.getString(holylandHash + ".FirstPrayerTime");
-		if (firstPrayerString == null) {
-			return null;
-		}
-		String pattern = "HH:mm dd-MM-yyyy";
-		DateFormat formatter = new SimpleDateFormat(pattern);
-		Date firstPrayerDate = null;
-		try {
-			firstPrayerDate = formatter.parse(firstPrayerString);
-		} catch (Exception ex) {
-			firstPrayerDate = new Date();
-			firstPrayerDate.setTime(0L);
-		}
-		return firstPrayerDate;
-	}
-
 	public void setNeutralLand(Location location) {
 		Date thisDate = new Date();
 
@@ -207,18 +185,6 @@ public class HolyLandManager implements Listener {
 		save();
 	}
 
-	private double getHolylandRadius(String godName) {
-		float godPower = this.plugin.getGodManager().getGodPower(godName);
-		if (godPower == 0.0F) {
-			return 0.0D;
-		}
-		double radius = this.plugin.minHolyLandRadius + this.plugin.holyLandRadiusPrPower * godPower;
-		if (radius > this.plugin.maxHolyLandRadius) {
-			return this.plugin.maxHolyLandRadius;
-		}
-		return radius;
-	}
-
 	public String getGodAtHolyLandLocationFrom(String believerName) {
 		return (String) this.fromLocations.get(believerName);
 	}
@@ -233,14 +199,6 @@ public class HolyLandManager implements Listener {
 
 	public void setNeutralLandLocationFrom(String believerName) {
 		this.fromLocations.put(believerName, "NeutralLand");
-	}
-
-	private void setBiomeAt(World world, int x, int z, Biome biome) {
-		Chunk chunk = world.getChunkAt(x >> 4, z >> 4);
-		if (!chunk.isLoaded()) {
-			chunk.load();
-		}
-		world.setBiome(x, z, biome);
 	}
 
 	public boolean deleteGodAtHolyLandLocation(Location location) {
