@@ -5,11 +5,11 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import com.dogonfire.gods.commands.GodsCommandExecuter;
 import com.dogonfire.gods.config.GodsConfiguration;
 import com.dogonfire.gods.listeners.BlockListener;
 import com.dogonfire.gods.listeners.ChatListener;
@@ -30,23 +30,19 @@ public class Gods extends JavaPlugin {
 		return pluginInstance;
 	}
 
-	private Commands commands = null;
-
-	private GodsConfiguration godsConfig;
-
 	public boolean isBlacklistedGod(String godName) {
-		if (godsConfig.isUseBlacklist()) {
+		if (GodsConfiguration.get().isUseBlacklist()) {
 			return WhitelistManager.get().isBlacklistedGod(godName);
 		}
 		return false;
 	}
 
 	public boolean isEnabledInWorld(World world) {
-		return godsConfig.getWorlds().contains(world.getName());
+		return GodsConfiguration.get().getWorlds().contains(world.getName());
 	}
 
 	public boolean isWhitelistedGod(String godName) {
-		if (godsConfig.isUseWhitelist()) {
+		if (GodsConfiguration.get().isUseWhitelist()) {
 			return WhitelistManager.get().isWhitelistedGod(godName);
 		}
 		return true;
@@ -57,14 +53,9 @@ public class Gods extends JavaPlugin {
 	}
 
 	public void logDebug(String message) {
-		if (godsConfig.isDebug()) {
+		if (GodsConfiguration.get().isDebug()) {
 			Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 		}
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		return this.commands.onCommand(sender, cmd, label, args);
 	}
 
 	@Override
@@ -86,11 +77,9 @@ public class Gods extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		pluginInstance = this;
-		this.commands = new Commands();
-
+		getCommand("gods").setExecutor(GodsCommandExecuter.get());
 		GodsConfiguration.get().loadSettings();
 		GodsConfiguration.get().saveSettings();
-
 		PermissionsManager.get().load();
 		LanguageManager.get().load();
 		GodManager.get().load();
@@ -101,13 +90,12 @@ public class Gods extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new BlockListener(), this);
 		getServer().getPluginManager().registerEvents(new ChatListener(), this);
 
-		Runnable updateTask = new Runnable() {
+		new BukkitRunnable() {
 			@Override
 			public void run() {
 				GodManager.get().update();
 			}
-		};
-		getServer().getScheduler().runTaskTimer(this, updateTask, 20L, 200L);
+		}.runTaskTimer(this, 20L, 200L);
 
 	}
 

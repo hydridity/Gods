@@ -10,11 +10,9 @@ softdepend:
   - GroupManager
   - WorldGuard
 commands:
-  g:
-    description: "Controls the god system"
-    usage: /g
   gods:
     description: "Controls the god system"
+    aliases: g
     usage: /gods
 permissions: 
   gods.*: 
