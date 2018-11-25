@@ -102,8 +102,8 @@ public class CommandInfo extends GodsCommand {
 		sender.sendMessage(ChatColor.AQUA + "Believers: " + ChatColor.YELLOW + BelieverManager.get().getBelieversForGod(godName).size());
 		sender.sendMessage(ChatColor.AQUA + "Exact power: " + ChatColor.YELLOW + GodManager.get().getGodPower(godName));
 		if (GodsConfiguration.get().isCommandmentsEnabled()) {
-			sender.sendMessage(ChatColor.AQUA + "Holy food: " + ChatColor.YELLOW + LanguageManager.get().getItemTypeName(GodManager.get().getEatFoodTypeForGod(godName)));
-			sender.sendMessage(ChatColor.AQUA + "Unholy food: " + ChatColor.YELLOW + LanguageManager.get().getItemTypeName(GodManager.get().getNotEatFoodTypeForGod(godName)));
+			sender.sendMessage(ChatColor.AQUA + "Holy food: " + ChatColor.YELLOW + LanguageManager.get().getItemTypeName(GodManager.get().getHolyFoodTypeForGod(godName)));
+			sender.sendMessage(ChatColor.AQUA + "Unholy food: " + ChatColor.YELLOW + LanguageManager.get().getItemTypeName(GodManager.get().getUnholyFoodTypeForGod(godName)));
 
 			sender.sendMessage(ChatColor.AQUA + "Holy creature: " + ChatColor.YELLOW + LanguageManager.get().getMobTypeName(GodManager.get().getHolyMobTypeForGod(godName)));
 			sender.sendMessage(ChatColor.AQUA + "Unholy creature: " + ChatColor.YELLOW + LanguageManager.get().getMobTypeName(GodManager.get().getUnholyMobTypeForGod(godName)));

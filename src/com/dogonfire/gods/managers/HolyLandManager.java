@@ -24,28 +24,32 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.config.GodsConfiguration;
 
-public class HolyLandManager implements Listener {
+public class HolyLandManager implements Listener
+{
 	private static HolyLandManager instance;
 
-	public static HolyLandManager get() {
+	public static HolyLandManager get()
+	{
 		if (instance == null)
 			instance = new HolyLandManager();
 		return instance;
 	}
 
-	private FileConfiguration landConfig = null;
-	private File landConfigFile = null;
-	private HashMap<String, String> fromLocations = new HashMap<String, String>();
-	private HashMap<Location, Long> hashedLocations = new HashMap<Location, Long>();
+	private FileConfiguration		landConfig		= null;
+	private File					landConfigFile	= null;
+	private HashMap<String, String>	fromLocations	= new HashMap<String, String>();
+	private HashMap<Location, Long>	hashedLocations	= new HashMap<Location, Long>();
 
-	private String pattern = "HH:mm dd-MM-yyyy";
+	private String					pattern			= "HH:mm dd-MM-yyyy";
 
-	private DateFormat formatter = new SimpleDateFormat(this.pattern);
+	private DateFormat				formatter		= new SimpleDateFormat(this.pattern);
 
-	private HolyLandManager() {
+	private HolyLandManager()
+	{
 	}
 
-	public void clearContestedLand(Location location) {
+	public void clearContestedLand(Location location)
+	{
 		Date thisDate = new Date();
 
 		long hash = hashLocation(location);
@@ -57,7 +61,8 @@ public class HolyLandManager implements Listener {
 		save();
 	}
 
-	public void clearNeutralLand(Location location) {
+	public void clearNeutralLand(Location location)
+	{
 		long hash = hashLocation(location);
 
 		this.landConfig.set(hash + ".NeutralLand", null);
@@ -65,13 +70,15 @@ public class HolyLandManager implements Listener {
 		save();
 	}
 
-	public boolean deleteGodAtHolyLandLocation(Location location) {
+	public boolean deleteGodAtHolyLandLocation(Location location)
+	{
 		Location clampedLocation = new Location(null, location.getBlockX(), 0.0D, location.getBlockZ());
 
 		long holylandHash = hashLocation(clampedLocation);
 
 		String godName = this.landConfig.getString(holylandHash + ".GodName");
-		if (godName != null) {
+		if (godName != null)
+		{
 			this.landConfig.set(holylandHash + ".GodName", null);
 
 			save();
@@ -81,19 +88,24 @@ public class HolyLandManager implements Listener {
 		return false;
 	}
 
-	public Set<String> getBelievers() {
+	public Set<String> getBelievers()
+	{
 		Set<String> allBelievers = this.landConfig.getKeys(false);
 
 		return allBelievers;
 	}
 
-	public long getContestedTimeAtHolyLand(Location location) {
+	public long getContestedTimeAtHolyLand(Location location)
+	{
 		Date thisDate = new Date();
 		Date contestedDate = null;
 		String contestedTime = this.landConfig.getString(hashLocation(location) + ".ContestedTime");
-		try {
+		try
+		{
 			contestedDate = this.formatter.parse(contestedTime);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			contestedDate = new Date();
 			contestedDate.setTime(0L);
 		}
@@ -103,19 +115,23 @@ public class HolyLandManager implements Listener {
 		return diffMinutes;
 	}
 
-	public String getGodAtHolyLandLocation(Location location) {
+	public String getGodAtHolyLandLocation(Location location)
+	{
 		String godName = this.landConfig.getString(hashLocation(location) + ".GodName");
-		if (godName != null) {
+		if (godName != null)
+		{
 			return godName;
 		}
 		return null;
 	}
 
-	public String getGodAtHolyLandLocationFrom(String believerName) {
+	public String getGodAtHolyLandLocationFrom(String believerName)
+	{
 		return this.fromLocations.get(believerName);
 	}
 
-	public String getGodAtHolyLandLocationTo(String believerName, Location location) {
+	public String getGodAtHolyLandLocationTo(String believerName, Location location)
+	{
 		String godName = getGodAtHolyLandLocation(location);
 
 		this.fromLocations.put(believerName, godName);
@@ -123,43 +139,53 @@ public class HolyLandManager implements Listener {
 		return godName;
 	}
 
-	public String getGodForBeliever(String believerName) {
+	public String getGodForBeliever(String believerName)
+	{
 		return this.landConfig.getString(believerName + ".God");
 	}
 
-	public long getHolyLandIdentifierFromLocation(Location location) {
+	public long getHolyLandIdentifierFromLocation(Location location)
+	{
 		long x = location.getBlockX() << 32;
 		long z = location.getBlockZ() & 0xFFFFFFFF;
 
 		return x | z;
 	}
 
-	public String getNearestBeliever(Location location) {
+	public String getNearestBeliever(Location location)
+	{
 		Set<String> allBelievers = this.landConfig.getKeys(false);
 		double minLength = 999999.0D;
 		Player minPlayer = null;
-		for (String believerName : allBelievers) {
+		for (String believerName : allBelievers)
+		{
 			Player player = Gods.get().getServer().getPlayer(believerName);
-			if ((player != null) && (player.getWorld() == location.getWorld())) {
+			if ((player != null) && (player.getWorld() == location.getWorld()))
+			{
 				double length = player.getLocation().subtract(location).length();
-				if (length < minLength) {
+				if (length < minLength)
+				{
 					minLength = length;
 					minPlayer = player;
 				}
 			}
 		}
-		if (minPlayer == null) {
+		if (minPlayer == null)
+		{
 			return null;
 		}
 		return minPlayer.getName();
 	}
 
-	public void handleQuit(String playerName) {
+	public void handleQuit(String playerName)
+	{
 		this.fromLocations.remove(playerName);
 	}
 
-	public long hashLocation(Location location) {
-		if (this.hashedLocations.containsKey(location)) {
+	public long hashLocation(Location location)
+	{
+		if (this.hashedLocations.containsKey(location))
+		{
 			return this.hashedLocations.get(location).longValue();
 		}
 		int chunkX = location.getBlockX() >> 7;
@@ -175,37 +201,47 @@ public class HolyLandManager implements Listener {
 		return hash;
 	}
 
-	public boolean isContestedLand(Location location) {
+	public boolean isContestedLand(Location location)
+	{
 		return this.landConfig.getString(hashLocation(location) + ".AttackingGodName") != null;
 	}
 
-	public boolean isMobTypeAllowedToSpawn(EntityType mobType) {
-		if ((mobType == EntityType.BAT) || (mobType == EntityType.SQUID) || (mobType == EntityType.CHICKEN) || (mobType == EntityType.PIG) || (mobType == EntityType.COW) || (mobType == EntityType.OCELOT) || (mobType == EntityType.SHEEP)
-				|| (mobType == EntityType.VILLAGER) || (mobType == EntityType.MUSHROOM_COW) || (mobType == EntityType.IRON_GOLEM)) {
+	public boolean isMobTypeAllowedToSpawn(EntityType mobType)
+	{
+		if ((mobType == EntityType.BAT) || (mobType == EntityType.SQUID) || (mobType == EntityType.CHICKEN) || (mobType == EntityType.PIG) || (mobType == EntityType.COW) || (mobType == EntityType.OCELOT) || (mobType == EntityType.SHEEP) || (mobType == EntityType.VILLAGER)
+				|| (mobType == EntityType.MUSHROOM_COW) || (mobType == EntityType.IRON_GOLEM))
+		{
 			return true;
 		}
 		return false;
 	}
 
-	public boolean isNeutralLandLocation(Location location) {
+	public boolean isNeutralLandLocation(Location location)
+	{
 		return this.landConfig.getString(hashLocation(location) + ".NeutralLand") != null;
 	}
 
-	public boolean isSameChunk(Location one, Location two) {
-		if (one.getBlockX() >> 7 != two.getBlockX() >> 7) {
+	public boolean isSameChunk(Location one, Location two)
+	{
+		if (one.getBlockX() >> 7 != two.getBlockX() >> 7)
+		{
 			return false;
 		}
-		if (one.getBlockZ() >> 7 != two.getBlockZ() >> 7) {
+		if (one.getBlockZ() >> 7 != two.getBlockZ() >> 7)
+		{
 			return false;
 		}
-		if (one.getWorld() != two.getWorld()) {
+		if (one.getWorld() != two.getWorld())
+		{
 			return false;
 		}
 		return true;
 	}
 
-	public void load() {
-		if (this.landConfigFile == null) {
+	public void load()
+	{
+		if (this.landConfigFile == null)
+		{
 			this.landConfigFile = new File(Gods.get().getDataFolder(), "holyland.yml");
 		}
 		this.landConfig = YamlConfiguration.loadConfiguration(this.landConfigFile);
@@ -214,25 +250,33 @@ public class HolyLandManager implements Listener {
 	}
 
 	@EventHandler
-	public void OnBlockBreak(BlockBreakEvent event) {
+	public void OnBlockBreak(BlockBreakEvent event)
+	{
 		Player player = event.getPlayer();
-		if (player != null) {
-			if (!Gods.get().isEnabledInWorld(player.getWorld())) {
+		if (player != null)
+		{
+			if (!Gods.get().isEnabledInWorld(player.getWorld()))
+			{
 				return;
 			}
-			if (player.isOp()) {
+			if (player.isOp())
+			{
 				return;
 			}
-			if (!PermissionsManager.get().hasPermission(player, "gods.holyland")) {
+			if (!PermissionsManager.get().hasPermission(player, "gods.holyland"))
+			{
 				Gods.get().logDebug(event.getPlayer().getName() + " does not have holyland permission");
 				return;
 			}
 		}
-		if (event.getBlock() == null) {
+		if (event.getBlock() == null)
+		{
 			return;
 		}
-		if (isNeutralLandLocation(event.getBlock().getLocation())) {
-			if (player != null) {
+		if (isNeutralLandLocation(event.getBlock().getLocation()))
+		{
+			if (player != null)
+			{
 				player.sendMessage(ChatColor.RED + "You cannot break blocks in neutral land");
 			}
 			event.setCancelled(true);
@@ -241,16 +285,20 @@ public class HolyLandManager implements Listener {
 		String godName = getGodAtHolyLandLocation(event.getBlock().getLocation());
 		Player attacker = event.getPlayer();
 		String attackerGod = null;
-		if (godName == null) {
+		if (godName == null)
+		{
 			return;
 		}
 
-		if (attacker != null) {
+		if (attacker != null)
+		{
 			attackerGod = BelieverManager.get().getGodForBeliever(attacker.getUniqueId());
 		}
 
-		if ((attackerGod == null) || (!attackerGod.equals(godName))) {
-			if (attacker != null) {
+		if ((attackerGod == null) || (!attackerGod.equals(godName)))
+		{
+			if (attacker != null)
+			{
 				attacker.sendMessage(ChatColor.RED + "You do not have access to the holy land of " + ChatColor.YELLOW + godName);
 			}
 			event.setCancelled(true);
@@ -258,26 +306,34 @@ public class HolyLandManager implements Listener {
 	}
 
 	@EventHandler
-	public void OnCreatureSpawn(CreatureSpawnEvent event) {
-		if (!Gods.get().isEnabledInWorld(event.getLocation().getWorld())) {
+	public void OnCreatureSpawn(CreatureSpawnEvent event)
+	{
+		if (!Gods.get().isEnabledInWorld(event.getLocation().getWorld()))
+		{
 			return;
 		}
-		if (isNeutralLandLocation(event.getLocation())) {
+		if (isNeutralLandLocation(event.getLocation()))
+		{
 			Gods.get().logDebug("Prevented " + event.getEntityType() + " from spawning in Neutral land");
 			return;
 		}
 		String godName = getGodAtHolyLandLocation(event.getLocation());
-		if (godName != null) {
-			if (GodManager.get().getDivineForceForGod(godName) == GodManager.GodType.NATURE) {
+		if (godName != null)
+		{
+			if (GodManager.get().getDivineForceForGod(godName) == GodManager.GodType.NATURE)
+			{
 				return;
 			}
-			if (event.getEntity().getType() == GodManager.get().getHolyMobTypeForGod(godName)) {
+			if (event.getEntity().getType() == GodManager.get().getHolyMobTypeForGod(godName))
+			{
 				return;
 			}
-			if (GodManager.get().getGodMobSpawning(godName)) {
+			if (GodManager.get().getGodMobSpawning(godName))
+			{
 				return;
 			}
-			if (!isMobTypeAllowedToSpawn(event.getEntityType())) {
+			if (!isMobTypeAllowedToSpawn(event.getEntityType()))
+			{
 				Gods.get().logDebug("Prevented " + event.getEntityType() + " from spawning in Holy Land of " + godName);
 				event.setCancelled(true);
 			}
@@ -285,36 +341,45 @@ public class HolyLandManager implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerDeath(PlayerDeathEvent event) {
+	public void onPlayerDeath(PlayerDeathEvent event)
+	{
 		Player player = event.getEntity();
-		if (!Gods.get().isEnabledInWorld(player.getWorld())) {
+		if (!Gods.get().isEnabledInWorld(player.getWorld()))
+		{
 			return;
 		}
-		if (!isContestedLand(player.getLocation())) {
+		if (!isContestedLand(player.getLocation()))
+		{
 			return;
 		}
 		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 
 		Player killer = event.getEntity().getKiller();
 		String killerGodName = BelieverManager.get().getGodForBeliever(killer.getUniqueId());
-		if (GodManager.get().increaseContestedHolyLandKillsForGod(killerGodName, 1)) {
+		if (GodManager.get().increaseContestedHolyLandKillsForGod(killerGodName, 1))
+		{
 			resolveContestedLand(player.getLocation(), godName, killerGodName, false);
 		}
 	}
 
 	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent event) {
-		if (!GodsConfiguration.get().isHolyLandEnabled()) {
+	public void onPlayerMove(PlayerMoveEvent event)
+	{
+		if (!GodsConfiguration.get().isHolyLandEnabled())
+		{
 			return;
 		}
-		if (isSameChunk(event.getFrom(), event.getTo())) {
+		if (isSameChunk(event.getFrom(), event.getTo()))
+		{
 			return;
 		}
 		Player player = event.getPlayer();
-		if (!Gods.get().isEnabledInWorld(player.getWorld())) {
+		if (!Gods.get().isEnabledInWorld(player.getWorld()))
+		{
 			return;
 		}
-		if (!PermissionsManager.get().hasPermission(player, "gods.holyland")) {
+		if (!PermissionsManager.get().hasPermission(player, "gods.holyland"))
+		{
 			return;
 		}
 		Location to = event.getTo();
@@ -323,45 +388,61 @@ public class HolyLandManager implements Listener {
 		String godTo = null;
 
 		godFrom = getGodAtHolyLandLocationFrom(player.getName());
-		if (isNeutralLandLocation(to)) {
+		if (isNeutralLandLocation(to))
+		{
 			godTo = "NeutralLand";
 			setNeutralLandLocationFrom(player.getName());
 			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.EnterNeutralLandInfo, ChatColor.YELLOW, "You are safe against mobs and PvP", "You are safe against mobs and PvP", 1);
 			return;
 		}
-		if (isContestedLand(to)) {
+		if (isContestedLand(to))
+		{
 			long time = getContestedTimeAtHolyLand(to);
-			if (time <= 0L) {
+			if (time <= 0L)
+			{
 				godTo = getGodAtHolyLandLocationTo(player.getName(), to);
 				resolveContestedLand(to, godTo, godFrom, true);
-			} else {
+			}
+			else
+			{
 				int defenderKillsNeeded = 5;
 				int attackerKillsNeeded = 10;
 
 				Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.EnterContestedLandInfo, ChatColor.RED, (int) time, godTo, 1);
 				Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.ContestedLandStatus, ChatColor.AQUA, String.valueOf(time), attackerKillsNeeded, defenderKillsNeeded, 20);
 			}
-		} else {
+		}
+		else
+		{
 			godTo = getGodAtHolyLandLocationTo(player.getName(), to);
 		}
-		if ((godFrom == null) && (godTo == null)) {
+		if ((godFrom == null) && (godTo == null))
+		{
 			return;
 		}
-		if ((godTo != null) && ((godFrom == null) || (!godFrom.equals(godTo)))) {
+		if ((godTo != null) && ((godFrom == null) || (!godFrom.equals(godTo))))
+		{
 			String playerGod = BelieverManager.get().getGodForBeliever(player.getUniqueId());
-			if ((playerGod != null) && (playerGod.equals(godTo))) {
+			if ((playerGod != null) && (playerGod.equals(godTo)))
+			{
 				Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.EnterHolyLandInfoYourGod, ChatColor.GOLD, godTo, ChatColor.AQUA + GodManager.get().getGodDescription(godTo), 1);
-			} else {
+			}
+			else
+			{
 				Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.EnterHolyLandInfoOtherGod, ChatColor.GREEN, godTo, ChatColor.AQUA + GodManager.get().getGodDescription(godTo), 1);
 			}
-		} else if ((godFrom != null) && (godTo == null)) {
+		}
+		else if ((godFrom != null) && (godTo == null))
+		{
 			Gods.get().sendInfo(player.getUniqueId(), LanguageManager.LANGUAGESTRING.EnterWildernessInfo, ChatColor.DARK_GREEN, 0, "", 1);
 		}
 	}
 
 	@EventHandler
-	public void onPlayerTeleport(PlayerTeleportEvent event) {
-		if (!Gods.get().isEnabledInWorld(event.getPlayer().getWorld())) {
+	public void onPlayerTeleport(PlayerTeleportEvent event)
+	{
+		if (!Gods.get().isEnabledInWorld(event.getPlayer().getWorld()))
+		{
 			return;
 		}
 
@@ -369,24 +450,30 @@ public class HolyLandManager implements Listener {
 
 		String targetLandGodName = getGodAtHolyLandLocation(event.getTo());
 
-		if (event.getPlayer().isOp()) {
+		if (event.getPlayer().isOp())
+		{
 			return;
 		}
 
-		if (targetLandGodName != null) {
-			if ((godName == null) || (!targetLandGodName.equals(godName))) {
+		if (targetLandGodName != null)
+		{
+			if ((godName == null) || (!targetLandGodName.equals(godName)))
+			{
 				Gods.get().sendInfo(event.getPlayer().getUniqueId(), LanguageManager.LANGUAGESTRING.TeleportIntoHolylandNotAllowed, ChatColor.DARK_RED, 0, targetLandGodName, 1);
 				event.setCancelled(true);
 			}
 		}
 	}
 
-	public void removeAbandonedLands() {
+	public void removeAbandonedLands()
+	{
 		long timeBefore = System.currentTimeMillis();
 
 		Date thisDate = new Date();
-		for (String holylandHash : this.landConfig.getKeys(false)) {
-			if (this.landConfig.getString(holylandHash + ".NeutralLand") != null) {
+		for (String holylandHash : this.landConfig.getKeys(false))
+		{
+			if (this.landConfig.getString(holylandHash + ".NeutralLand") != null)
+			{
 				String lastPrayerString = this.landConfig.getString(holylandHash + ".LastPrayerTime");
 
 				String pattern = "HH:mm dd-MM-yyyy";
@@ -394,14 +481,18 @@ public class HolyLandManager implements Listener {
 				DateFormat formatter = new SimpleDateFormat(pattern);
 
 				Date lastPrayerDate = null;
-				try {
+				try
+				{
 					lastPrayerDate = formatter.parse(lastPrayerString);
-				} catch (Exception ex) {
+				}
+				catch (Exception ex)
+				{
 					this.landConfig.set(holylandHash, null);
 				}
 				long diff = thisDate.getTime() - lastPrayerDate.getTime();
 				long diffMinutes = diff / 60000L;
-				if (diffMinutes > GodsConfiguration.get().getNumberOfDaysForAbandonedHolyLands() * 24 * 60) {
+				if (diffMinutes > GodsConfiguration.get().getNumberOfDaysForAbandonedHolyLands() * 24 * 60)
+				{
 					this.landConfig.set(holylandHash, null);
 				}
 			}
@@ -411,12 +502,16 @@ public class HolyLandManager implements Listener {
 		Gods.get().logDebug("Traversed " + this.landConfig.getKeys(false).size() + " Holy lands in " + (timeAfter - timeBefore) + " ms");
 	}
 
-	private void resolveContestedLand(Location location, String godName1, String godName2, boolean firstIsWinner) {
-		if (firstIsWinner) {
+	private void resolveContestedLand(Location location, String godName1, String godName2, boolean firstIsWinner)
+	{
+		if (firstIsWinner)
+		{
 			setHolyLand(location, godName1);
 			GodManager.get().godSayToBelievers(godName1, LanguageManager.LANGUAGESTRING.GodToBelieversDefendHolyLandSuccess, 1);
 			GodManager.get().godSayToBelievers(godName2, LanguageManager.LANGUAGESTRING.GodToBelieversAttackHolyLandFailed, 1);
-		} else {
+		}
+		else
+		{
 			setHolyLand(location, godName2);
 			GodManager.get().godSayToBelievers(godName1, LanguageManager.LANGUAGESTRING.GodToBelieversDefendHolyLandFailed, 1);
 			GodManager.get().godSayToBelievers(godName2, LanguageManager.LANGUAGESTRING.GodToBelieversAttackHolyLandSuccess, 1);
@@ -427,28 +522,36 @@ public class HolyLandManager implements Listener {
 		GodManager.get().clearContestedHolyLandForGod(godName2);
 	}
 
-	public void save() {
-		if ((this.landConfig == null) || (this.landConfigFile == null)) {
+	public void save()
+	{
+		if ((this.landConfig == null) || (this.landConfigFile == null))
+		{
 			return;
 		}
-		try {
+		try
+		{
 			this.landConfig.save(this.landConfigFile);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			Gods.get().log("Could not save config to " + this.landConfigFile + ": " + ex.getMessage());
 		}
 	}
 
-	public void setContestedLand(Location location, String attackingGodName) {
+	public void setContestedLand(Location location, String attackingGodName)
+	{
 		this.landConfig.set(hashLocation(location) + ".AttackingGodName", attackingGodName);
 
 		save();
 	}
 
-	public void setHolyLand(Location location, String godName) {
+	public void setHolyLand(Location location, String godName)
+	{
 		long hash = hashLocation(location);
 
 		Date thisDate = new Date();
-		if (this.landConfig.getString(hash + ".FirstPrayerTime") == null) {
+		if (this.landConfig.getString(hash + ".FirstPrayerTime") == null)
+		{
 			this.landConfig.set(hash + ".FirstPrayerTime", this.formatter.format(thisDate));
 		}
 		this.landConfig.set(hash + ".GodName", godName);
@@ -458,7 +561,8 @@ public class HolyLandManager implements Listener {
 		save();
 	}
 
-	public void setNeutralLand(Location location) {
+	public void setNeutralLand(Location location)
+	{
 		Date thisDate = new Date();
 
 		long hash = hashLocation(location);
@@ -468,17 +572,20 @@ public class HolyLandManager implements Listener {
 		save();
 	}
 
-	public void setNeutralLandLocationFrom(String believerName) {
+	public void setNeutralLandLocationFrom(String believerName)
+	{
 		this.fromLocations.put(believerName, "NeutralLand");
 	}
 
-	public void setPrayingHotspot(String believerName, String godName, Location location) {
+	public void setPrayingHotspot(String believerName, String godName, Location location)
+	{
 		Location clampedLocation = new Location(location.getWorld(), location.getBlockX(), 0.0D, location.getBlockZ());
 
 		long hash = hashLocation(clampedLocation);
 
 		Date thisDate = new Date();
-		if (this.landConfig.getString(hash + ".FirstPrayerTime") == null) {
+		if (this.landConfig.getString(hash + ".FirstPrayerTime") == null)
+		{
 			this.landConfig.set(hash + ".FirstPrayerTime", this.formatter.format(thisDate));
 		}
 		this.landConfig.set(hash + ".GodName", godName);

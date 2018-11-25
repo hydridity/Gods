@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="Z:/_EXT/Spigot 1.12.2 (Build 1508).jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/bPermissions-2.12 (MC 1.10).jar"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/EssentialsXGroupManager-2.0.1 (MC 1.11).jar"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/PermissionsBukkit-2.5 (MC 1.8.1.jar"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/PermissionsEx-1.23.4 (MC 1.11).jar"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/worldedit-bukkit-6.1.7.3 (MC 1.12.1).jar"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/worldguard-6.2.1 (MC 1.12).jar"/>
-	<classpathentry kind="lib" path="E:/git/Gods/lib/zPermissions-1.3beta1 (MC 1.7.9).jar"/>
-	<classpathentry kind="lib" path="E:/_EXT/Spigot 1.12.2 (Build 1508).jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/bPermissions-2.12 (MC 1.10).jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/EssentialsXGroupManager-2.0.1 (MC 1.11).jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/PermissionsBukkit-2.5 (MC 1.8.1.jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/PermissionsEx-1.23.4 (MC 1.11).jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/worldedit-bukkit-6.1.7.3 (MC 1.12.1).jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/worldguard-6.2.1 (MC 1.12).jar"/>
-	<classpathentry kind="lib" path="Z:/git/Gods/lib/zPermissions-1.3beta1 (MC 1.7.9).jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

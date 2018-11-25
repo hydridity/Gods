@@ -20,270 +20,34 @@ import org.bukkit.entity.EntityType;
 import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.config.GodsConfiguration;
 
-public class LanguageManager {
+public class LanguageManager
+{
 	public static enum LANGUAGESTRING {
-		GodToBelieverPrayerRecentItemBlessing,
-		GodToBelieverPrayerWhenNoItemNeed,
-		GodToBelieverPrayerTooSoon,
-		EnterHolyLandInfoYourGod,
-		EnterHolyLandInfoOtherGod,
-		EnterWildernessInfo,
-		EnterNeutralLandInfo,
-		EnterContestedLandInfo,
-		PrivateGodNoAccess,
-		DivorcedYou,
-		MarrigeLovesYou,
-		MarrigeYouLove,
-		YouLeftReligion,
-		AttackHelp,
-		GodsHelp,
-		AltarHelp,
-		PrayForHelp,
-		DescriptionHelp,
-		FollowersHelp,
-		InviteHelp,
-		PrayAlterHelp,
-		PrayToBlacklistedGodNotAllowed,
-		BlessingsNotAllowed,
-		CursesNotAllowed,
-		TeleportIntoHolylandNotAllowed,
-		AltarPrayingNotAllowed,
-		YouEarnedPowerBySlayingHeathen,
-		YouEarnedPowerBySlayingEnemy,
-		PvPLostPower,
-		ConfirmChangeToOtherReligion,
-		CannotPraySoSoon,
-		CannotChangeGodSoSoon,
-		CannotBuildAltarToOtherGods,
-		InfoHelp,
-		YourPrayerPower,
-		YouHealedBeings,
-		RejectedJoinOffer,
-		PrayedForBlessing,
-		PrayedForQuest,
-		PrayedForItem,
-		PrayedForHealth,
-		PrayedForHolyArtifact,
-		NotEnoughPrayerPower,
-		NowHunting,
-		NotHunting,
-		InvalidGodName,
-		InvalidAltarSign,
-		BlessingsHelp,
-		CursesHelp,
-		BuildAltarNotAllowed,
-		CreateGodNotAllowed,
-		SacrificeHelp,
-		QuestTargetHelp,
-		QuestTargetRange,
-		BelieverPower,
-		AttackingHolyLandsHelp,
-		DefendingHolyLandsHelp,
-		ContestedLandStatus,
-		GodToBelieversDefendHolyLandSuccess,
-		GodToBelieversDefendHolyLandFailed,
-		GodToBelieversAttackHolyLandSuccess,
-		GodToBelieversAttackHolyLandFailed,
-		GodToBelieversAttackStarted,
-		GodToBelieversAttackProgress,
-		GodToBelieversAttackStatus,
-		GodToBelieverQuestionHelp,
-		GodToBelieverNoQuestion,
-		GodToBelieversNewPlayerAccepted,
-		GodToPriestPriestAccepted,
-		GodToPriestBlessedPlayerSet,
-		GodToPriestBlessedPlayerUnset,
-		GodToPriestCursedPlayerSet,
-		GodToPriestCursedPlayerUnset,
-		GodToPriestEatFoodType,
-		GodToPriestNotEatFoodType,
-		GodToPriestSlayMobType,
-		GodToPriestNotSlayMobType,
-		GodToPriestUseBible,
-		GodToPriestUseProphecies,
-		GodToPriestBelieverKilledDeclareWarQuestion,
-		GodToBelieversBlessedPlayerSet,
-		GodToBelieversBlessedPlayerUnset,
-		GodToBelieversCursedPlayerSet,
-		GodToBelieversCursedPlayerUnset,
-		GodToBelieverOfferPriest,
-		GodToBelieverPraying,
-		GodToBelieverMarriageProposal,
-		GodToBelieverAcceptedMarriageProposal,
-		GodToBelieverAcceptedYourMarriageProposal,
-		GodToBelieverMarriageTokenPickup,
-		GodToBelieverMarriagePartnerTokenPickup,
-		GodToBelieverMarried,
-		GodToBelieverMarriedCouple,
-		GodToBelieversSlayDragonQuestStarted,
-		GodToBelieversSlayDragonQuestProgress,
-		GodToBelieversSlayDragonQuestStatus,
-		GodToBelieversSlayDragonQuestCompleted,
-		GodToBelieversSlayDragonQuestFailed,
-		GodToBelieversSlayQuestStarted,
-		GodToBelieversSlayQuestProgress,
-		GodToBelieversSlayQuestStatus,
-		GodToBelieversSlayQuestCompleted,
-		GodToBelieversSlayQuestFailed,
-		GodToBelieversConvertQuestStarted,
-		GodToBelieversConvertQuestProgress,
-		GodToBelieversConvertQuestStatus,
-		GodToBelieversConvertQuestCompleted,
-		GodToBelieversConvertQuestFailed,
-		GodToBelieversBuildAltarsQuestStarted,
-		GodToBelieversBuildAltarsQuestProgress,
-		GodToBelieversBuildAltarsQuestStatus,
-		GodToBelieversBuildAltarsQuestCompleted,
-		GodToBelieversBuildAltarsQuestFailed,
-		GodToBelieversBuildTowerQuestStarted,
-		GodToBelieversBuildTowerQuestProgress,
-		GodToBelieversBuildTowerQuestStatus,
-		GodToBelieversBuildTowerQuestCompleted,
-		GodToBelieversBuildTowerQuestFailed,
-		GodToBelieversSacrificeQuestStarted,
-		GodToBelieversSacrificeQuestProgress,
-		GodToBelieversSacrificeQuestStatus,
-		GodToBelieversSacrificeQuestCompleted,
-		GodToBelieversSacrificeQuestFailed,
-		GodToBelieversHolyFeastQuestStarted,
-		GodToBelieversHolyFeastQuestProgress,
-		GodToBelieversHolyFeastQuestStatus,
-		GodToBelieversHolyFeastQuestCompleted,
-		GodToBelieversHolyFeastQuestFailed,
-		GodToBelieversHolyBattleQuestStarted,
-		GodToBelieversHolyBattleQuestProgress,
-		GodToBelieversHolyBattleQuestStatus,
-		GodToBelieversHolyBattleQuestCompleted,
-		GodToBelieversHolyBattleQuestFailed,
-		GodToBelieversGiveItemsQuestStarted,
-		GodToBelieversGiveBiblesQuestProgress,
-		GodToBelieversGiveItemsQuestStatus,
-		GodToBelieversGiveItemsQuestCompleted,
-		GodToBelieversGiveItemsQuestFailed,
-		GodToBelieversBurnBiblesQuestStarted,
-		GodToBelieversBurnBiblesQuestProgress,
-		GodToBelieversBurnBiblesQuestStatus,
-		GodToBelieversBurnBiblesQuestCompleted,
-		GodToBelieversBurnBiblesQuestFailed,
-		GodToBelieversCrusadeQuestStarted,
-		GodToBelieversCrusadeQuestProgress,
-		GodToBelieversCrusadeQuestStatus,
-		GodToBelieversCrusadeQuestCompleted,
-		GodToBelieversCrusadeQuestFailed,
-		GodToBelieversPVPRevengeQuestStarted,
-		GodToBelieversPVPRevengeQuestProgress,
-		GodToBelieversPVPRevengeQuestStatus,
-		GodToBelieversPVPRevengeQuestCompleted,
-		GodToBelieversPVPRevengeQuestFailed,
-		GodToBelieversPilgrimageQuestStarted,
-		GodToBelieversPilgrimageQuestProgress,
-		GodToBelieversPilgrimageQuestStatus,
-		GodToBelieversPilgrimageQuestCompleted,
-		GodToBelieversPilgrimageQuestFailed,
-		GodToBelieversClaimHolyLandQuestStarted,
-		GodToBelieversClaimHolyLandQuestProgress,
-		GodToBelieversClaimHolyLandQuestStatus,
-		GodToBelieversClaimHolyLandQuestCompleted,
-		GodToBelieversClaimHolyLandQuestFailed,
-		GodToBelieversGetHolyArtifactQuestStarted,
-		GodToBelieversGetHolyArtifactQuestProgress,
-		GodToBelieversGetHolyArtifactQuestHelp,
-		GodToBelieversGetHolyArtifactQuestRange,
-		GodToBelieversGetHolyArtifactQuestStatus,
-		GodToBelieversGetHolyArtifactQuestCompleted,
-		GodToBelieversGetHolyArtifactOtherQuestFailed,
-		GodToBelieversGetHolyArtifactQuestFailed,
-		GodToBelieversHolywarQuestStarted,
-		GodToBelieversHolywarQuestProgress,
-		GodToBelieversHolywarQuestHelp,
-		GodToBelieversHolywarQuestRange,
-		GodToBelieversHolywarQuestStatus,
-		GodToBelieversHolywarQuestCompleted,
-		GodToBelieversHolywarOtherQuestFailed,
-		GodToBelieversHolywarQuestFailed,
-		GodToBelieversRemovedPriest,
-		GodToBelieverPriestRejected,
-		GodToBelieverAltarBuilt,
-		GodToBelieversPlayerJoinedReligion,
-		GodToBelieversPlayerLeftReligion,
-		GodToBelieverRandomExaltedSpeech,
-		GodToBelieverRandomPleasedSpeech,
-		GodToBelieverRandomNeutralSpeech,
-		GodToBelieverRandomDispleasedSpeech,
-		GodToBelieverRandomAngrySpeech,
-		GodToBelieversLostBeliever,
-		GodToPlayerBlessed,
-		GodToPlayerCursed,
-		GodToPlayerInvite,
-		GodToPlayerAcceptedInvitation,
-		GodToBelieverCursedAngry,
-		GodToBelieverGoodSacrifice,
-		GodToBelieverMehSacrifice,
-		GodToBelieverBadSacrifice,
-		GodToBelieverHolyFoodSacrifice,
-		GodToBelieversPlayerCursed,
-		GodToBelieversPlayerBlessed,
-		GodToBelieverItemBlessing,
-		GodToBelieverHolyArtifactBlessing,
-		GodToBelieverHealthBlessing,
-		GodToBelieverSmiteBlessing,
-		GodToBelieversEatFoodBlessing,
-		GodToBelieversNotEatFoodCursing,
-		GodToBelieversSlayMobBlessing,
-		GodToBelieversNotSlayMobCursing,
-		GodToBelieversPriestAccepted,
-		GodToBelieversAltarDestroyed,
-		GodToBelieversAltarDestroyedByPlayer,
-		GodToBelieversWar,
-		GodToBelieversAlliance,
-		GodToBelieversWarCancelled,
-		GodToBelieversAllianceCancelled,
-		GodToBelieversSetHome,
-		GodToBelieversSacrificeItemType,
-		GodToBelieversAllPropheciesFulfilled,
-		GodToBelieversProphecyFulfilled,
-		GodToBelieversJustMarried,
-		ProphecyHeaderBibleText,
-		UnholyMobWillBeSlainFutureProphecyBibleText,
-		UnholyMobWillBeSlainPastProphecyBibleText,
-		StormProphecyEffectPastBibleText,
-		StormProphecyEffectFutureBibleText,
-		HolyFoodRainProphecyEffectBibleText,
-		DarknessProphecyEffectBibleText,
-		HeathenWillBeSlainProphecyEffectBibleText,
-		BelieverWillLeaveReligionProphecyBibleText,
-		DragonBossWillBeSlainPastProphecyBibleText,
-		DragonBossWillBeSlainFutureProphecyBibleText,
-		DragonBossProphecyEffectPastBibleText,
-		DragonBossProphecyEffectFutureBibleText,
-		DefaultBibleText1,
-		DefaultBibleText2,
-		DefaultBibleText3,
-		DefaultBibleText4,
-		DefaultBibleText5,
-		DefaultBibleText6,
-		DefaultBibleText7;
+		GodToBelieverPrayerRecentItemBlessing, GodToBelieverPrayerWhenNoItemNeed, GodToBelieverPrayerTooSoon, EnterHolyLandInfoYourGod, EnterHolyLandInfoOtherGod, EnterWildernessInfo, EnterNeutralLandInfo, EnterContestedLandInfo, PrivateGodNoAccess, DivorcedYou, MarrigeLovesYou, MarrigeYouLove, YouLeftReligion, AttackHelp, GodsHelp, AltarHelp, PrayForHelp, DescriptionHelp, FollowersHelp, InviteHelp, PrayAlterHelp, PrayToBlacklistedGodNotAllowed, BlessingsNotAllowed, CursesNotAllowed, TeleportIntoHolylandNotAllowed, AltarPrayingNotAllowed, YouEarnedPowerBySlayingHeathen, YouEarnedPowerBySlayingEnemy, PvPLostPower, ConfirmChangeToOtherReligion, CannotPraySoSoon, CannotChangeGodSoSoon, CannotBuildAltarToOtherGods, InfoHelp, YourPrayerPower, YouHealedBeings, RejectedJoinOffer, PrayedForBlessing, PrayedForQuest, PrayedForItem, PrayedForHealth, PrayedForHolyArtifact, NotEnoughPrayerPower, NowHunting, NotHunting, InvalidGodName, InvalidAltarSign, BlessingsHelp, CursesHelp, BuildAltarNotAllowed, CreateGodNotAllowed, SacrificeHelp, QuestTargetHelp, QuestTargetRange, BelieverPower, AttackingHolyLandsHelp, DefendingHolyLandsHelp, ContestedLandStatus, GodToBelieversDefendHolyLandSuccess, GodToBelieversDefendHolyLandFailed, GodToBelieversAttackHolyLandSuccess, GodToBelieversAttackHolyLandFailed, GodToBelieversAttackStarted, GodToBelieversAttackProgress, GodToBelieversAttackStatus, GodToBelieverQuestionHelp, GodToBelieverNoQuestion, GodToBelieversNewPlayerAccepted, GodToPriestPriestAccepted, GodToPriestBlessedPlayerSet, GodToPriestBlessedPlayerUnset, GodToPriestCursedPlayerSet, GodToPriestCursedPlayerUnset, GodToPriestEatFoodType, GodToPriestNotEatFoodType, GodToPriestSlayMobType, GodToPriestNotSlayMobType, GodToPriestUseBible, GodToPriestUseProphecies, GodToPriestBelieverKilledDeclareWarQuestion, GodToBelieversBlessedPlayerSet, GodToBelieversBlessedPlayerUnset, GodToBelieversCursedPlayerSet, GodToBelieversCursedPlayerUnset, GodToBelieverOfferPriest, GodToBelieverPraying, GodToBelieverMarriageProposal, GodToBelieverAcceptedMarriageProposal, GodToBelieverAcceptedYourMarriageProposal, GodToBelieverMarriageTokenPickup, GodToBelieverMarriagePartnerTokenPickup, GodToBelieverMarried, GodToBelieverMarriedCouple, GodToBelieversSlayDragonQuestStarted, GodToBelieversSlayDragonQuestProgress, GodToBelieversSlayDragonQuestStatus, GodToBelieversSlayDragonQuestCompleted, GodToBelieversSlayDragonQuestFailed, GodToBelieversSlayQuestStarted, GodToBelieversSlayQuestProgress, GodToBelieversSlayQuestStatus, GodToBelieversSlayQuestCompleted, GodToBelieversSlayQuestFailed, GodToBelieversConvertQuestStarted, GodToBelieversConvertQuestProgress, GodToBelieversConvertQuestStatus, GodToBelieversConvertQuestCompleted, GodToBelieversConvertQuestFailed, GodToBelieversBuildAltarsQuestStarted, GodToBelieversBuildAltarsQuestProgress, GodToBelieversBuildAltarsQuestStatus, GodToBelieversBuildAltarsQuestCompleted, GodToBelieversBuildAltarsQuestFailed, GodToBelieversBuildTowerQuestStarted, GodToBelieversBuildTowerQuestProgress, GodToBelieversBuildTowerQuestStatus, GodToBelieversBuildTowerQuestCompleted, GodToBelieversBuildTowerQuestFailed, GodToBelieversSacrificeQuestStarted, GodToBelieversSacrificeQuestProgress, GodToBelieversSacrificeQuestStatus, GodToBelieversSacrificeQuestCompleted, GodToBelieversSacrificeQuestFailed, GodToBelieversHolyFeastQuestStarted, GodToBelieversHolyFeastQuestProgress, GodToBelieversHolyFeastQuestStatus, GodToBelieversHolyFeastQuestCompleted, GodToBelieversHolyFeastQuestFailed, GodToBelieversHolyBattleQuestStarted, GodToBelieversHolyBattleQuestProgress, GodToBelieversHolyBattleQuestStatus, GodToBelieversHolyBattleQuestCompleted, GodToBelieversHolyBattleQuestFailed, GodToBelieversGiveItemsQuestStarted, GodToBelieversGiveBiblesQuestProgress, GodToBelieversGiveItemsQuestStatus, GodToBelieversGiveItemsQuestCompleted, GodToBelieversGiveItemsQuestFailed, GodToBelieversBurnBiblesQuestStarted, GodToBelieversBurnBiblesQuestProgress, GodToBelieversBurnBiblesQuestStatus, GodToBelieversBurnBiblesQuestCompleted, GodToBelieversBurnBiblesQuestFailed, GodToBelieversCrusadeQuestStarted, GodToBelieversCrusadeQuestProgress, GodToBelieversCrusadeQuestStatus, GodToBelieversCrusadeQuestCompleted, GodToBelieversCrusadeQuestFailed, GodToBelieversPVPRevengeQuestStarted, GodToBelieversPVPRevengeQuestProgress, GodToBelieversPVPRevengeQuestStatus, GodToBelieversPVPRevengeQuestCompleted, GodToBelieversPVPRevengeQuestFailed, GodToBelieversPilgrimageQuestStarted, GodToBelieversPilgrimageQuestProgress, GodToBelieversPilgrimageQuestStatus, GodToBelieversPilgrimageQuestCompleted, GodToBelieversPilgrimageQuestFailed, GodToBelieversClaimHolyLandQuestStarted, GodToBelieversClaimHolyLandQuestProgress, GodToBelieversClaimHolyLandQuestStatus, GodToBelieversClaimHolyLandQuestCompleted, GodToBelieversClaimHolyLandQuestFailed, GodToBelieversGetHolyArtifactQuestStarted, GodToBelieversGetHolyArtifactQuestProgress, GodToBelieversGetHolyArtifactQuestHelp, GodToBelieversGetHolyArtifactQuestRange, GodToBelieversGetHolyArtifactQuestStatus, GodToBelieversGetHolyArtifactQuestCompleted, GodToBelieversGetHolyArtifactOtherQuestFailed, GodToBelieversGetHolyArtifactQuestFailed, GodToBelieversHolywarQuestStarted, GodToBelieversHolywarQuestProgress, GodToBelieversHolywarQuestHelp, GodToBelieversHolywarQuestRange, GodToBelieversHolywarQuestStatus, GodToBelieversHolywarQuestCompleted, GodToBelieversHolywarOtherQuestFailed, GodToBelieversHolywarQuestFailed, GodToBelieversRemovedPriest, GodToBelieverPriestRejected, GodToBelieverAltarBuilt, GodToBelieversPlayerJoinedReligion, GodToBelieversPlayerLeftReligion, GodToBelieverRandomExaltedSpeech, GodToBelieverRandomPleasedSpeech, GodToBelieverRandomNeutralSpeech, GodToBelieverRandomDispleasedSpeech, GodToBelieverRandomAngrySpeech, GodToBelieversLostBeliever, GodToPlayerBlessed, GodToPlayerCursed, GodToPlayerInvite, GodToPlayerAcceptedInvitation, GodToBelieverCursedAngry, GodToBelieverGoodSacrifice, GodToBelieverMehSacrifice, GodToBelieverBadSacrifice, GodToBelieverHolyFoodSacrifice, GodToBelieversPlayerCursed, GodToBelieversPlayerBlessed, GodToBelieverItemBlessing, GodToBelieverHolyArtifactBlessing, GodToBelieverHealthBlessing, GodToBelieverSmiteBlessing, GodToBelieversEatFoodBlessing, GodToBelieversNotEatFoodCursing, GodToBelieversSlayMobBlessing, GodToBelieversNotSlayMobCursing, GodToBelieversPriestAccepted, GodToBelieversAltarDestroyed, GodToBelieversAltarDestroyedByPlayer, GodToBelieversWar, GodToBelieversAlliance, GodToBelieversWarCancelled, GodToBelieversAllianceCancelled, GodToBelieversSetHome, GodToBelieversSacrificeItemType, GodToBelieversAllPropheciesFulfilled, GodToBelieversProphecyFulfilled, GodToBelieversJustMarried, ProphecyHeaderBibleText, UnholyMobWillBeSlainFutureProphecyBibleText, UnholyMobWillBeSlainPastProphecyBibleText, StormProphecyEffectPastBibleText, StormProphecyEffectFutureBibleText, HolyFoodRainProphecyEffectBibleText, DarknessProphecyEffectBibleText, HeathenWillBeSlainProphecyEffectBibleText, BelieverWillLeaveReligionProphecyBibleText, DragonBossWillBeSlainPastProphecyBibleText, DragonBossWillBeSlainFutureProphecyBibleText, DragonBossProphecyEffectPastBibleText, DragonBossProphecyEffectFutureBibleText, DefaultBibleText1, DefaultBibleText2, DefaultBibleText3, DefaultBibleText4, DefaultBibleText5, DefaultBibleText6, DefaultBibleText7;
 	}
 
 	private static LanguageManager instance;
 
-	public static LanguageManager get() {
+	public static LanguageManager get()
+	{
 		if (instance == null)
 			instance = new LanguageManager();
 		return instance;
 	}
 
-	private String generalLanguageFileName = null;
-	private HashMap<String, FileConfiguration> languageConfigs = new HashMap<String, FileConfiguration>();
-	private Random random = new Random();
-	private int amount;
-	private String playerName;
-	private String type;
+	private String								generalLanguageFileName	= null;
+	private HashMap<String, FileConfiguration>	languageConfigs			= new HashMap<String, FileConfiguration>();
+	private Random								random					= new Random();
+	private int									amount;
+	private String								playerName;
+	private String								type;
 
-	private LanguageManager() {
+	private LanguageManager()
+	{
 	}
 
-	private void downloadLanguageFile(String fileName) throws IOException {
+	private void downloadLanguageFile(String fileName) throws IOException
+	{
 		BufferedInputStream in = new BufferedInputStream(new URL("https://raw.githubusercontent.com/DogOnFire/Gods/master/lang/" + fileName).openStream());
 
 		FileOutputStream fos = new FileOutputStream(Gods.get().getDataFolder() + "/lang/" + fileName);
@@ -293,7 +57,8 @@ public class LanguageManager {
 		byte[] data = new byte[1024];
 
 		int x = 0;
-		while ((x = in.read(data, 0, 1024)) >= 0) {
+		while ((x = in.read(data, 0, 1024)) >= 0)
+		{
 			bout.write(data, 0, x);
 		}
 		bout.close();
@@ -301,56 +66,69 @@ public class LanguageManager {
 		in.close();
 	}
 
-	public int getAmount() {
+	public int getAmount()
+	{
 		return this.amount;
 	}
 
-	public String getGodGenderName(GodManager.GodGender gender) {
+	public String getGodGenderName(GodManager.GodGender gender)
+	{
 		return this.languageConfigs.get(this.generalLanguageFileName).getString("GodGender." + gender.name());
 	}
 
-	public String getGodMoodName(GodManager.GodMood mood) {
+	public String getGodMoodName(GodManager.GodMood mood)
+	{
 		return this.languageConfigs.get(this.generalLanguageFileName).getString("GodMood." + mood.name());
 	}
 
-	public String getGodTypeName(GodManager.GodType type, String gender) {
+	public String getGodTypeName(GodManager.GodType type, String gender)
+	{
 		String typeName = this.languageConfigs.get(this.generalLanguageFileName).getString("GodTypes." + type.name());
-		if (typeName == null) {
+		if (typeName == null)
+		{
 			typeName = "$Gender of Nothing";
 		}
 		return typeName.replace("$Gender", gender);
 	}
 
-	public String getInfoString(LANGUAGESTRING languageString, ChatColor defaultColor) {
+	public String getInfoString(LANGUAGESTRING languageString, ChatColor defaultColor)
+	{
 		String text = this.languageConfigs.get(this.generalLanguageFileName).getString("Info." + languageString.name());
 
-		if (text == null) {
+		if (text == null)
+		{
 			Gods.get().logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the info type '" + languageString.name() + "'");
 			return languageString.name() + " MISSING in " + this.generalLanguageFileName;
 		}
 		return parseString(text, defaultColor);
 	}
 
-	public String getItemTypeName(Material material) {
+	public String getItemTypeName(Material material)
+	{
 		FileConfiguration configuration = this.languageConfigs.get(this.generalLanguageFileName);
-		if (configuration == null) {
+		if (configuration == null)
+		{
 			return null;
 		}
 		String itemTypeName = configuration.getString("Items." + material.name());
-		if (itemTypeName == null) {
+		if (itemTypeName == null)
+		{
 			Gods.get().logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the item '" + material.name() + "'");
 			return material.name();
 		}
 		return itemTypeName;
 	}
 
-	private String getLanguageFileForGod(String godName) {
+	private String getLanguageFileForGod(String godName)
+	{
 		return GodManager.get().getLanguageFileForGod(godName);
 	}
 
-	public String getLanguageString(String godName, LANGUAGESTRING type) {
+	public String getLanguageString(String godName, LANGUAGESTRING type)
+	{
 		FileConfiguration languageConfig = this.languageConfigs.get(getLanguageFileForGod(godName));
-		if (languageConfig == null) {
+		if (languageConfig == null)
+		{
 			GodManager.GodType godType = GodManager.get().getDivineForceForGod(godName);
 
 			Gods.get().log("No languageConfig found for " + godName + " of type " + godType.name() + "!");
@@ -359,7 +137,8 @@ public class LanguageManager {
 
 		List<String> strings = languageConfig.getStringList(type.name());
 
-		if (strings == null || strings.size() == 0) {
+		if (strings == null || strings.size() == 0)
+		{
 			Gods.get().log("No language strings found for " + godName + "," + type.name() + "!");
 			return type.name() + " MISSING in " + getLanguageFileForGod(godName);
 		}
@@ -369,9 +148,11 @@ public class LanguageManager {
 		return parseString(text);
 	}
 
-	public String getLanguageStringForBook(String godName, LANGUAGESTRING type) {
+	public String getLanguageStringForBook(String godName, LANGUAGESTRING type)
+	{
 		List<String> strings = this.languageConfigs.get(getLanguageFileForGod(godName)).getStringList(type.name());
-		if (strings.size() == 0) {
+		if (strings.size() == 0)
+		{
 			Gods.get().log("No language strings found for " + type.name() + "!");
 			return type.name() + " MISSING in " + getLanguageFileForGod(godName);
 		}
@@ -380,76 +161,102 @@ public class LanguageManager {
 		return parseStringForBook(text);
 	}
 
-	public String getMobTypeName(EntityType type) {
+	public String getMobTypeName(EntityType type)
+	{
 		String mobTypeName = this.languageConfigs.get(this.generalLanguageFileName).getString("Mobs." + type.name());
-		if (mobTypeName == null) {
+		if (mobTypeName == null)
+		{
 			Gods.get().logDebug("WARNING: No language string in " + this.generalLanguageFileName + " for the mob type '" + type.name() + "'");
 			return type.name();
 		}
 		return mobTypeName;
 	}
 
-	public String getPlayerName() {
+	public String getPlayerName()
+	{
 		return this.playerName;
 	}
 
-	public String getPriestAssignCommand(UUID playerName) {
+	public String getPriestAssignCommand(UUID playerName)
+	{
 		return "";
 	}
 
-	public String getPriestRemoveCommand(UUID playerName) {
+	public String getPriestRemoveCommand(UUID playerName)
+	{
 		return "";
 	}
 
-	public String getType() {
+	public String getType()
+	{
 		return this.type;
 	}
 
-	public void load() {
+	public void load()
+	{
 		this.generalLanguageFileName = (GodsConfiguration.get().getLanguageIdentifier() + "_general.yml");
 
 		Gods.get().logDebug("generalFileName is " + this.generalLanguageFileName);
 		Gods.get().logDebug("GodsConfiguration.get().language is " + GodsConfiguration.get().getLanguageIdentifier());
 
 		File directory = new File(Gods.get().getDataFolder() + "/lang");
-		if (!directory.exists()) {
+		if (!directory.exists())
+		{
 			System.out.println("Creating language file directory '/lang'...");
 
 			boolean result = directory.mkdir();
-			if (result) {
+			if (result)
+			{
 				Gods.get().logDebug("Directory created");
-			} else {
+			}
+			else
+			{
 				Gods.get().logDebug("Directory FAILED!");
 				return;
 			}
 		}
-		if (!loadLanguageFile(this.generalLanguageFileName)) {
+		if (!loadLanguageFile(this.generalLanguageFileName))
+		{
 			Gods.get().log("Could not load " + this.generalLanguageFileName + " from the /lang folder!");
-			if (GodsConfiguration.get().isDownloadLanguageFile()) {
+			if (GodsConfiguration.get().isDownloadLanguageFile())
+			{
 				Gods.get().log("Downloading " + this.generalLanguageFileName + " from DogOnFire...");
-				try {
+				try
+				{
 					downloadLanguageFile(this.generalLanguageFileName);
-				} catch (Exception ex) {
+				}
+				catch (Exception ex)
+				{
 					Gods.get().log("Could not download " + this.generalLanguageFileName + " language file from DogOnFire: " + ex.getMessage());
 					return;
 				}
-				if (loadLanguageFile(this.generalLanguageFileName)) {
+				if (loadLanguageFile(this.generalLanguageFileName))
+				{
 					Gods.get().logDebug(this.generalLanguageFileName + " loaded.");
 				}
-			} else {
+			}
+			else
+			{
 				Gods.get().log("Will NOT download from DogOnFire. Please place a valid language file in your /lang folder!");
 			}
 		}
-		for (GodManager.GodType godType : GodManager.GodType.values()) {
-			for (GodManager.GodGender godGender : GodManager.GodGender.values()) {
-				if (godGender != GodManager.GodGender.None) {
+		for (GodManager.GodType godType : GodManager.GodType.values())
+		{
+			for (GodManager.GodGender godGender : GodManager.GodGender.values())
+			{
+				if (godGender != GodManager.GodGender.None)
+				{
 					String fileName = GodsConfiguration.get().getLanguageIdentifier() + "_" + godType.name().toLowerCase() + "_" + godGender.name().toLowerCase() + ".yml";
-					if (!loadLanguageFile(fileName)) {
+					if (!loadLanguageFile(fileName))
+					{
 						Gods.get().log("Could not load language file " + fileName + " from the /lang folder!");
 						Gods.get().log("Downloading english files from doggycraft.dk...");
-						try {
+						try
+						{
 							downloadLanguageFile(fileName);
-						} catch (Exception ex) {
+						}
+						catch (Exception ex)
+						{
 							Gods.get().log("Could not download language file " + fileName + " from bukkit: " + ex.getMessage());
 							continue;
 						}
@@ -461,9 +268,11 @@ public class LanguageManager {
 		}
 	}
 
-	private boolean loadLanguageFile(String fileName) {
+	private boolean loadLanguageFile(String fileName)
+	{
 		File languageConfigFile = new File(Gods.get().getDataFolder() + "/lang/" + fileName);
-		if (!languageConfigFile.exists()) {
+		if (!languageConfigFile.exists())
+		{
 			Gods.get().log("Could not load " + Gods.get().getDataFolder() + "/lang/" + fileName);
 			return false;
 		}
@@ -476,74 +285,95 @@ public class LanguageManager {
 		return true;
 	}
 
-	public String parseString(String id) {
+	public String parseString(String id)
+	{
 		String string = id;
-		if (string.contains("$ServerName")) {
+		if (string.contains("$ServerName"))
+		{
 			string = string.replace("$ServerName", ChatColor.GOLD + GodsConfiguration.get().getServerName() + ChatColor.WHITE + ChatColor.BOLD);
 		}
-		if (string.contains("$PlayerName")) {
+		if (string.contains("$PlayerName"))
+		{
 			string = string.replace("$PlayerName", ChatColor.GOLD + this.playerName + ChatColor.WHITE + ChatColor.BOLD);
 		}
-		if (string.contains("$Amount")) {
+		if (string.contains("$Amount"))
+		{
 			string = string.replace("$Amount", ChatColor.GOLD + String.valueOf(this.amount) + ChatColor.WHITE + ChatColor.BOLD);
 		}
-		if (string.contains("$Type")) {
+		if (string.contains("$Type"))
+		{
 			string = string.replace("$Type", ChatColor.GOLD + this.type + ChatColor.WHITE + ChatColor.BOLD);
 		}
 		return string;
 	}
 
-	public String parseString(String id, ChatColor defaultColor) {
+	public String parseString(String id, ChatColor defaultColor)
+	{
 		String string = id;
-		if (string.contains("$ServerName")) {
+		if (string.contains("$ServerName"))
+		{
 			string = string.replace("$ServerName", ChatColor.GOLD + GodsConfiguration.get().getServerName() + defaultColor);
 		}
-		if (string.contains("$PlayerName")) {
+		if (string.contains("$PlayerName"))
+		{
 			string = string.replace("$PlayerName", ChatColor.GOLD + this.playerName + defaultColor);
 		}
-		if (string.contains("$Amount")) {
+		if (string.contains("$Amount"))
+		{
 			string = string.replace("$Amount", ChatColor.GOLD + String.valueOf(this.amount) + defaultColor);
 		}
-		if (string.contains("$Type")) {
+		if (string.contains("$Type"))
+		{
 			string = string.replace("$Type", ChatColor.GOLD + this.type + defaultColor);
 		}
 		return string;
 	}
 
-	public String parseStringForBook(String id) {
+	public String parseStringForBook(String id)
+	{
 		String string = id;
-		if (string.contains("$ServerName")) {
+		if (string.contains("$ServerName"))
+		{
 			string = string.replace("$ServerName", GodsConfiguration.get().getServerName());
 		}
-		if (string.contains("$PlayerName")) {
+		if (string.contains("$PlayerName"))
+		{
 			string = string.replace("$PlayerName", this.playerName);
 		}
-		if (string.contains("$Amount")) {
+		if (string.contains("$Amount"))
+		{
 			string = string.replace("$Amount", String.valueOf(this.amount));
 		}
-		if (string.contains("$Type")) {
+		if (string.contains("$Type"))
+		{
 			string = string.replace("$Type", this.type);
 		}
 		return string;
 	}
 
-	public void setAmount(int a) {
+	public void setAmount(int a)
+	{
 		this.amount = a;
 	}
 
-	public boolean setDefault() {
+	public boolean setDefault()
+	{
 		return true;
 	}
 
-	public void setPlayerName(String name) {
-		if (name == null) {
+	public void setPlayerName(String name)
+	{
+		if (name == null)
+		{
 			Gods.get().logDebug("WARNING: Setting null playername");
 		}
 		this.playerName = name;
 	}
 
-	public void setType(String t) throws Exception {
-		if (t == null) {
+	public void setType(String t) throws Exception
+	{
+		if (t == null)
+		{
 			Gods.get().logDebug("WARNING: Setting null type");
 			throw new Exception("WARNING: Setting null type");
 		}

@@ -10,9 +10,11 @@ import com.dogonfire.gods.managers.BelieverManager;
 import com.dogonfire.gods.managers.GodManager;
 import com.dogonfire.gods.managers.LanguageManager;
 
-public class CommandToggleWar extends GodsCommand {
+public class CommandToggleWar extends GodsCommand
+{
 
-	protected CommandToggleWar() {
+	protected CommandToggleWar()
+	{
 		super("war");
 		this.permission = "gods.priest.war";
 		this.parameters = "<god>";
@@ -20,38 +22,47 @@ public class CommandToggleWar extends GodsCommand {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String... args) {
-		if (!hasPermission(sender)) {
+	public void onCommand(CommandSender sender, String command, String... args)
+	{
+		if (!hasPermission(sender))
+		{
 			sender.sendMessage(stringNoPermission);
 			return;
 		}
-		if (sender instanceof Player == false) {
+		if (sender instanceof Player == false)
+		{
 			sender.sendMessage(stringPlayerOnly);
 			return;
 		}
 		Player player = (Player) sender;
-		if (!GodManager.get().isPriest(player.getUniqueId())) {
+		if (!GodManager.get().isPriest(player.getUniqueId()))
+		{
 			player.sendMessage(stringPreistOnly);
 			return;
 		}
 		String godName = BelieverManager.get().getGodForBeliever(player.getUniqueId());
 		String enemyGodName = GodManager.get().formatGodName(args[1]);
-		if (!GodManager.get().godExist(args[1])) {
+		if (!GodManager.get().godExist(args[1]))
+		{
 			player.sendMessage(ChatColor.RED + "There is no God with the name " + ChatColor.GOLD + args[1]);
 			return;
 		}
 		List<String> alliances = GodManager.get().getAllianceRelations(godName);
-		if (alliances.contains(enemyGodName)) {
+		if (alliances.contains(enemyGodName))
+		{
 			player.sendMessage(ChatColor.RED + "You are ALLIED with " + ChatColor.GOLD + args[1] + ChatColor.RED + "!");
 			return;
 		}
-		if (GodManager.get().toggleWarRelationForGod(godName, enemyGodName)) {
+		if (GodManager.get().toggleWarRelationForGod(godName, enemyGodName))
+		{
 			LanguageManager.get().setPlayerName(godName);
 			GodManager.get().godSayToBelievers(enemyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversWar, 10);
 
 			LanguageManager.get().setPlayerName(enemyGodName);
 			GodManager.get().godSayToBelievers(godName, LanguageManager.LANGUAGESTRING.GodToBelieversWar, 10);
-		} else {
+		}
+		else
+		{
 			LanguageManager.get().setPlayerName(godName);
 			GodManager.get().godSayToBelievers(enemyGodName, LanguageManager.LANGUAGESTRING.GodToBelieversWarCancelled, 10);
 

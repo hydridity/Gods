@@ -5,24 +5,29 @@ import org.bukkit.entity.Player;
 
 import com.dogonfire.gods.managers.GodManager;
 
-public class CommandAccept extends GodsCommand {
+public class CommandAccept extends GodsCommand
+{
 
-	protected CommandAccept() {
+	protected CommandAccept()
+	{
 		super("accept");
 		this.permission = "gods.accept";
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String... args) {
-		if (!hasPermission(sender)) {
+	public void onCommand(CommandSender sender, String command, String... args)
+	{
+		if (!hasPermission(sender))
+		{
 			sender.sendMessage(stringNoPermission);
 			return;
 		}
-		if (sender instanceof Player == false) {
+		if (sender instanceof Player == false)
+		{
 			sender.sendMessage(stringPlayerOnly);
 			return;
 		}
+		
 		GodManager.get().believerAccept(((Player) sender).getUniqueId());
 	}
-
 }

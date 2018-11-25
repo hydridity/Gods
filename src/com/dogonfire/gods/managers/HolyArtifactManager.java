@@ -22,163 +22,178 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.HolyArtifact;
 
-public class HolyArtifactManager {
+public class HolyArtifactManager
+{
 	private static HolyArtifactManager instance;
 
-	public static HolyArtifactManager get() {
+	public static HolyArtifactManager get()
+	{
 		if (instance == null)
 			instance = new HolyArtifactManager();
 		return instance;
 	}
 
-	private FileConfiguration holyArtifactsConfig = null;
+	private FileConfiguration	holyArtifactsConfig		= null;
+	private File				holyArtifactsConfigFile	= null;
+	private Random				random					= new Random();
 
-	private File holyArtifactsConfigFile = null;
-	private Random random = new Random();
-
-	private HolyArtifactManager() {
+	private HolyArtifactManager()
+	{
 	}
 
-	public Item createHolyArtifact(GodManager.GodType godType, String godName, Location location) {
+	public Item createHolyArtifact(GodManager.GodType godType, String godName, Location location)
+	{
 		Material itemType = Material.AIR;
 		String lorePage = "A Holy artifact given by " + godName;
 		HolyPowerManager.HolyPower holyPower = HolyPowerManager.HolyPower.values()[this.random.nextInt(HolyPowerManager.HolyPower.values().length)];
-		switch (godType) {
-			case CREATURES:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of frost!";
-				holyPower = HolyPowerManager.HolyPower.FREEZE;
-				switch (this.random.nextInt(1)) {
-					case 0:
-						itemType = Material.STICK;
-				}
+		switch (godType)
+		{
+		case CREATURES:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of frost!";
+			holyPower = HolyPowerManager.HolyPower.FREEZE;
+			switch (this.random.nextInt(1))
+			{
+			case 0:
+				itemType = Material.STICK;
+			}
+			break;
+		case EVIL:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of LOVE!";
+			holyPower = HolyPowerManager.HolyPower.HEALING;
+			switch (this.random.nextInt(3))
+			{
+			case 0:
+				itemType = Material.RED_ROSE;
 				break;
-			case EVIL:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of LOVE!";
-				holyPower = HolyPowerManager.HolyPower.HEALING;
-				switch (this.random.nextInt(3)) {
-					case 0:
-						itemType = Material.RED_ROSE;
-						break;
-					case 1:
-						itemType = Material.DIAMOND;
-						break;
-					case 2:
-						itemType = Material.COOKIE;
-				}
+			case 1:
+				itemType = Material.DIAMOND;
 				break;
-			case SEA:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of the PAAARTEY!";
-				holyPower = HolyPowerManager.HolyPower.FIREWORK;
-				switch (this.random.nextInt(3)) {
-					case 0:
-						itemType = Material.GLASS_BOTTLE;
-						break;
-					case 1:
-						itemType = Material.STICK;
-						break;
-					case 2:
-						itemType = Material.CAKE;
-				}
+			case 2:
+				itemType = Material.COOKIE;
+			}
+			break;
+		case SEA:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of the PAAARTEY!";
+			holyPower = HolyPowerManager.HolyPower.FIREWORK;
+			switch (this.random.nextInt(3))
+			{
+			case 0:
+				itemType = Material.GLASS_BOTTLE;
 				break;
-			case WISDOM:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Nature";
-				holyPower = HolyPowerManager.HolyPower.NATURE;
-				switch (this.random.nextInt(5)) {
-					case 0:
-						itemType = Material.STICK;
-						break;
-					case 1:
-						itemType = Material.GOLD_HOE;
-						break;
-					case 2:
-						itemType = Material.SEEDS;
-						break;
-					case 3:
-						itemType = Material.PUMPKIN_SEEDS;
-						break;
-					case 4:
-						itemType = Material.MELON_SEEDS;
-				}
+			case 1:
+				itemType = Material.STICK;
 				break;
-			case WEREWOLVES:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of the Wisdom";
-				holyPower = HolyPowerManager.HolyPower.KNOWLEDGE;
-				switch (this.random.nextInt(3)) {
-					case 0:
-						itemType = Material.BOOK;
-						break;
-					case 1:
-						itemType = Material.ENCHANTED_BOOK;
-						break;
-					case 2:
-						itemType = Material.ENCHANTMENT_TABLE;
-				}
+			case 2:
+				itemType = Material.CAKE;
+			}
+			break;
+		case WISDOM:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Nature";
+			holyPower = HolyPowerManager.HolyPower.NATURE;
+			switch (this.random.nextInt(5))
+			{
+			case 0:
+				itemType = Material.STICK;
 				break;
-			case MOON:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of the Moon";
-				holyPower = HolyPowerManager.HolyPower.CALLMOON;
-				switch (this.random.nextInt(2)) {
-					case 0:
-						itemType = Material.BUCKET;
-				}
+			case 1:
+				itemType = Material.GOLD_HOE;
 				break;
-			case NATURE:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Nature";
-				holyPower = HolyPowerManager.HolyPower.CALLSUN;
-				switch (this.random.nextInt(2)) {
-					case 0:
-						itemType = Material.BUCKET;
-				}
+			case 2:
+				itemType = Material.SEEDS;
 				break;
-			case PARTY:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Thunder";
-				holyPower = HolyPowerManager.HolyPower.LIGHTNING_STORM;
-				switch (this.random.nextInt(2)) {
-					case 0:
-						itemType = Material.STICK;
-						break;
-					case 1:
-						itemType = Material.GOLD_AXE;
-				}
+			case 3:
+				itemType = Material.PUMPKIN_SEEDS;
 				break;
-			case WAR:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Creatures";
-				holyPower = HolyPowerManager.HolyPower.TAME;
-				switch (this.random.nextInt(1)) {
-					case 0:
-						itemType = Material.SHEARS;
-						break;
-					case 1:
-						itemType = Material.LEASH;
-				}
+			case 4:
+				itemType = Material.MELON_SEEDS;
+			}
+			break;
+		case WEREWOLVES:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of the Wisdom";
+			holyPower = HolyPowerManager.HolyPower.KNOWLEDGE;
+			switch (this.random.nextInt(3))
+			{
+			case 0:
+				itemType = Material.BOOK;
 				break;
-			case SUN:
-				lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of WAR";
-				holyPower = HolyPowerManager.HolyPower.FIREBALL;
-				switch (this.random.nextInt(2)) {
-					case 0:
-						itemType = Material.GOLD_SWORD;
-						break;
-					case 1:
-						itemType = Material.GOLD_AXE;
-				}
+			case 1:
+				itemType = Material.ENCHANTED_BOOK;
 				break;
-			case FROST:
-				lorePage = ChatColor.DARK_PURPLE + "An Unholy artifact of EVIL";
-				holyPower = HolyPowerManager.HolyPower.FIREBALL;
-				switch (this.random.nextInt(2)) {
-					case 0:
-						itemType = Material.GOLD_SWORD;
-						break;
-					case 1:
-						itemType = Material.GOLD_AXE;
-				}
+			case 2:
+				itemType = Material.ENCHANTMENT_TABLE;
+			}
+			break;
+		case MOON:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of the Moon";
+			holyPower = HolyPowerManager.HolyPower.CALLMOON;
+			switch (this.random.nextInt(2))
+			{
+			case 0:
+				itemType = Material.BUCKET;
+			}
+			break;
+		case NATURE:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Nature";
+			holyPower = HolyPowerManager.HolyPower.CALLSUN;
+			switch (this.random.nextInt(2))
+			{
+			case 0:
+				itemType = Material.BUCKET;
+			}
+			break;
+		case PARTY:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Thunder";
+			holyPower = HolyPowerManager.HolyPower.LIGHTNING_STORM;
+			switch (this.random.nextInt(2))
+			{
+			case 0:
+				itemType = Material.STICK;
 				break;
-			case LOVE:
-			case THUNDER:
-			default:
-				Gods.get().log("createHolyArtifact() : Unknown godType " + godType);
-				return null;
+			case 1:
+				itemType = Material.GOLD_AXE;
+			}
+			break;
+		case WAR:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of Creatures";
+			holyPower = HolyPowerManager.HolyPower.TAME;
+			switch (this.random.nextInt(1))
+			{
+			case 0:
+				itemType = Material.SHEARS;
+				break;
+			case 1:
+				itemType = Material.LEASH;
+			}
+			break;
+		case SUN:
+			lorePage = ChatColor.DARK_PURPLE + "A Holy artifact of WAR";
+			holyPower = HolyPowerManager.HolyPower.FIREBALL;
+			switch (this.random.nextInt(2))
+			{
+			case 0:
+				itemType = Material.GOLD_SWORD;
+				break;
+			case 1:
+				itemType = Material.GOLD_AXE;
+			}
+			break;
+		case FROST:
+			lorePage = ChatColor.DARK_PURPLE + "An Unholy artifact of EVIL";
+			holyPower = HolyPowerManager.HolyPower.FIREBALL;
+			switch (this.random.nextInt(2))
+			{
+			case 0:
+				itemType = Material.GOLD_SWORD;
+				break;
+			case 1:
+				itemType = Material.GOLD_AXE;
+			}
+			break;
+		case LOVE:
+		case THUNDER:
+		default:
+			Gods.get().log("createHolyArtifact() : Unknown godType " + godType);
+			return null;
 		}
 		int powerValue = 1;
 
@@ -188,14 +203,19 @@ public class HolyArtifactManager {
 
 		ItemMeta itemMeta = null;
 
-		try {
+		try
+		{
 			itemMeta = item.getItemMeta();
 			itemMeta.setDisplayName(ChatColor.GOLD + itemName);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			Gods.get().logDebug("createHolyArtifact(): Could not get or set item meta");
 		}
-		try {
-			if (lorePage != null) {
+		try
+		{
+			if (lorePage != null)
+			{
 				List<String> lorePages = new ArrayList();
 				lorePages.add(lorePage);
 				lorePages.add(ChatColor.WHITE + "Damage: 12");
@@ -203,28 +223,31 @@ public class HolyArtifactManager {
 
 				itemMeta.setLore(lorePages);
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			Gods.get().logDebug("createHolyArtifact(): Could not set meta lore pages");
 			return null;
 		}
-		switch (this.random.nextInt(6)) {
-			case 0:
-				itemMeta.addEnchant(Enchantment.DAMAGE_ALL, 1 + this.random.nextInt(2), true);
-				break;
-			case 1:
-				itemMeta.addEnchant(Enchantment.DAMAGE_UNDEAD, 1 + this.random.nextInt(2), true);
-				break;
-			case 2:
-				itemMeta.addEnchant(Enchantment.FIRE_ASPECT, 1 + this.random.nextInt(2), true);
-				break;
-			case 3:
-				itemMeta.addEnchant(Enchantment.KNOCKBACK, 1 + this.random.nextInt(2), true);
-				break;
-			case 4:
-				itemMeta.addEnchant(Enchantment.DIG_SPEED, 1 + this.random.nextInt(2), true);
-				break;
-			case 5:
-				itemMeta.addEnchant(Enchantment.LOOT_BONUS_MOBS, 1 + this.random.nextInt(2), true);
+		switch (this.random.nextInt(6))
+		{
+		case 0:
+			itemMeta.addEnchant(Enchantment.DAMAGE_ALL, 1 + this.random.nextInt(2), true);
+			break;
+		case 1:
+			itemMeta.addEnchant(Enchantment.DAMAGE_UNDEAD, 1 + this.random.nextInt(2), true);
+			break;
+		case 2:
+			itemMeta.addEnchant(Enchantment.FIRE_ASPECT, 1 + this.random.nextInt(2), true);
+			break;
+		case 3:
+			itemMeta.addEnchant(Enchantment.KNOCKBACK, 1 + this.random.nextInt(2), true);
+			break;
+		case 4:
+			itemMeta.addEnchant(Enchantment.DIG_SPEED, 1 + this.random.nextInt(2), true);
+			break;
+		case 5:
+			itemMeta.addEnchant(Enchantment.LOOT_BONUS_MOBS, 1 + this.random.nextInt(2), true);
 		}
 		item.setItemMeta(itemMeta);
 
@@ -235,182 +258,213 @@ public class HolyArtifactManager {
 		return artifactItem;
 	}
 
-	public Item createHolyArtifact(String playerName, GodManager.GodType godType, String godName, Location location) {
+	public Item createHolyArtifact(String playerName, GodManager.GodType godType, String godName, Location location)
+	{
 		Item item = createHolyArtifact(godType, godName, location);
 
 		return item;
 	}
 
-	public String getArtifactRankName(int kills) {
-		if (kills < 5) {
+	public String getArtifactRankName(int kills)
+	{
+		if (kills < 5)
+		{
 			return "";
 		}
-		if (kills < 20) {
+		if (kills < 20)
+		{
 			return ChatColor.GREEN + "Shiny";
 		}
-		if (kills < 50) {
+		if (kills < 50)
+		{
 			return ChatColor.GREEN + "Honorable";
 		}
-		if (kills < 100) {
+		if (kills < 100)
+		{
 			return ChatColor.GREEN + "Holy";
 		}
-		if (kills < 150) {
+		if (kills < 150)
+		{
 			return ChatColor.GREEN + "Saintly";
 		}
-		if (kills < 200) {
+		if (kills < 200)
+		{
 			return ChatColor.BLUE + "Amazing";
 		}
-		if (kills < 300) {
+		if (kills < 300)
+		{
 			return ChatColor.BLUE + "Mega";
 		}
-		if (kills < 500) {
+		if (kills < 500)
+		{
 			return ChatColor.GREEN + "Awesome";
 		}
-		if (kills < 1000) {
+		if (kills < 1000)
+		{
 			return ChatColor.DARK_PURPLE + "Epic";
 		}
 		return ChatColor.GOLD + "Legendary";
 	}
 
-	public String getHolyArtifactName(Material itemType, HolyPowerManager.HolyPower holyPower, String godName, GodManager.GodType godType) {
+	public String getHolyArtifactName(Material itemType, HolyPowerManager.HolyPower holyPower, String godName, GodManager.GodType godType)
+	{
 		String itemName = "Holy Artifact of " + godName;
-		if (godType == null) {
+		if (godType == null)
+		{
 			return itemName;
 		}
-		switch (godType) {
-			case EVIL:
-				switch (itemType) {
-					case CHAINMAIL_BOOTS:
-						itemName = "Love rose of " + godName;
-						break;
-					case LEATHER_BOOTS:
-						itemName = "Jewel of " + godName;
-						break;
-					case SHEARS:
-						itemName = "Friendship cookie of " + godName;
-				}
+		switch (godType)
+		{
+		case EVIL:
+			switch (itemType)
+			{
+			case CHAINMAIL_BOOTS:
+				itemName = "Love rose of " + godName;
 				break;
-			case SEA:
-				switch (itemType) {
-					case STAINED_CLAY:
-						itemName = "Vodka of " + godName;
-						break;
-					case MELON_STEM:
-						itemName = "Partystick of " + godName;
-						break;
-					case SANDSTONE_STAIRS:
-						itemName = "Partycake of " + godName;
-				}
+			case LEATHER_BOOTS:
+				itemName = "Jewel of " + godName;
 				break;
-			case WISDOM:
-				switch (itemType) {
-					case NETHER_FENCE:
-						itemName = "Earthdigger of " + godName;
-						break;
-					case BAKED_POTATO:
-						itemName = "Seed of " + godName;
-						break;
-					case NETHER_STALK:
-						itemName = "Seed of " + godName;
-						break;
-					case SLIME_BALL:
-						itemName = "Melon seeds of " + godName;
-						break;
-					case SKULL_ITEM:
-						itemName = "Pumpkin seeds of " + godName;
-				}
+			case SHEARS:
+				itemName = "Friendship cookie of " + godName;
+			}
+			break;
+		case SEA:
+			switch (itemType)
+			{
+			case STAINED_CLAY:
+				itemName = "Vodka of " + godName;
 				break;
-			case WEREWOLVES:
-				switch (itemType) {
-					case REDSTONE_COMPARATOR_OFF:
-						itemName = "Knowledge tome of " + godName;
-						break;
-					case GLASS:
-						itemName = "Enchantment table of " + godName;
-						break;
-					case WALL_SIGN:
-						itemName = "Enchantment book of " + godName;
-				}
+			case MELON_STEM:
+				itemName = "Partystick of " + godName;
 				break;
-			case MOON:
-				switch (itemType) {
-					case RAW_CHICKEN:
-						itemName = "Moonbucket of " + godName;
-				}
+			case SANDSTONE_STAIRS:
+				itemName = "Partycake of " + godName;
+			}
+			break;
+		case WISDOM:
+			switch (itemType)
+			{
+			case NETHER_FENCE:
+				itemName = "Earthdigger of " + godName;
 				break;
-			case NATURE:
-				switch (itemType) {
-					case RAW_CHICKEN:
-						itemName = "Sunbucket of " + godName;
-				}
+			case BAKED_POTATO:
+				itemName = "Seed of " + godName;
 				break;
-			case PARTY:
-				switch (itemType) {
-					case MOSSY_COBBLESTONE:
-						itemName = "Thunderaxe of " + godName;
-						break;
-					case MELON_STEM:
-						itemName = "Thunderwand of " + godName;
-				}
+			case NETHER_STALK:
+				itemName = "Seed of " + godName;
 				break;
-			case WAR:
-				switch (itemType) {
-					case SIGN_POST:
-						itemName = "Shears of " + godName;
-						break;
-					case WOOD_AXE:
-						itemName = "Leash of " + godName;
-				}
+			case SLIME_BALL:
+				itemName = "Melon seeds of " + godName;
 				break;
-			case SUN:
-				switch (itemType) {
-					case MOB_SPAWNER:
-						itemName = "Warsword of " + godName;
-						break;
-					case MOSSY_COBBLESTONE:
-						itemName = "Waraxe of " + godName;
-				}
+			case SKULL_ITEM:
+				itemName = "Pumpkin seeds of " + godName;
+			}
+			break;
+		case WEREWOLVES:
+			switch (itemType)
+			{
+			case REDSTONE_COMPARATOR_OFF:
+				itemName = "Knowledge tome of " + godName;
 				break;
-			case FROST:
-				switch (itemType) {
-					case MOB_SPAWNER:
-						itemName = "Bloodsword of " + godName;
-						break;
-					case MOSSY_COBBLESTONE:
-						itemName = "Bloodaxe of " + godName;
-				}
+			case GLASS:
+				itemName = "Enchantment table of " + godName;
 				break;
-			case CREATURES:
-				switch (itemType) {
-					case MELON_STEM:
-						itemName = "Frostwand of " + godName;
-				}
+			case WALL_SIGN:
+				itemName = "Enchantment book of " + godName;
+			}
+			break;
+		case MOON:
+			switch (itemType)
+			{
+			case RAW_CHICKEN:
+				itemName = "Moonbucket of " + godName;
+			}
+			break;
+		case NATURE:
+			switch (itemType)
+			{
+			case RAW_CHICKEN:
+				itemName = "Sunbucket of " + godName;
+			}
+			break;
+		case PARTY:
+			switch (itemType)
+			{
+			case MOSSY_COBBLESTONE:
+				itemName = "Thunderaxe of " + godName;
 				break;
+			case MELON_STEM:
+				itemName = "Thunderwand of " + godName;
+			}
+			break;
+		case WAR:
+			switch (itemType)
+			{
+			case SIGN_POST:
+				itemName = "Shears of " + godName;
+				break;
+			case WOOD_AXE:
+				itemName = "Leash of " + godName;
+			}
+			break;
+		case SUN:
+			switch (itemType)
+			{
+			case MOB_SPAWNER:
+				itemName = "Warsword of " + godName;
+				break;
+			case MOSSY_COBBLESTONE:
+				itemName = "Waraxe of " + godName;
+			}
+			break;
+		case FROST:
+			switch (itemType)
+			{
+			case MOB_SPAWNER:
+				itemName = "Bloodsword of " + godName;
+				break;
+			case MOSSY_COBBLESTONE:
+				itemName = "Bloodaxe of " + godName;
+			}
+			break;
+		case CREATURES:
+			switch (itemType)
+			{
+			case MELON_STEM:
+				itemName = "Frostwand of " + godName;
+			}
+			break;
 		}
 		return itemName;
 	}
 
-	public int getHolyArtifactUsed(String playerName) {
+	public int getHolyArtifactUsed(String playerName)
+	{
 		return this.holyArtifactsConfig.getInt(playerName + ".Used");
 	}
 
-	public int getNumberOfHolyArtifacts() {
+	public int getNumberOfHolyArtifacts()
+	{
 		ConfigurationSection configSection = this.holyArtifactsConfig.getConfigurationSection("Player");
-		if (configSection != null) {
+		if (configSection != null)
+		{
 			Gods.get().logDebug("NumberOfArtifacts = " + configSection.getKeys(false).size());
 			return configSection.getKeys(false).size();
 		}
 		return 0;
 	}
 
-	public void handleActivate(String playerName, ItemStack item) {
-		if (!isHolyArtifact(item)) {
+	public void handleActivate(String playerName, ItemStack item)
+	{
+		if (!isHolyArtifact(item))
+		{
 			return;
 		}
 		HolyPowerManager.HolyPower holyPower = HolyPowerManager.get().getHolyPowerFromDescription(item.getItemMeta().getLore().get(2).substring(2));
 
 		Player player = Gods.get().getServer().getPlayer(playerName);
-		if (player == null) {
+		if (player == null)
+		{
 			return;
 		}
 		HolyPowerManager.get().activatePower(player, holyPower, 1);
@@ -418,18 +472,23 @@ public class HolyArtifactManager {
 		item.setDurability((short) (item.getDurability() - 1));
 	}
 
-	public float handleDamage(String playerName, Entity targetEntity, ItemStack itemInHand, String godName) {
-		if (itemInHand.getAmount() == 0) {
+	public float handleDamage(String playerName, Entity targetEntity, ItemStack itemInHand, String godName)
+	{
+		if (itemInHand.getAmount() == 0)
+		{
 			return 1.0F;
 		}
 		HolyArtifact item = new HolyArtifact(itemInHand);
-		if ((targetEntity.getType() == EntityType.GIANT) || (targetEntity.getType() == EntityType.ENDER_DRAGON)) {
-			if (!item.isHolyArtifact()) {
+		if ((targetEntity.getType() == EntityType.GIANT) || (targetEntity.getType() == EntityType.ENDER_DRAGON))
+		{
+			if (!item.isHolyArtifact())
+			{
 				return 0.0F;
 			}
 			return 1.0F;
 		}
-		if (!item.isHolyArtifact()) {
+		if (!item.isHolyArtifact())
+		{
 			return 1.0F;
 		}
 		Gods.get().logDebug("Handling Holy Artifact damage for " + playerName);
@@ -443,16 +502,20 @@ public class HolyArtifactManager {
 		return 1.0F + used / 25.0F;
 	}
 
-	public void handleDeath(String killerName, String godName, ItemStack itemInHand) {
-		if (itemInHand.getAmount() > 0) {
+	public void handleDeath(String killerName, String godName, ItemStack itemInHand)
+	{
+		if (itemInHand.getAmount() > 0)
+		{
 			HolyArtifact item = new HolyArtifact(itemInHand);
 
 			item.isHolyArtifact();
 		}
 	}
 
-	public void handleDrop(String playerName, Item item, Location pickupLocation) {
-		if (!isHolyArtifact(item.getItemStack())) {
+	public void handleDrop(String playerName, Item item, Location pickupLocation)
+	{
+		if (!isHolyArtifact(item.getItemStack()))
+		{
 			return;
 		}
 		Gods.get().logDebug(playerName + " dropped up a Holy artifact");
@@ -460,61 +523,79 @@ public class HolyArtifactManager {
 		save();
 	}
 
-	public boolean hasHolyArtifact(String playerName) {
+	public boolean hasHolyArtifact(String playerName)
+	{
 		return this.holyArtifactsConfig.getString("Player." + playerName + ".PowerType") != null;
 	}
 
-	public boolean hasHolyArtifactBlessing(String playerName) {
+	public boolean hasHolyArtifactBlessing(String playerName)
+	{
 		return this.holyArtifactsConfig.get("Player." + playerName + ".PowerType") != null;
 	}
 
-	public boolean isHolyArtifact(ItemStack item) {
-		if (!item.hasItemMeta()) {
+	public boolean isHolyArtifact(ItemStack item)
+	{
+		if (!item.hasItemMeta())
+		{
 			return false;
 		}
-		if (!item.getItemMeta().hasLore()) {
+		if (!item.getItemMeta().hasLore())
+		{
 			return false;
 		}
 		ItemMeta itemMeta = item.getItemMeta();
-		if (itemMeta.getLore().size() < 3) {
+		if (itemMeta.getLore().size() < 3)
+		{
 			return false;
 		}
 		return true;
 	}
 
-	public boolean isNewItemRank(int oldKills) {
-		if (oldKills == 5) {
+	public boolean isNewItemRank(int oldKills)
+	{
+		if (oldKills == 5)
+		{
 			return true;
 		}
-		if (oldKills == 20) {
+		if (oldKills == 20)
+		{
 			return true;
 		}
-		if (oldKills == 50) {
+		if (oldKills == 50)
+		{
 			return true;
 		}
-		if (oldKills == 100) {
+		if (oldKills == 100)
+		{
 			return true;
 		}
-		if (oldKills == 150) {
+		if (oldKills == 150)
+		{
 			return true;
 		}
-		if (oldKills == 200) {
+		if (oldKills == 200)
+		{
 			return true;
 		}
-		if (oldKills == 300) {
+		if (oldKills == 300)
+		{
 			return true;
 		}
-		if (oldKills == 500) {
+		if (oldKills == 500)
+		{
 			return true;
 		}
-		if (oldKills == 1000) {
+		if (oldKills == 1000)
+		{
 			return true;
 		}
 		return false;
 	}
 
-	public void load() {
-		if (this.holyArtifactsConfigFile == null) {
+	public void load()
+	{
+		if (this.holyArtifactsConfigFile == null)
+		{
 			this.holyArtifactsConfigFile = new File(Gods.get().getDataFolder(), "holyartifacts.yml");
 		}
 		this.holyArtifactsConfig = YamlConfiguration.loadConfiguration(this.holyArtifactsConfigFile);
@@ -522,7 +603,8 @@ public class HolyArtifactManager {
 		Gods.get().log("Loaded " + this.holyArtifactsConfig.getKeys(false).size() + " holy artifacts.");
 	}
 
-	public void resetHolyArtifactKills(Item item, String godName, GodManager.GodType godType, int oldKills, int kills) {
+	public void resetHolyArtifactKills(Item item, String godName, GodManager.GodType godType, int oldKills, int kills)
+	{
 		ItemMeta itemMeta = item.getItemStack().getItemMeta();
 		List<String> lore = itemMeta.getLore();
 
@@ -537,18 +619,24 @@ public class HolyArtifactManager {
 		save();
 	}
 
-	public void save() {
-		if ((this.holyArtifactsConfig == null) || (this.holyArtifactsConfigFile == null)) {
+	public void save()
+	{
+		if ((this.holyArtifactsConfig == null) || (this.holyArtifactsConfigFile == null))
+		{
 			return;
 		}
-		try {
+		try
+		{
 			this.holyArtifactsConfig.save(this.holyArtifactsConfigFile);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			Gods.get().log("Could not save config to " + this.holyArtifactsConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 
-	public void updateStats(ItemStack item, String playerName, String godName, GodManager.GodType godType, int oldUses, int uses) {
+	public void updateStats(ItemStack item, String playerName, String godName, GodManager.GodType godType, int oldUses, int uses)
+	{
 		ItemMeta itemMeta = item.getItemMeta();
 		List<String> lore = itemMeta.getLore();
 
@@ -559,7 +647,8 @@ public class HolyArtifactManager {
 		item.setItemMeta(itemMeta);
 
 		HolyPowerManager.HolyPower holyPower = HolyPowerManager.HolyPower.valueOf(this.holyArtifactsConfig.getString("Player." + playerName + ".PowerType"));
-		if ((uses != oldUses) && (isNewItemRank(oldUses))) {
+		if ((uses != oldUses) && (isNewItemRank(oldUses)))
+		{
 			String artifactName = getArtifactRankName(uses) + " " + ChatColor.GOLD + getHolyArtifactName(item.getType(), holyPower, godName, godType);
 
 			itemMeta.setDisplayName(artifactName);

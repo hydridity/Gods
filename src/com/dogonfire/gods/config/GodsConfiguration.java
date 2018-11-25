@@ -37,483 +37,578 @@ import com.dogonfire.gods.managers.QuestManager;
  * @author Jacob
  *
  */
-public class GodsConfiguration {
-
+public class GodsConfiguration
+{
 	private static GodsConfiguration instance;
 
-	public static GodsConfiguration get() {
+	public static GodsConfiguration get()
+	{
 		if (instance == null)
 			instance = new GodsConfiguration();
 		return instance;
 	}
 
-	private boolean debug = false;
-	private boolean downloadLanguageFile = true;
-	private boolean useWhitelist = false;
-	private boolean useBlacklist = false;
-	private boolean questsEnabled = false;
-	private boolean itemBlessingEnabled = true;
-	private boolean blessingEnabled = true;
-	private boolean enableDetoration = false;
-	private boolean commandmentsEnabled = true;
-	private boolean sacrificesEnabled = true;
-	private boolean holyLandEnabled = false;
-	private boolean biblesEnabled = false;
-	private boolean holyArtifactsEnabled = false;
-	private boolean propheciesEnabled = false;
-	private boolean chatFormattingEnabled = false;
-	private boolean useGodTitles = true;
-	private boolean marriageEnabled = false;
-	private boolean marriageFireworksEnabled = false;
-	private boolean cursingEnabled = true;
-	private boolean lightningCurseEnabled = false;
-	private boolean mobCurseEnabled = true;
-	private boolean fastDiggingBlessingEnabled = false;
-	private boolean healBlessingEnabled = false;
-	private boolean regenerationBlessingEnabled = false;
-	private boolean speedBlessingEnabled = false;
-	private boolean increaseDamageBlessingEnabled = false;
-	private boolean globalQuestsEnabled = false;
-	private boolean slayQuestsEnabled = true;
-	private boolean sacrificeQuestsEnabled = true;
-	private boolean pilgrimageQuestsEnabled = false;
-	private boolean holyFeastQuestsEnabled = false;
-	private boolean giveItemsQuestsEnabled = false;
-	private boolean burnBiblesQuestsEnabled = false;
-	private boolean crusadeQuestsEnabled = false;
-	private boolean convertQuestsEnabled = false;
-	private boolean buildTowerQuestsEnabled = false;
-	private boolean holywarQuestsEnabled = false;
-	private boolean slayDragonQuestsEnabled = false;
-	private boolean broadcastNewGods = true;
-	private boolean broadcastProphecyFullfillment = true;
-	private boolean defaultPrivateReligions = false;
-	private boolean leaveReligionOnDeath = false;
-	private boolean onlyPriestCanSetHome = false;
-	private boolean commandmentsBroadcastFoodEaten = true;
-	private boolean commandmentsBroadcastMobSlain = true;
-	private boolean holyLandDefaultPvP = false;
-	private boolean holyLandDefaultMobDamage = true;
-	private boolean holyLandLightning = true;
-	private boolean powerLossOnDeath = false;
-	private boolean allowMultipleGodsPrDivinePower = false;
-	private boolean prayersEnabled = true;
-	private boolean allowInteractionInNeutralLands = true;
-	private boolean werewolfEnabled = false;
-	private int minCursingTime = 10;
-	private int maxCursingTime = 10;
-	private int minBlessingTime = 900;
-	private int maxBlessingTime = 180;
-	private int minMinutesBetweenQuests = 180;
-	private int globalQuestsPercentChance = 10;
-	private int maxPriestsPrGod = 3;
-	private int numberOfBelieversPrPriest = 3;
-	private int maxInvitationTimeSeconds = 60;
-	private int minItemBlessingTime = 10;
-	private int minHolyArtifactBlessingTime = 1440;
-	private int maxPriestPrayerTime = 8;
-	private int maxBelieverPrayerTime = 154;
-	private int minBelieverPrayerTime = 30;
-	private int minGodPowerForItemBlessings = 3;
-	private int godPowerForLevel3Items = 100;
-	private int godPowerForLevel2Items = 50;
-	private int godPowerForLevel1Items = 10;
-	private int minBelieversForPriest = 3;
-	private int minSecondsBetweenChangingGod = 5 * 60;
-	private int requiredBelieversForQuests = 1;
-	private int numberOfDaysForAbandonedHolyLands = 14;
-	private int minHolyLandRadius = 10;
-	private int maxHolyLandRadius = 1000;
-	private int maxHolyArtifacts = 50;
-	private int prayerPowerForItem = 20;
-	private int prayerPowerForQuest = 50;
-	private int prayerPowerForBlessing = 10;
-	private int prayerPowerForHolyArtifact = 100;
-	private int prayerPowerForHealth = 10;
-	private double moodFalloff = 0.03D;
-	private double godVerbosity = 1.0D;
-	private double holyLandRadiusPrPower = 1.25D;
-	private String languageIdentifier = "english";
-	private String priestAssignCommand = "";
-	private String priestRemoveCommand = "";
-	private String serverName = "Your Server";
+	private boolean			debug								= false;
+	private boolean			downloadLanguageFile				= true;
+	private boolean			useWhitelist						= false;
+	private boolean			useBlacklist						= false;
+	private boolean			questsEnabled						= false;
+	private boolean			itemBlessingEnabled					= true;
+	private boolean			blessingEnabled						= true;
+	private boolean			enableDetoration					= false;
+	private boolean			commandmentsEnabled					= true;
+	private boolean			sacrificesEnabled					= true;
+	private boolean			holyLandEnabled						= false;
+	private boolean			biblesEnabled						= false;
+	private boolean			holyArtifactsEnabled				= false;
+	private boolean			propheciesEnabled					= false;
+	private boolean			chatFormattingEnabled				= false;
+	private boolean			useGodTitles						= true;
+	private boolean			marriageEnabled						= false;
+	private boolean			marriageFireworksEnabled			= false;
+	private boolean			cursingEnabled						= true;
+	private boolean			lightningCurseEnabled				= false;
+	private boolean			mobCurseEnabled						= true;
+	private boolean			fastDiggingBlessingEnabled			= false;
+	private boolean			healBlessingEnabled					= false;
+	private boolean			regenerationBlessingEnabled			= false;
+	private boolean			speedBlessingEnabled				= false;
+	private boolean			increaseDamageBlessingEnabled		= false;
+	private boolean			globalQuestsEnabled					= false;
+	private boolean			slayQuestsEnabled					= true;
+	private boolean			sacrificeQuestsEnabled				= true;
+	private boolean			pilgrimageQuestsEnabled				= false;
+	private boolean			holyFeastQuestsEnabled				= false;
+	private boolean			giveItemsQuestsEnabled				= false;
+	private boolean			burnBiblesQuestsEnabled				= false;
+	private boolean			crusadeQuestsEnabled				= false;
+	private boolean			convertQuestsEnabled				= false;
+	private boolean			buildTowerQuestsEnabled				= false;
+	private boolean			holywarQuestsEnabled				= false;
+	private boolean			slayDragonQuestsEnabled				= false;
+	private boolean			broadcastNewGods					= true;
+	private boolean			broadcastProphecyFullfillment		= true;
+	private boolean			defaultPrivateReligions				= false;
+	private boolean			leaveReligionOnDeath				= false;
+	private boolean			onlyPriestCanSetHome				= false;
+	private boolean			commandmentsBroadcastFoodEaten		= true;
+	private boolean			commandmentsBroadcastMobSlain		= true;
+	private boolean			holyLandDefaultPvP					= false;
+	private boolean			holyLandDefaultMobDamage			= true;
+	private boolean			holyLandLightning					= true;
+	private boolean			powerLossOnDeath					= false;
+	private boolean			allowMultipleGodsPrDivinePower		= false;
+	private boolean			prayersEnabled						= true;
+	private boolean			allowInteractionInNeutralLands		= true;
+	private boolean			werewolfEnabled						= false;
+	private int				minCursingTime						= 10;
+	private int				maxCursingTime						= 10;
+	private int				minBlessingTime						= 900;
+	private int				maxBlessingTime						= 180;
+	private int				minMinutesBetweenQuests				= 180;
+	private int				globalQuestsPercentChance			= 10;
+	private int				maxPriestsPrGod						= 3;
+	private int				numberOfBelieversPrPriest			= 3;
+	private int				maxInvitationTimeSeconds			= 60;
+	private int				minItemBlessingTime					= 10;
+	private int				minHolyArtifactBlessingTime			= 1440;
+	private int				maxPriestPrayerTime					= 8;
+	private int				maxBelieverPrayerTime				= 154;
+	private int				minBelieverPrayerTime				= 30;
+	private int				minGodPowerForItemBlessings			= 3;
+	private int				godPowerForLevel3Items				= 100;
+	private int				godPowerForLevel2Items				= 50;
+	private int				godPowerForLevel1Items				= 10;
+	private int				minBelieversForPriest				= 3;
+	private int				minSecondsBetweenChangingGod		= 5 * 60;
+	private int				requiredBelieversForQuests			= 1;
+	private int				numberOfDaysForAbandonedHolyLands	= 14;
+	private int				minHolyLandRadius					= 10;
+	private int				maxHolyLandRadius					= 1000;
+	private int				maxHolyArtifacts					= 50;
+	private int				prayerPowerForItem					= 20;
+	private int				prayerPowerForQuest					= 50;
+	private int				prayerPowerForBlessing				= 10;
+	private int				prayerPowerForHolyArtifact			= 100;
+	private int				prayerPowerForHealth				= 10;
+	private double			moodFalloff							= 0.03D;
+	private double			godVerbosity						= 1.0D;
+	private double			holyLandRadiusPrPower				= 1.25D;
+	private String			languageIdentifier					= "english";
+	private String			priestAssignCommand					= "";
+	private String			priestRemoveCommand					= "";
+	private String			serverName							= "Your Server";
 
-	private Set<Material> holylandBreakableBlockTypes = new HashSet<Material>();
+	private Set<Material>	holylandBreakableBlockTypes			= new HashSet<Material>();
 
-	private List<String> worlds = new ArrayList<String>();
+	private List<String>	worlds								= new ArrayList<String>();
 
-	private GodsConfiguration() {
+	private GodsConfiguration()
+	{
 	}
 
-	public final int getGlobalQuestsPercentChance() {
+	public final int getGlobalQuestsPercentChance()
+	{
 		return globalQuestsPercentChance;
 	}
 
-	public final int getGodPowerForLevel1Items() {
+	public final int getGodPowerForLevel1Items()
+	{
 		return godPowerForLevel1Items;
 	}
 
-	public final int getGodPowerForLevel2Items() {
+	public final int getGodPowerForLevel2Items()
+	{
 		return godPowerForLevel2Items;
 	}
 
-	public final int getGodPowerForLevel3Items() {
+	public final int getGodPowerForLevel3Items()
+	{
 		return godPowerForLevel3Items;
 	}
 
-	public final double getGodVerbosity() {
+	public final double getGodVerbosity()
+	{
 		return godVerbosity;
 	}
 
-	public final Set<Material> getHolylandBreakableBlockTypes() {
+	public final Set<Material> getHolylandBreakableBlockTypes()
+	{
 		return holylandBreakableBlockTypes;
 	}
 
-	public final double getHolyLandRadiusPrPower() {
+	public final double getHolyLandRadiusPrPower()
+	{
 		return holyLandRadiusPrPower;
 	}
 
-	public final String getLanguageIdentifier() {
+	public final String getLanguageIdentifier()
+	{
 		return languageIdentifier;
 	}
 
-	public final int getMaxBelieverPrayerTime() {
+	public final int getMaxBelieverPrayerTime()
+	{
 		return maxBelieverPrayerTime;
 	}
 
-	public final int getMaxBlessingTime() {
+	public final int getMaxBlessingTime()
+	{
 		return maxBlessingTime;
 	}
 
-	public final int getMaxCursingTime() {
+	public final int getMaxCursingTime()
+	{
 		return maxCursingTime;
 	}
 
-	public final int getMaxHolyArtifacts() {
+	public final int getMaxHolyArtifacts()
+	{
 		return maxHolyArtifacts;
 	}
 
-	public final int getMaxHolyLandRadius() {
+	public final int getMaxHolyLandRadius()
+	{
 		return maxHolyLandRadius;
 	}
 
-	public final int getMaxInvitationTimeSeconds() {
+	public final int getMaxInvitationTimeSeconds()
+	{
 		return maxInvitationTimeSeconds;
 	}
 
-	public final int getMaxPriestPrayerTime() {
+	public final int getMaxPriestPrayerTime()
+	{
 		return maxPriestPrayerTime;
 	}
 
-	public final int getMaxPriestsPrGod() {
+	public final int getMaxPriestsPrGod()
+	{
 		return maxPriestsPrGod;
 	}
 
-	public final int getMinBelieverPrayerTime() {
+	public final int getMinBelieverPrayerTime()
+	{
 		return minBelieverPrayerTime;
 	}
 
-	public final int getMinBelieversForPriest() {
+	public final int getMinBelieversForPriest()
+	{
 		return minBelieversForPriest;
 	}
 
-	public final int getMinBlessingTime() {
+	public final int getMinBlessingTime()
+	{
 		return minBlessingTime;
 	}
 
-	public final int getMinCursingTime() {
+	public final int getMinCursingTime()
+	{
 		return minCursingTime;
 	}
 
-	public final int getMinGodPowerForItemBlessings() {
+	public final int getMinGodPowerForItemBlessings()
+	{
 		return minGodPowerForItemBlessings;
 	}
 
-	public final int getMinHolyArtifactBlessingTime() {
+	public final int getMinHolyArtifactBlessingTime()
+	{
 		return minHolyArtifactBlessingTime;
 	}
 
-	public final int getMinHolyLandRadius() {
+	public final int getMinHolyLandRadius()
+	{
 		return minHolyLandRadius;
 	}
 
-	public final int getMinItemBlessingTime() {
+	public final int getMinItemBlessingTime()
+	{
 		return minItemBlessingTime;
 	}
 
-	public final int getMinMinutesBetweenQuests() {
+	public final int getMinMinutesBetweenQuests()
+	{
 		return minMinutesBetweenQuests;
 	}
 
-	public final int getMinSecondsBetweenChangingGod() {
+	public final int getMinSecondsBetweenChangingGod()
+	{
 		return minSecondsBetweenChangingGod;
 	}
 
-	public final double getMoodFalloff() {
+	public final double getMoodFalloff()
+	{
 		return moodFalloff;
 	}
 
-	public final int getNumberOfBelieversPrPriest() {
+	public final int getNumberOfBelieversPrPriest()
+	{
 		return numberOfBelieversPrPriest;
 	}
 
-	public final int getNumberOfDaysForAbandonedHolyLands() {
+	public final int getNumberOfDaysForAbandonedHolyLands()
+	{
 		return numberOfDaysForAbandonedHolyLands;
 	}
 
-	public final int getPrayerPowerForBlessing() {
+	public final int getPrayerPowerForBlessing()
+	{
 		return prayerPowerForBlessing;
 	}
 
-	public final int getPrayerPowerForHealth() {
+	public final int getPrayerPowerForHealth()
+	{
 		return prayerPowerForHealth;
 	}
 
-	public final int getPrayerPowerForHolyArtifact() {
+	public final int getPrayerPowerForHolyArtifact()
+	{
 		return prayerPowerForHolyArtifact;
 	}
 
-	public final int getPrayerPowerForItem() {
+	public final int getPrayerPowerForItem()
+	{
 		return prayerPowerForItem;
 	}
 
-	public final int getPrayerPowerForQuest() {
+	public final int getPrayerPowerForQuest()
+	{
 		return prayerPowerForQuest;
 	}
 
-	public final String getPriestAssignCommand() {
+	public final String getPriestAssignCommand()
+	{
 		return priestAssignCommand;
 	}
 
-	public final String getPriestRemoveCommand() {
+	public final String getPriestRemoveCommand()
+	{
 		return priestRemoveCommand;
 	}
 
-	public final int getRequiredBelieversForQuests() {
+	public final int getRequiredBelieversForQuests()
+	{
 		return requiredBelieversForQuests;
 	}
 
-	public final String getServerName() {
+	public final String getServerName()
+	{
 		return serverName;
 	}
 
-	public final List<String> getWorlds() {
+	public final List<String> getWorlds()
+	{
 		return worlds;
 	}
 
-	public final boolean isAllowInteractionInNeutralLands() {
+	public final boolean isAllowInteractionInNeutralLands()
+	{
 		return allowInteractionInNeutralLands;
 	}
 
-	public final boolean isAllowMultipleGodsPrDivinePower() {
+	public final boolean isAllowMultipleGodsPrDivinePower()
+	{
 		return allowMultipleGodsPrDivinePower;
 	}
 
-	public final boolean isBiblesEnabled() {
+	public final boolean isBiblesEnabled()
+	{
 		return biblesEnabled;
 	}
 
-	public final boolean isBlessingEnabled() {
+	public final boolean isBlessingEnabled()
+	{
 		return blessingEnabled;
 	}
 
-	public final boolean isBroadcastNewGods() {
+	public final boolean isBroadcastNewGods()
+	{
 		return broadcastNewGods;
 	}
 
-	public final boolean isBroadcastProphecyFullfillment() {
+	public final boolean isBroadcastProphecyFullfillment()
+	{
 		return broadcastProphecyFullfillment;
 	}
 
-	public final boolean isBuildTowerQuestsEnabled() {
+	public final boolean isBuildTowerQuestsEnabled()
+	{
 		return buildTowerQuestsEnabled;
 	}
 
-	public final boolean isBurnBiblesQuestsEnabled() {
+	public final boolean isBurnBiblesQuestsEnabled()
+	{
 		return burnBiblesQuestsEnabled;
 	}
 
-	public final boolean isChatFormattingEnabled() {
+	public final boolean isChatFormattingEnabled()
+	{
 		return chatFormattingEnabled;
 	}
 
-	public final boolean isCommandmentsBroadcastFoodEaten() {
+	public final boolean isCommandmentsBroadcastFoodEaten()
+	{
 		return commandmentsBroadcastFoodEaten;
 	}
 
-	public final boolean isCommandmentsBroadcastMobSlain() {
+	public final boolean isCommandmentsBroadcastMobSlain()
+	{
 		return commandmentsBroadcastMobSlain;
 	}
 
-	public final boolean isCommandmentsEnabled() {
+	public final boolean isCommandmentsEnabled()
+	{
 		return commandmentsEnabled;
 	}
 
-	public final boolean isConvertQuestsEnabled() {
+	public final boolean isConvertQuestsEnabled()
+	{
 		return convertQuestsEnabled;
 	}
 
-	public final boolean isCrusadeQuestsEnabled() {
+	public final boolean isCrusadeQuestsEnabled()
+	{
 		return crusadeQuestsEnabled;
 	}
 
-	public final boolean isCursingEnabled() {
+	public final boolean isCursingEnabled()
+	{
 		return cursingEnabled;
 	}
 
-	public final boolean isDebug() {
+	public final boolean isDebug()
+	{
 		return debug;
 	}
 
-	public final boolean isDefaultPrivateReligions() {
+	public final boolean isDefaultPrivateReligions()
+	{
 		return defaultPrivateReligions;
 	}
 
-	public final boolean isDownloadLanguageFile() {
+	public final boolean isDownloadLanguageFile()
+	{
 		return downloadLanguageFile;
 	}
 
-	public final boolean isEnableDetoration() {
+	public final boolean isEnableDetoration()
+	{
 		return enableDetoration;
 	}
 
-	public final boolean isFastDiggingBlessingEnabled() {
+	public final boolean isFastDiggingBlessingEnabled()
+	{
 		return fastDiggingBlessingEnabled;
 	}
 
-	public final boolean isGiveItemsQuestsEnabled() {
+	public final boolean isGiveItemsQuestsEnabled()
+	{
 		return giveItemsQuestsEnabled;
 	}
 
-	public final boolean isGlobalQuestsEnabled() {
+	public final boolean isGlobalQuestsEnabled()
+	{
 		return globalQuestsEnabled;
 	}
 
-	public final boolean isHealBlessingEnabled() {
+	public final boolean isHealBlessingEnabled()
+	{
 		return healBlessingEnabled;
 	}
 
-	public final boolean isHolyArtifactsEnabled() {
+	public final boolean isHolyArtifactsEnabled()
+	{
 		return holyArtifactsEnabled;
 	}
 
-	public final boolean isHolyFeastQuestsEnabled() {
+	public final boolean isHolyFeastQuestsEnabled()
+	{
 		return holyFeastQuestsEnabled;
 	}
 
-	public final boolean isHolyLandDefaultMobDamage() {
+	public final boolean isHolyLandDefaultMobDamage()
+	{
 		return holyLandDefaultMobDamage;
 	}
 
-	public final boolean isHolyLandDefaultPvP() {
+	public final boolean isHolyLandDefaultPvP()
+	{
 		return holyLandDefaultPvP;
 	}
 
-	public final boolean isHolyLandEnabled() {
+	public final boolean isHolyLandEnabled()
+	{
 		return holyLandEnabled;
 	}
 
-	public final boolean isHolyLandLightning() {
+	public final boolean isHolyLandLightning()
+	{
 		return holyLandLightning;
 	}
 
-	public final boolean isHolywarQuestsEnabled() {
+	public final boolean isHolywarQuestsEnabled()
+	{
 		return holywarQuestsEnabled;
 	}
 
-	public final boolean isIncreaseDamageBlessingEnabled() {
+	public final boolean isIncreaseDamageBlessingEnabled()
+	{
 		return increaseDamageBlessingEnabled;
 	}
 
-	public final boolean isItemBlessingEnabled() {
+	public final boolean isItemBlessingEnabled()
+	{
 		return itemBlessingEnabled;
 	}
 
-	public final boolean isLeaveReligionOnDeath() {
+	public final boolean isLeaveReligionOnDeath()
+	{
 		return leaveReligionOnDeath;
 	}
 
-	public final boolean isLightningCurseEnabled() {
+	public final boolean isLightningCurseEnabled()
+	{
 		return lightningCurseEnabled;
 	}
 
-	public final boolean isMarriageEnabled() {
+	public final boolean isMarriageEnabled()
+	{
 		return marriageEnabled;
 	}
 
-	public final boolean isMarriageFireworksEnabled() {
+	public final boolean isMarriageFireworksEnabled()
+	{
 		return marriageFireworksEnabled;
 	}
 
-	public final boolean isMobCurseEnabled() {
+	public final boolean isMobCurseEnabled()
+	{
 		return mobCurseEnabled;
 	}
 
-	public final boolean isOnlyPriestCanSetHome() {
+	public final boolean isOnlyPriestCanSetHome()
+	{
 		return onlyPriestCanSetHome;
 	}
 
-	public final boolean isPilgrimageQuestsEnabled() {
+	public final boolean isPilgrimageQuestsEnabled()
+	{
 		return pilgrimageQuestsEnabled;
 	}
 
-	public final boolean isPowerLossOnDeath() {
+	public final boolean isPowerLossOnDeath()
+	{
 		return powerLossOnDeath;
 	}
 
-	public final boolean isPrayersEnabled() {
+	public final boolean isPrayersEnabled()
+	{
 		return prayersEnabled;
 	}
 
-	public final boolean isPropheciesEnabled() {
+	public final boolean isPropheciesEnabled()
+	{
 		return propheciesEnabled;
 	}
 
-	public final boolean isQuestsEnabled() {
+	public final boolean isQuestsEnabled()
+	{
 		return questsEnabled;
 	}
 
-	public final boolean isRegenerationBlessingEnabled() {
+	public final boolean isRegenerationBlessingEnabled()
+	{
 		return regenerationBlessingEnabled;
 	}
 
-	public final boolean isSacrificeQuestsEnabled() {
+	public final boolean isSacrificeQuestsEnabled()
+	{
 		return sacrificeQuestsEnabled;
 	}
 
-	public final boolean isSacrificesEnabled() {
+	public final boolean isSacrificesEnabled()
+	{
 		return sacrificesEnabled;
 	}
 
-	public final boolean isSlayDragonQuestsEnabled() {
+	public final boolean isSlayDragonQuestsEnabled()
+	{
 		return slayDragonQuestsEnabled;
 	}
 
-	public final boolean isSlayQuestsEnabled() {
+	public final boolean isSlayQuestsEnabled()
+	{
 		return slayQuestsEnabled;
 	}
 
-	public final boolean isSpeedBlessingEnabled() {
+	public final boolean isSpeedBlessingEnabled()
+	{
 		return speedBlessingEnabled;
 	}
 
-	public final boolean isUseBlacklist() {
+	public final boolean isUseBlacklist()
+	{
 		return useBlacklist;
 	}
 
-	public final boolean isUseGodTitles() {
+	public final boolean isUseGodTitles()
+	{
 		return useGodTitles;
 	}
 
-	public final boolean isUseWhitelist() {
+	public final boolean isUseWhitelist()
+	{
 		return useWhitelist;
 	}
 
-	public final boolean isWerewolfEnabled() {
+	public final boolean isWerewolfEnabled()
+	{
 		return werewolfEnabled;
 	}
 
-	public void loadSettings() {
+	public void loadSettings()
+	{
 		FileConfiguration config = Gods.get().getConfig();
 
 		this.debug = config.getBoolean("Settings.Debug", false);
@@ -521,20 +616,26 @@ public class GodsConfiguration {
 		this.languageIdentifier = config.getString("Settings.Language", "english");
 
 		List<String> worldNames = config.getStringList("Settings.Worlds");
-		if ((worldNames == null) || (worldNames.size() == 0)) {
+		if ((worldNames == null) || (worldNames.size() == 0))
+		{
 			Gods.get().log("No worlds found in config file.");
-			for (World world : Gods.get().getServer().getWorlds()) {
+			for (World world : Gods.get().getServer().getWorlds())
+			{
 				this.worlds.add(world.getName());
 				Gods.get().log("Enabed in world '" + world.getName() + "'");
 			}
 			config.set("Settings.Worlds", this.worlds);
 			Gods.get().saveConfig();
-		} else {
-			for (String worldName : worldNames) {
+		}
+		else
+		{
+			for (String worldName : worldNames)
+			{
 				this.worlds.add(worldName);
 				Gods.get().log("Enabled in '" + worldName + "'");
 			}
-			if (worldNames.size() == 0) {
+			if (worldNames.size() == 0)
+			{
 				Gods.get().log("WARNING: No worlds are set in config file. Gods are disabled on this server!");
 			}
 		}
@@ -542,12 +643,14 @@ public class GodsConfiguration {
 		if (this.biblesEnabled)
 			HolyBookManager.get().load();
 		this.marriageEnabled = config.getBoolean("Marriage.Enabled", true);
-		if (this.marriageEnabled) {
+		if (this.marriageEnabled)
+		{
 			this.marriageFireworksEnabled = config.getBoolean("Marriage.WeddingFireworks", true);
 			MarriageManager.get().load();
 		}
 		this.holyArtifactsEnabled = config.getBoolean("HolyArtifacts.Enabled", true);
-		if (this.holyArtifactsEnabled) {
+		if (this.holyArtifactsEnabled)
+		{
 			HolyPowerManager.get();
 			HolyArtifactManager.get().load();
 		}
@@ -582,16 +685,23 @@ public class GodsConfiguration {
 		this.numberOfDaysForAbandonedHolyLands = config.getInt("HolyLand.DeleteAbandonedHolyLandsAfterDays", 14);
 
 		List<String> blockList = config.getStringList("HolyLand.BreakableBlockTypes");
-		if ((blockList != null) && (blockList.size() > 0)) {
-			for (String blockType : blockList) {
-				try {
+		if ((blockList != null) && (blockList.size() > 0))
+		{
+			for (String blockType : blockList)
+			{
+				try
+				{
 					Gods.get().logDebug("adding breakable block type " + blockType);
 					this.holylandBreakableBlockTypes.add(Material.getMaterial(blockType));
-				} catch (Exception ex) {
+				}
+				catch (Exception ex)
+				{
 					Gods.get().log("ERROR parsing HolyLand.BreakableBlockTypes blocktype '" + blockType + "' in config");
 				}
 			}
-		} else {
+		}
+		else
+		{
 			Gods.get().log("No HolyLand.BreakableBlockTypes section found in config.");
 			Gods.get().log("Adding '" + Material.SMOOTH_BRICK.name() + "' to BreakableBlockTypes");
 			this.holylandBreakableBlockTypes.add(Material.SMOOTH_BRICK);
@@ -613,17 +723,24 @@ public class GodsConfiguration {
 		this.pilgrimageQuestsEnabled = config.getBoolean("Quests.PilgrimageQuests", true);
 
 		ConfigurationSection configSection = config.getConfigurationSection("Quests.RewardValues");
-		if (configSection != null) {
-			for (String rewardItem : configSection.getKeys(false)) {
-				try {
+		if (configSection != null)
+		{
+			for (String rewardItem : configSection.getKeys(false))
+			{
+				try
+				{
 					Gods.get().logDebug("Setting value for reward item " + rewardItem + " to " + config.getInt(new StringBuilder().append("Quests.RewardValues.").append(rewardItem).toString()));
 
 					QuestManager.get().setItemRewardValue(Material.getMaterial(rewardItem), config.getInt("Quests.RewardValues." + rewardItem));
-				} catch (Exception ex) {
+				}
+				catch (Exception ex)
+				{
 					Gods.get().log("ERROR parsing Quests.RewardValues value '" + rewardItem + "' in config");
 				}
 			}
-		} else {
+		}
+		else
+		{
 			QuestManager.get().resetItemRewardValues();
 		}
 
@@ -673,31 +790,41 @@ public class GodsConfiguration {
 
 		Object localObject;
 
-		if (configSection != null) {
-			for (String godType : configSection.getKeys(false)) {
-				try {
-					for (localObject = config.getStringList("Altars.BlockTypes." + godType).iterator(); ((Iterator<?>) localObject).hasNext();) {
+		if (configSection != null)
+		{
+			for (String godType : configSection.getKeys(false))
+			{
+				try
+				{
+					for (localObject = config.getStringList("Altars.BlockTypes." + godType).iterator(); ((Iterator<?>) localObject).hasNext();)
+					{
 						String blockMaterial = (String) ((Iterator<?>) localObject).next();
 
 						Gods.get().log("Setting block type " + blockMaterial + " for God type " + godType);
 						AltarManager.get().setAltarBlockTypeForGodType(GodManager.GodType.valueOf(godType), Material.getMaterial(blockMaterial));
 					}
-				} catch (Exception ex) {
+				}
+				catch (Exception ex)
+				{
 					Gods.get().log("ERROR parsing Altars.BlockType value '" + godType + "' in config");
 				}
 			}
-		} else {
+		}
+		else
+		{
 			Gods.get().log("No altar blocktypes found in config. Setting defaults.");
 			AltarManager.get().resetAltarBlockTypes();
 
-			for (GodType godType : GodManager.GodType.values()) {
+			for (GodType godType : GodManager.GodType.values())
+			{
 				config.set("Altars.BlockTypes." + godType.name(), AltarManager.get().getAltarBlockTypesFromGodType(godType));
 			}
 			saveSettings();
 		}
 	}
 
-	public void saveSettings() {
+	public void saveSettings()
+	{
 		FileConfiguration config = Gods.get().getConfig();
 		config.set("Settings.Debug", Boolean.valueOf(this.debug));
 		config.set("Settings.DownloadLanguageFile", Boolean.valueOf(this.downloadLanguageFile));
@@ -721,7 +848,8 @@ public class GodsConfiguration {
 		config.set("Settings.AllowMultipleGodsPrDivinePower", Boolean.valueOf(this.allowMultipleGodsPrDivinePower));
 		config.set("Settings.MoodFalloff", Double.valueOf(this.moodFalloff));
 		config.set("Settings.DefaultPrivateReligions", Boolean.valueOf(this.defaultPrivateReligions));
-		for (GodManager.GodType godType : GodManager.GodType.values()) {
+		for (GodManager.GodType godType : GodManager.GodType.values())
+		{
 			config.set("Altars.BlockTypes." + godType.name(), AltarManager.get().getAltarBlockTypesFromGodType(godType));
 		}
 		config.set("ItemBlessing.Enabled", Boolean.valueOf(this.itemBlessingEnabled));
@@ -773,7 +901,8 @@ public class GodsConfiguration {
 		config.set("HolyLand.DeleteAbandonedHolyLandsAfterDays", Integer.valueOf(this.numberOfDaysForAbandonedHolyLands));
 
 		List<String> blockTypes = new ArrayList<String>();
-		for (Material blockType : this.holylandBreakableBlockTypes) {
+		for (Material blockType : this.holylandBreakableBlockTypes)
+		{
 			blockTypes.add(blockType.name());
 		}
 		config.set("HolyLand.BreakableBlockTypes", blockTypes);
@@ -794,371 +923,463 @@ public class GodsConfiguration {
 		Gods.get().saveConfig();
 	}
 
-	public final void setAllowInteractionInNeutralLands(boolean allowInteractionInNeutralLands) {
+	public final void setAllowInteractionInNeutralLands(boolean allowInteractionInNeutralLands)
+	{
 		this.allowInteractionInNeutralLands = allowInteractionInNeutralLands;
 	}
 
-	public final void setAllowMultipleGodsPrDivinePower(boolean allowMultipleGodsPrDivinePower) {
+	public final void setAllowMultipleGodsPrDivinePower(boolean allowMultipleGodsPrDivinePower)
+	{
 		this.allowMultipleGodsPrDivinePower = allowMultipleGodsPrDivinePower;
 	}
 
-	public final void setBiblesEnabled(boolean biblesEnabled) {
+	public final void setBiblesEnabled(boolean biblesEnabled)
+	{
 		this.biblesEnabled = biblesEnabled;
 	}
 
-	public final void setBlessingEnabled(boolean blessingEnabled) {
+	public final void setBlessingEnabled(boolean blessingEnabled)
+	{
 		this.blessingEnabled = blessingEnabled;
 	}
 
-	public final void setBroadcastNewGods(boolean broadcastNewGods) {
+	public final void setBroadcastNewGods(boolean broadcastNewGods)
+	{
 		this.broadcastNewGods = broadcastNewGods;
 	}
 
-	public final void setBroadcastProphecyFullfillment(boolean broadcastProphecyFullfillment) {
+	public final void setBroadcastProphecyFullfillment(boolean broadcastProphecyFullfillment)
+	{
 		this.broadcastProphecyFullfillment = broadcastProphecyFullfillment;
 	}
 
-	public final void setBuildTowerQuestsEnabled(boolean buildTowerQuestsEnabled) {
+	public final void setBuildTowerQuestsEnabled(boolean buildTowerQuestsEnabled)
+	{
 		this.buildTowerQuestsEnabled = buildTowerQuestsEnabled;
 	}
 
-	public final void setBurnBiblesQuestsEnabled(boolean burnBiblesQuestsEnabled) {
+	public final void setBurnBiblesQuestsEnabled(boolean burnBiblesQuestsEnabled)
+	{
 		this.burnBiblesQuestsEnabled = burnBiblesQuestsEnabled;
 	}
 
-	public final void setChatFormattingEnabled(boolean chatFormattingEnabled) {
+	public final void setChatFormattingEnabled(boolean chatFormattingEnabled)
+	{
 		this.chatFormattingEnabled = chatFormattingEnabled;
 	}
 
-	public final void setCommandmentsBroadcastFoodEaten(boolean commandmentsBroadcastFoodEaten) {
+	public final void setCommandmentsBroadcastFoodEaten(boolean commandmentsBroadcastFoodEaten)
+	{
 		this.commandmentsBroadcastFoodEaten = commandmentsBroadcastFoodEaten;
 	}
 
-	public final void setCommandmentsBroadcastMobSlain(boolean commandmentsBroadcastMobSlain) {
+	public final void setCommandmentsBroadcastMobSlain(boolean commandmentsBroadcastMobSlain)
+	{
 		this.commandmentsBroadcastMobSlain = commandmentsBroadcastMobSlain;
 	}
 
-	public final void setCommandmentsEnabled(boolean commandmentsEnabled) {
+	public final void setCommandmentsEnabled(boolean commandmentsEnabled)
+	{
 		this.commandmentsEnabled = commandmentsEnabled;
 	}
 
-	public final void setConvertQuestsEnabled(boolean convertQuestsEnabled) {
+	public final void setConvertQuestsEnabled(boolean convertQuestsEnabled)
+	{
 		this.convertQuestsEnabled = convertQuestsEnabled;
 	}
 
-	public final void setCrusadeQuestsEnabled(boolean crusadeQuestsEnabled) {
+	public final void setCrusadeQuestsEnabled(boolean crusadeQuestsEnabled)
+	{
 		this.crusadeQuestsEnabled = crusadeQuestsEnabled;
 	}
 
-	public final void setCursingEnabled(boolean cursingEnabled) {
+	public final void setCursingEnabled(boolean cursingEnabled)
+	{
 		this.cursingEnabled = cursingEnabled;
 	}
 
-	public final void setDebug(boolean debug) {
+	public final void setDebug(boolean debug)
+	{
 		this.debug = debug;
 	}
 
-	public final void setDefaultPrivateReligions(boolean defaultPrivateReligions) {
+	public final void setDefaultPrivateReligions(boolean defaultPrivateReligions)
+	{
 		this.defaultPrivateReligions = defaultPrivateReligions;
 	}
 
-	public final void setDownloadLanguageFile(boolean downloadLanguageFile) {
+	public final void setDownloadLanguageFile(boolean downloadLanguageFile)
+	{
 		this.downloadLanguageFile = downloadLanguageFile;
 	}
 
-	public final void setEnableDetoration(boolean enableDetoration) {
+	public final void setEnableDetoration(boolean enableDetoration)
+	{
 		this.enableDetoration = enableDetoration;
 	}
 
-	public final void setFastDiggingBlessingEnabled(boolean fastDiggingBlessingEnabled) {
+	public final void setFastDiggingBlessingEnabled(boolean fastDiggingBlessingEnabled)
+	{
 		this.fastDiggingBlessingEnabled = fastDiggingBlessingEnabled;
 	}
 
-	public final void setGiveItemsQuestsEnabled(boolean giveItemsQuestsEnabled) {
+	public final void setGiveItemsQuestsEnabled(boolean giveItemsQuestsEnabled)
+	{
 		this.giveItemsQuestsEnabled = giveItemsQuestsEnabled;
 	}
 
-	public final void setGlobalQuestsEnabled(boolean globalQuestsEnabled) {
+	public final void setGlobalQuestsEnabled(boolean globalQuestsEnabled)
+	{
 		this.globalQuestsEnabled = globalQuestsEnabled;
 	}
 
-	public final void setGlobalQuestsPercentChance(int globalQuestsPercentChance) {
+	public final void setGlobalQuestsPercentChance(int globalQuestsPercentChance)
+	{
 		this.globalQuestsPercentChance = globalQuestsPercentChance;
 	}
 
-	public final void setGodPowerForLevel1Items(int godPowerForLevel1Items) {
+	public final void setGodPowerForLevel1Items(int godPowerForLevel1Items)
+	{
 		this.godPowerForLevel1Items = godPowerForLevel1Items;
 	}
 
-	public final void setGodPowerForLevel2Items(int godPowerForLevel2Items) {
+	public final void setGodPowerForLevel2Items(int godPowerForLevel2Items)
+	{
 		this.godPowerForLevel2Items = godPowerForLevel2Items;
 	}
 
-	public final void setGodPowerForLevel3Items(int godPowerForLevel3Items) {
+	public final void setGodPowerForLevel3Items(int godPowerForLevel3Items)
+	{
 		this.godPowerForLevel3Items = godPowerForLevel3Items;
 	}
 
-	public final void setGodVerbosity(double godVerbosity) {
+	public final void setGodVerbosity(double godVerbosity)
+	{
 		this.godVerbosity = godVerbosity;
 	}
 
-	public final void setHealBlessingEnabled(boolean healBlessingEnabled) {
+	public final void setHealBlessingEnabled(boolean healBlessingEnabled)
+	{
 		this.healBlessingEnabled = healBlessingEnabled;
 	}
 
-	public final void setHolyArtifactsEnabled(boolean holyArtifactsEnabled) {
+	public final void setHolyArtifactsEnabled(boolean holyArtifactsEnabled)
+	{
 		this.holyArtifactsEnabled = holyArtifactsEnabled;
 	}
 
-	public final void setHolyFeastQuestsEnabled(boolean holyFeastQuestsEnabled) {
+	public final void setHolyFeastQuestsEnabled(boolean holyFeastQuestsEnabled)
+	{
 		this.holyFeastQuestsEnabled = holyFeastQuestsEnabled;
 	}
 
-	public final void setHolylandBreakableBlockTypes(Set<Material> holylandBreakableBlockTypes) {
+	public final void setHolylandBreakableBlockTypes(Set<Material> holylandBreakableBlockTypes)
+	{
 		this.holylandBreakableBlockTypes = holylandBreakableBlockTypes;
 	}
 
-	public final void setHolyLandDefaultMobDamage(boolean holyLandDefaultMobDamage) {
+	public final void setHolyLandDefaultMobDamage(boolean holyLandDefaultMobDamage)
+	{
 		this.holyLandDefaultMobDamage = holyLandDefaultMobDamage;
 	}
 
-	public final void setHolyLandDefaultPvP(boolean holyLandDefaultPvP) {
+	public final void setHolyLandDefaultPvP(boolean holyLandDefaultPvP)
+	{
 		this.holyLandDefaultPvP = holyLandDefaultPvP;
 	}
 
-	public final void setHolyLandEnabled(boolean holyLandEnabled) {
+	public final void setHolyLandEnabled(boolean holyLandEnabled)
+	{
 		this.holyLandEnabled = holyLandEnabled;
 	}
 
-	public final void setHolyLandLightning(boolean holyLandLightning) {
+	public final void setHolyLandLightning(boolean holyLandLightning)
+	{
 		this.holyLandLightning = holyLandLightning;
 	}
 
-	public final void setHolyLandRadiusPrPower(double holyLandRadiusPrPower) {
+	public final void setHolyLandRadiusPrPower(double holyLandRadiusPrPower)
+	{
 		this.holyLandRadiusPrPower = holyLandRadiusPrPower;
 	}
 
-	public final void setHolywarQuestsEnabled(boolean holywarQuestsEnabled) {
+	public final void setHolywarQuestsEnabled(boolean holywarQuestsEnabled)
+	{
 		this.holywarQuestsEnabled = holywarQuestsEnabled;
 	}
 
-	public final void setIncreaseDamageBlessingEnabled(boolean increaseDamageBlessingEnabled) {
+	public final void setIncreaseDamageBlessingEnabled(boolean increaseDamageBlessingEnabled)
+	{
 		this.increaseDamageBlessingEnabled = increaseDamageBlessingEnabled;
 	}
 
-	public final void setItemBlessingEnabled(boolean itemBlessingEnabled) {
+	public final void setItemBlessingEnabled(boolean itemBlessingEnabled)
+	{
 		this.itemBlessingEnabled = itemBlessingEnabled;
 	}
 
-	public final void setLanguageIdentifier(String languageIdentifier) {
+	public final void setLanguageIdentifier(String languageIdentifier)
+	{
 		this.languageIdentifier = languageIdentifier;
 	}
 
-	public final void setLeaveReligionOnDeath(boolean leaveReligionOnDeath) {
+	public final void setLeaveReligionOnDeath(boolean leaveReligionOnDeath)
+	{
 		this.leaveReligionOnDeath = leaveReligionOnDeath;
 	}
 
-	public final void setLightningCurseEnabled(boolean lightningCurseEnabled) {
+	public final void setLightningCurseEnabled(boolean lightningCurseEnabled)
+	{
 		this.lightningCurseEnabled = lightningCurseEnabled;
 	}
 
-	public final void setMarriageEnabled(boolean marriageEnabled) {
+	public final void setMarriageEnabled(boolean marriageEnabled)
+	{
 		this.marriageEnabled = marriageEnabled;
 	}
 
-	public final void setMarriageFireworksEnabled(boolean marriageFireworksEnabled) {
+	public final void setMarriageFireworksEnabled(boolean marriageFireworksEnabled)
+	{
 		this.marriageFireworksEnabled = marriageFireworksEnabled;
 	}
 
-	public final void setMaxBelieverPrayerTime(int maxBelieverPrayerTime) {
+	public final void setMaxBelieverPrayerTime(int maxBelieverPrayerTime)
+	{
 		this.maxBelieverPrayerTime = maxBelieverPrayerTime;
 	}
 
-	public final void setMaxBlessingTime(int maxBlessingTime) {
+	public final void setMaxBlessingTime(int maxBlessingTime)
+	{
 		this.maxBlessingTime = maxBlessingTime;
 	}
 
-	public final void setMaxCursingTime(int maxCursingTime) {
+	public final void setMaxCursingTime(int maxCursingTime)
+	{
 		this.maxCursingTime = maxCursingTime;
 	}
 
-	public final void setMaxHolyArtifacts(int maxHolyArtifacts) {
+	public final void setMaxHolyArtifacts(int maxHolyArtifacts)
+	{
 		this.maxHolyArtifacts = maxHolyArtifacts;
 	}
 
-	public final void setMaxHolyLandRadius(int maxHolyLandRadius) {
+	public final void setMaxHolyLandRadius(int maxHolyLandRadius)
+	{
 		this.maxHolyLandRadius = maxHolyLandRadius;
 	}
 
-	public final void setMaxInvitationTimeSeconds(int maxInvitationTimeSeconds) {
+	public final void setMaxInvitationTimeSeconds(int maxInvitationTimeSeconds)
+	{
 		this.maxInvitationTimeSeconds = maxInvitationTimeSeconds;
 	}
 
-	public final void setMaxPriestPrayerTime(int maxPriestPrayerTime) {
+	public final void setMaxPriestPrayerTime(int maxPriestPrayerTime)
+	{
 		this.maxPriestPrayerTime = maxPriestPrayerTime;
 	}
 
-	public final void setMaxPriestsPrGod(int maxPriestsPrGod) {
+	public final void setMaxPriestsPrGod(int maxPriestsPrGod)
+	{
 		this.maxPriestsPrGod = maxPriestsPrGod;
 	}
 
-	public final void setMinBelieverPrayerTime(int minBelieverPrayerTime) {
+	public final void setMinBelieverPrayerTime(int minBelieverPrayerTime)
+	{
 		this.minBelieverPrayerTime = minBelieverPrayerTime;
 	}
 
-	public final void setMinBelieversForPriest(int minBelieversForPriest) {
+	public final void setMinBelieversForPriest(int minBelieversForPriest)
+	{
 		this.minBelieversForPriest = minBelieversForPriest;
 	}
 
-	public final void setMinBlessingTime(int minBlessingTime) {
+	public final void setMinBlessingTime(int minBlessingTime)
+	{
 		this.minBlessingTime = minBlessingTime;
 	}
 
-	public final void setMinCursingTime(int minCursingTime) {
+	public final void setMinCursingTime(int minCursingTime)
+	{
 		this.minCursingTime = minCursingTime;
 	}
 
-	public final void setMinGodPowerForItemBlessings(int minGodPowerForItemBlessings) {
+	public final void setMinGodPowerForItemBlessings(int minGodPowerForItemBlessings)
+	{
 		this.minGodPowerForItemBlessings = minGodPowerForItemBlessings;
 	}
 
-	public final void setMinHolyArtifactBlessingTime(int minHolyArtifactBlessingTime) {
+	public final void setMinHolyArtifactBlessingTime(int minHolyArtifactBlessingTime)
+	{
 		this.minHolyArtifactBlessingTime = minHolyArtifactBlessingTime;
 	}
 
-	public final void setMinHolyLandRadius(int minHolyLandRadius) {
+	public final void setMinHolyLandRadius(int minHolyLandRadius)
+	{
 		this.minHolyLandRadius = minHolyLandRadius;
 	}
 
-	public final void setMinItemBlessingTime(int minItemBlessingTime) {
+	public final void setMinItemBlessingTime(int minItemBlessingTime)
+	{
 		this.minItemBlessingTime = minItemBlessingTime;
 	}
 
-	public final void setMinMinutesBetweenQuests(int minMinutesBetweenQuests) {
+	public final void setMinMinutesBetweenQuests(int minMinutesBetweenQuests)
+	{
 		this.minMinutesBetweenQuests = minMinutesBetweenQuests;
 	}
 
-	public final void setMinSecondsBetweenChangingGod(int minSecondsBetweenChangingGod) {
+	public final void setMinSecondsBetweenChangingGod(int minSecondsBetweenChangingGod)
+	{
 		this.minSecondsBetweenChangingGod = minSecondsBetweenChangingGod;
 	}
 
-	public final void setMobCurseEnabled(boolean mobCurseEnabled) {
+	public final void setMobCurseEnabled(boolean mobCurseEnabled)
+	{
 		this.mobCurseEnabled = mobCurseEnabled;
 	}
 
-	public final void setMoodFalloff(double moodFalloff) {
+	public final void setMoodFalloff(double moodFalloff)
+	{
 		this.moodFalloff = moodFalloff;
 	}
 
-	public final void setNumberOfBelieversPrPriest(int numberOfBelieversPrPriest) {
+	public final void setNumberOfBelieversPrPriest(int numberOfBelieversPrPriest)
+	{
 		this.numberOfBelieversPrPriest = numberOfBelieversPrPriest;
 	}
 
-	public final void setNumberOfDaysForAbandonedHolyLands(int numberOfDaysForAbandonedHolyLands) {
+	public final void setNumberOfDaysForAbandonedHolyLands(int numberOfDaysForAbandonedHolyLands)
+	{
 		this.numberOfDaysForAbandonedHolyLands = numberOfDaysForAbandonedHolyLands;
 	}
 
-	public final void setOnlyPriestCanSetHome(boolean onlyPriestCanSetHome) {
+	public final void setOnlyPriestCanSetHome(boolean onlyPriestCanSetHome)
+	{
 		this.onlyPriestCanSetHome = onlyPriestCanSetHome;
 	}
 
-	public final void setPilgrimageQuestsEnabled(boolean pilgrimageQuestsEnabled) {
+	public final void setPilgrimageQuestsEnabled(boolean pilgrimageQuestsEnabled)
+	{
 		this.pilgrimageQuestsEnabled = pilgrimageQuestsEnabled;
 	}
 
-	public final void setPowerLossOnDeath(boolean powerLossOnDeath) {
+	public final void setPowerLossOnDeath(boolean powerLossOnDeath)
+	{
 		this.powerLossOnDeath = powerLossOnDeath;
 	}
 
-	public final void setPrayerPowerForBlessing(int prayerPowerForBlessing) {
+	public final void setPrayerPowerForBlessing(int prayerPowerForBlessing)
+	{
 		this.prayerPowerForBlessing = prayerPowerForBlessing;
 	}
 
-	public final void setPrayerPowerForHealth(int prayerPowerForHealth) {
+	public final void setPrayerPowerForHealth(int prayerPowerForHealth)
+	{
 		this.prayerPowerForHealth = prayerPowerForHealth;
 	}
 
-	public final void setPrayerPowerForHolyArtifact(int prayerPowerForHolyArtifact) {
+	public final void setPrayerPowerForHolyArtifact(int prayerPowerForHolyArtifact)
+	{
 		this.prayerPowerForHolyArtifact = prayerPowerForHolyArtifact;
 	}
 
-	public final void setPrayerPowerForItem(int prayerPowerForItem) {
+	public final void setPrayerPowerForItem(int prayerPowerForItem)
+	{
 		this.prayerPowerForItem = prayerPowerForItem;
 	}
 
-	public final void setPrayerPowerForQuest(int prayerPowerForQuest) {
+	public final void setPrayerPowerForQuest(int prayerPowerForQuest)
+	{
 		this.prayerPowerForQuest = prayerPowerForQuest;
 	}
 
-	public final void setPrayersEnabled(boolean prayersEnabled) {
+	public final void setPrayersEnabled(boolean prayersEnabled)
+	{
 		this.prayersEnabled = prayersEnabled;
 	}
 
-	public final void setPriestAssignCommand(String priestAssignCommand) {
+	public final void setPriestAssignCommand(String priestAssignCommand)
+	{
 		this.priestAssignCommand = priestAssignCommand;
 	}
 
-	public final void setPriestRemoveCommand(String priestRemoveCommand) {
+	public final void setPriestRemoveCommand(String priestRemoveCommand)
+	{
 		this.priestRemoveCommand = priestRemoveCommand;
 	}
 
-	public final void setPropheciesEnabled(boolean propheciesEnabled) {
+	public final void setPropheciesEnabled(boolean propheciesEnabled)
+	{
 		this.propheciesEnabled = propheciesEnabled;
 	}
 
-	public final void setQuestsEnabled(boolean questsEnabled) {
+	public final void setQuestsEnabled(boolean questsEnabled)
+	{
 		this.questsEnabled = questsEnabled;
 	}
 
-	public final void setRegenerationBlessingEnabled(boolean regenerationBlessingEnabled) {
+	public final void setRegenerationBlessingEnabled(boolean regenerationBlessingEnabled)
+	{
 		this.regenerationBlessingEnabled = regenerationBlessingEnabled;
 	}
 
-	public final void setRequiredBelieversForQuests(int requiredBelieversForQuests) {
+	public final void setRequiredBelieversForQuests(int requiredBelieversForQuests)
+	{
 		this.requiredBelieversForQuests = requiredBelieversForQuests;
 	}
 
-	public final void setSacrificeQuestsEnabled(boolean sacrificeQuestsEnabled) {
+	public final void setSacrificeQuestsEnabled(boolean sacrificeQuestsEnabled)
+	{
 		this.sacrificeQuestsEnabled = sacrificeQuestsEnabled;
 	}
 
-	public final void setSacrificesEnabled(boolean sacrificesEnabled) {
+	public final void setSacrificesEnabled(boolean sacrificesEnabled)
+	{
 		this.sacrificesEnabled = sacrificesEnabled;
 	}
 
-	public final void setServerName(String serverName) {
+	public final void setServerName(String serverName)
+	{
 		this.serverName = serverName;
 	}
 
-	public final void setSlayDragonQuestsEnabled(boolean slayDragonQuestsEnabled) {
+	public final void setSlayDragonQuestsEnabled(boolean slayDragonQuestsEnabled)
+	{
 		this.slayDragonQuestsEnabled = slayDragonQuestsEnabled;
 	}
 
-	public final void setSlayQuestsEnabled(boolean slayQuestsEnabled) {
+	public final void setSlayQuestsEnabled(boolean slayQuestsEnabled)
+	{
 		this.slayQuestsEnabled = slayQuestsEnabled;
 	}
 
-	public final void setSpeedBlessingEnabled(boolean speedBlessingEnabled) {
+	public final void setSpeedBlessingEnabled(boolean speedBlessingEnabled)
+	{
 		this.speedBlessingEnabled = speedBlessingEnabled;
 	}
 
-	public final void setUseBlacklist(boolean useBlacklist) {
+	public final void setUseBlacklist(boolean useBlacklist)
+	{
 		this.useBlacklist = useBlacklist;
 	}
 
-	public final void setUseGodTitles(boolean useGodTitles) {
+	public final void setUseGodTitles(boolean useGodTitles)
+	{
 		this.useGodTitles = useGodTitles;
 	}
 
-	public final void setUseWhitelist(boolean useWhitelist) {
+	public final void setUseWhitelist(boolean useWhitelist)
+	{
 		this.useWhitelist = useWhitelist;
 	}
 
-	public final void setWerewolfEnabled(boolean werewolfEnabled) {
+	public final void setWerewolfEnabled(boolean werewolfEnabled)
+	{
 		this.werewolfEnabled = werewolfEnabled;
 	}
 
-	public final void setWorlds(List<String> worlds) {
+	public final void setWorlds(List<String> worlds)
+	{
 		this.worlds = worlds;
 	}
 

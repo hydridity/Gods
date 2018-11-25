@@ -23,61 +23,77 @@ import com.dogonfire.gods.managers.QuestManager;
 import com.dogonfire.gods.managers.WhitelistManager;
 import com.dogonfire.gods.tasks.TaskInfo;
 
-public class Gods extends JavaPlugin {
+public class Gods extends JavaPlugin
+{
 	private static Gods pluginInstance;
 
-	public static Gods get() {
+	public static Gods get()
+	{
 		return pluginInstance;
 	}
 
-	public boolean isBlacklistedGod(String godName) {
-		if (GodsConfiguration.get().isUseBlacklist()) {
+	public boolean isBlacklistedGod(String godName)
+	{
+		if (GodsConfiguration.get().isUseBlacklist())
+		{
 			return WhitelistManager.get().isBlacklistedGod(godName);
 		}
 		return false;
 	}
 
-	public boolean isEnabledInWorld(World world) {
+	public boolean isEnabledInWorld(World world)
+	{
 		return GodsConfiguration.get().getWorlds().contains(world.getName());
 	}
 
-	public boolean isWhitelistedGod(String godName) {
-		if (GodsConfiguration.get().isUseWhitelist()) {
+	public boolean isWhitelistedGod(String godName)
+	{
+		if (GodsConfiguration.get().isUseWhitelist())
+		{
 			return WhitelistManager.get().isWhitelistedGod(godName);
 		}
 		return true;
 	}
 
-	public void log(String message) {
+	public void log(String message)
+	{
 		Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 	}
 
-	public void logDebug(String message) {
-		if (GodsConfiguration.get().isDebug()) {
+	public void logDebug(String message)
+	{
+		if (GodsConfiguration.get().isDebug())
+		{
 			Logger.getLogger("minecraft").info("[" + getDescription().getFullName() + "] " + message);
 		}
 	}
 
 	@Override
-	public void onDisable() {
+	public void onDisable()
+	{
 		reloadSettings();
 
 		GodManager.get().save();
 		QuestManager.get().save();
 		BelieverManager.get().save();
+		
 		if ((GodsConfiguration.get().isUseBlacklist()) || (GodsConfiguration.get().isUseWhitelist()))
 			WhitelistManager.get().save();
 		if (GodsConfiguration.get().isHolyLandEnabled())
 			HolyLandManager.get().save();
 		if (GodsConfiguration.get().isBiblesEnabled())
 			HolyBookManager.get().save();
+		
 		pluginInstance = null;
 	}
 
 	@Override
-	public void onEnable() {
+	public void onEnable()
+	{
 		pluginInstance = this;
+		
 		getCommand("gods").setExecutor(GodsCommandExecuter.get());
+		
 		GodsConfiguration.get().loadSettings();
 		GodsConfiguration.get().saveSettings();
 		PermissionsManager.get().load();
@@ -86,20 +102,24 @@ public class Gods extends JavaPlugin {
 		QuestManager.get().load();
 		BelieverManager.get().load();
 		WhitelistManager.get().load();
+		
 		getServer().getPluginManager().registerEvents(HolyLandManager.get(), this);
 		getServer().getPluginManager().registerEvents(new BlockListener(), this);
 		getServer().getPluginManager().registerEvents(new ChatListener(), this);
 
-		new BukkitRunnable() {
+		new BukkitRunnable()
+		{
 			@Override
-			public void run() {
+			public void run()
+			{
 				GodManager.get().update();
 			}
 		}.runTaskTimer(this, 20L, 200L);
 
 	}
 
-	public void reloadSettings() {
+	public void reloadSettings()
+	{
 		reloadConfig();
 
 		GodsConfiguration.get().loadSettings();
@@ -107,10 +127,12 @@ public class Gods extends JavaPlugin {
 		WhitelistManager.get().load();
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, int amount, String name, int delay) {
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, int amount, String name, int delay)
+	{
 		Player player = getServer().getPlayer(playerId);
 
-		if (player == null) {
+		if (player == null)
+		{
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
@@ -118,18 +140,22 @@ public class Gods extends JavaPlugin {
 		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, amount, name), delay);
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay) {
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name, int amount1, int amount2, int delay)
+	{
 		Player player = getServer().getPlayer(playerId);
-		if (player == null) {
+		if (player == null)
+		{
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}
 		getServer().getScheduler().runTaskLater(this, new TaskInfo(color, playerId, message, name, amount1, amount2), delay);
 	}
 
-	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay) {
+	public void sendInfo(UUID playerId, LanguageManager.LANGUAGESTRING message, ChatColor color, String name1, String name2, int delay)
+	{
 		Player player = getServer().getPlayer(playerId);
-		if (player == null) {
+		if (player == null)
+		{
 			logDebug("sendInfo can not find online player with id " + playerId);
 			return;
 		}

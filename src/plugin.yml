@@ -1,6 +1,6 @@
 name: Gods
 author: DogOnFire
-version: "0.9.1"
+version: ${project.version}
 website: "http://dev.bukkit.org/server-mods/gods"
 main: com.dogonfire.gods.Gods
 softdepend: 
@@ -10,9 +10,11 @@ softdepend:
   - GroupManager
   - WorldGuard
 commands:
+  g:
+    description: "Controls the god system"
+    usage: /g
   gods:
     description: "Controls the god system"
-    aliases: g
     usage: /gods
 permissions: 
   gods.*: 
