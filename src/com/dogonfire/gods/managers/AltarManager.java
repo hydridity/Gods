@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.material.Attachable;
@@ -51,24 +53,22 @@ public class AltarManager
 
 	public Block getAltarBlockFromSign(Block block)
 	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
+		if ((block == null) || (block.getType() != Material.OAK_WALL_SIGN))
 		{
 			return null;
 		}
-		MaterialData m = block.getState().getData();
-
-		BlockFace face = BlockFace.DOWN;
-
-		face = ((Attachable) m).getAttachedFace();
-
-		Block altarBlock = block.getRelative(face);
+		BlockData m = block.getBlockData();
+		
+		Directional face = (Directional)m;
+		
+		Block altarBlock = block.getRelative(face.getFacing().getOppositeFace());
 
 		Gods.get().logDebug("getAltarBlockFromSign(): AltarBlock block is " + altarBlock.getType().name());
 		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null)
 		{
 			return null;
 		}
-		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON)))
+		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH)))
 		{
 			return null;
 		}
@@ -90,7 +90,7 @@ public class AltarManager
 
 	public Player getBlessedPlayerFromAltarSign(Block block, String[] lines)
 	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
+		if ((block == null) || (block.getType() != Material.OAK_WALL_SIGN))
 		{
 			return null;
 		}
@@ -112,7 +112,7 @@ public class AltarManager
 
 	public Player getCursedPlayerFromAltar(Block block, String[] lines)
 	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
+		if ((block == null) || (block.getType() != Material.OAK_WALL_SIGN))
 		{
 			return null;
 		}
@@ -139,7 +139,7 @@ public class AltarManager
 
 	public GodManager.GodGender getGodGenderFromAltarBlock(Block block)
 	{
-		if (block.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON))
+		if (block.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH))
 		{
 			return GodManager.GodGender.Female;
 		}
@@ -316,14 +316,14 @@ public class AltarManager
 		{
 			return false;
 		}
-		if ((block.getRelative(BlockFace.UP).getType() != Material.TORCH) && (block.getRelative(BlockFace.UP).getType() != Material.REDSTONE_TORCH_ON))
+		if ((block.getRelative(BlockFace.UP).getType() != Material.TORCH) && (block.getRelative(BlockFace.UP).getType() != Material.REDSTONE_TORCH))
 		{
 			return false;
 		}
 		
 		for (BlockFace face : new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST })
 		{
-			if (block.getRelative(face).getType() == Material.WALL_SIGN)
+			if (block.getRelative(face).getType() == Material.OAK_WALL_SIGN)
 			{
 				return true;
 			}
@@ -334,17 +334,15 @@ public class AltarManager
 
 	public boolean isAltarSign(Block block)
 	{
-		if ((block == null) || (block.getType() != Material.WALL_SIGN))
+		if ((block == null) || (block.getType() != Material.OAK_WALL_SIGN))
 		{
 			return false;
 		}
-		MaterialData m = block.getState().getData();
-
-		BlockFace face = BlockFace.DOWN;
-
-		face = ((Attachable) m).getAttachedFace();
-
-		Block altarBlock = block.getRelative(face);
+		BlockData m = block.getBlockData();
+		
+		Directional face = (Directional)m;
+		
+		Block altarBlock = block.getRelative(face.getFacing().getOppositeFace());
 
 		Gods.get().logDebug("isAltarSign(): AltarBlock block is " + altarBlock.getType().name());
 		if (getGodTypeForAltarBlockType(altarBlock.getType()) == null)
@@ -352,7 +350,7 @@ public class AltarManager
 			return false;
 		}
 		
-		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH_ON)))
+		if ((!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.TORCH)) && (!altarBlock.getRelative(BlockFace.UP).getType().equals(Material.REDSTONE_TORCH)))
 		{
 			return false;
 		}
@@ -365,7 +363,7 @@ public class AltarManager
 		{
 			return false;
 		}
-		if ((block.getType() != Material.TORCH) && (block.getType() != Material.REDSTONE_TORCH_ON))
+		if ((block.getType() != Material.TORCH) && (block.getType() != Material.REDSTONE_TORCH))
 		{
 			return false;
 		}
@@ -376,19 +374,19 @@ public class AltarManager
 		{
 			return false;
 		}
-		if (altarBlock.getRelative(BlockFace.EAST).getType() == Material.WALL_SIGN)
+		if (altarBlock.getRelative(BlockFace.EAST).getType() == Material.OAK_WALL_SIGN)
 		{
 			return true;
 		}
-		if (altarBlock.getRelative(BlockFace.WEST).getType() == Material.WALL_SIGN)
+		if (altarBlock.getRelative(BlockFace.WEST).getType() == Material.OAK_WALL_SIGN)
 		{
 			return true;
 		}
-		if (altarBlock.getRelative(BlockFace.NORTH).getType() == Material.WALL_SIGN)
+		if (altarBlock.getRelative(BlockFace.NORTH).getType() == Material.OAK_WALL_SIGN)
 		{
 			return true;
 		}
-		if (altarBlock.getRelative(BlockFace.SOUTH).getType() == Material.WALL_SIGN)
+		if (altarBlock.getRelative(BlockFace.SOUTH).getType() == Material.OAK_WALL_SIGN)
 		{
 			return true;
 		}
@@ -425,7 +423,7 @@ public class AltarManager
 		{
 			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.MOON);
-			this.altarBlockTypes.put(Material.ENDER_STONE, list);
+			this.altarBlockTypes.put(Material.END_STONE, list);
 		}
 
 		{
@@ -443,13 +441,13 @@ public class AltarManager
 		{
 			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.CREATURES);
-			this.altarBlockTypes.put(Material.LOG, list);
+			this.altarBlockTypes.put(Material.OAK_LOG, list);
 		}
 
 		{
 			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.NATURE);
-			this.altarBlockTypes.put(Material.MELON_BLOCK, list);
+			this.altarBlockTypes.put(Material.MELON, list);
 		}
 
 		{
@@ -498,7 +496,7 @@ public class AltarManager
 		{
 			ArrayList<GodManager.GodType> list = new ArrayList<GodType>();
 			list.add(GodManager.GodType.WEREWOLVES);
-			this.altarBlockTypes.put(Material.WOOD, list);
+			this.altarBlockTypes.put(Material.OAK_WOOD, list);
 		}
 	}
 

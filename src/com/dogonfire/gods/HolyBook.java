@@ -12,7 +12,7 @@ public class HolyBook {
 	private final ItemStack s;
 
 	public HolyBook(ItemStack itemStack) throws Exception {
-		if ((itemStack.getType() != Material.WRITTEN_BOOK) && (itemStack.getType() != Material.BOOK_AND_QUILL)) {
+		if ((itemStack.getType() != Material.WRITTEN_BOOK) && (itemStack.getType() != Material.WRITABLE_BOOK)) {
 			throw new Exception("HolyBook: CraftItemStack is not Material.WRITTEN_BOOK or Material.BOOK_AND_QUILL");
 		}
 		this.s = itemStack;

@@ -79,7 +79,7 @@ public class HolyBookManager
 			initBible(godName);
 			pages = this.biblesConfig.getStringList(godName + ".Pages");
 		}
-		ItemStack book = new ItemStack(Material.BOOK_AND_QUILL);
+		ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
 		try
 		{
 			HolyBook b = new HolyBook(book);
@@ -256,7 +256,7 @@ public class HolyBookManager
 			return false;
 		}
 		ItemStack item = player.getInventory().getItemInMainHand();
-		if ((item == null) || ((item.getType() != Material.WRITTEN_BOOK) && (item.getType() != Material.BOOK_AND_QUILL)))
+		if ((item == null) || ((item.getType() != Material.WRITTEN_BOOK) && (item.getType() != Material.WRITABLE_BOOK)))
 		{
 			return false;
 		}

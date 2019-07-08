@@ -24,7 +24,7 @@ public class HolyArtifact
 		
 		switch (itemType)
 		{
-		case DIAMOND_SPADE:
+		case DIAMOND_SHOVEL:
 			name = godName + "'s Magic Stick";
 			break;
 		case TORCH:
@@ -36,47 +36,51 @@ public class HolyArtifact
 		case BOW:
 			name = godName + "'s Shower sponge";
 			break;
-		case CAKE_BLOCK:
+		case CAKE:
 			name = godName + "'s Weed";
 			break;
-		case EMPTY_MAP:
+		case MAP:
 			name = godName + "'s Lantern";
 			break;
-		case RAW_CHICKEN:
+		case CHICKEN:
 			name = godName + "'s Paperbasket";
 			break;
-		case REDSTONE_COMPARATOR:
+		/*case REDSTONE_COMPARATOR:
 			name = godName + "'s Cinematicket";
-			break;
+			break;*/
 		case SAND:
 			name = "Bone of " + godName;
 			break;
 		case COBBLESTONE_STAIRS:
 			name = "Matchstick of " + godName;
 			break;
-		case SIGN_POST:
+		case OAK_SIGN:
 			name = godName + "'s nailcutter";
 			break;
 		case REDSTONE_WIRE:
 			name = "Bedside Clock of " + godName;
 			break;
-		case REDSTONE_TORCH_ON:
+		case REDSTONE_TORCH:
 			name = "Fishing pole of " + godName;
 			break;
 		case PUMPKIN_SEEDS:
 			name = godName + "'s boots";
 			break;
-		case WOOD_SPADE:
-		case WOOD_STAIRS:
-		case WOOD_STEP:
-		case WOOD_SWORD:
+		case WOODEN_SHOVEL:
+		case OAK_STAIRS:
+		case OAK_SLAB:
+		case WOODEN_SWORD:
+		/*
 		case WOOL:
 			name = godName + "'s favorite song";
 			break;
+		*/
+		/*
 		case MONSTER_EGG:
 			name = godName + "'s gardening shovel";
 			break;
-		case MOB_SPAWNER:
+		*/
+		case SPAWNER:
 			name = "Butterknife of " + godName;
 			break;
 		case MELON_STEM:

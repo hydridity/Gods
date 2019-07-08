@@ -31,6 +31,8 @@ import org.bukkit.util.Vector;
 
 import com.dogonfire.gods.Gods;
 import com.dogonfire.gods.config.GodsConfiguration;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public class QuestManager
@@ -129,7 +131,7 @@ public class QuestManager
 		List<Material> defaultspawnblocks = new ArrayList<Material>();
 
 		defaultspawnblocks.add(Material.STONE);
-		defaultspawnblocks.add(Material.SMOOTH_BRICK);
+		defaultspawnblocks.add(Material.STONE_BRICKS);
 		defaultspawnblocks.add(Material.MOSSY_COBBLESTONE);
 		defaultspawnblocks.add(Material.OBSIDIAN);
 
@@ -204,7 +206,7 @@ public class QuestManager
 					}
 					else if ((stoneTarget.getType() == Material.STONE) && (this.random.nextInt(4) == 0))
 					{
-						stoneTarget.setType(Material.SMOOTH_BRICK);
+						stoneTarget.setType(Material.STONE_BRICKS);
 					}
 				}
 			}
@@ -536,7 +538,7 @@ public class QuestManager
 					switch (godType)
 					{
 					case EVIL:
-						newQuest = generateGiveItemsQuest(godName, Material.RED_ROSE);
+						newQuest = generateGiveItemsQuest(godName, Material.POPPY);
 						break;
 					case SUN:
 						newQuest = generateGiveItemsQuest(godName, Material.STONE_AXE);
@@ -587,16 +589,16 @@ public class QuestManager
 		switch (this.random.nextInt(10))
 		{
 		case 0:
-			questTargetType = Material.GOLD_SWORD.name();
+			questTargetType = Material.GOLDEN_SWORD.name();
 			break;
 		case 1:
-			questTargetType = Material.GOLD_PICKAXE.name();
+			questTargetType = Material.GOLDEN_PICKAXE.name();
 			break;
 		case 2:
-			questTargetType = Material.GOLD_SPADE.name();
+			questTargetType = Material.GOLDEN_SHOVEL.name();
 			break;
 		case 3:
-			questTargetType = Material.GOLD_AXE.name();
+			questTargetType = Material.GOLDEN_AXE.name();
 			break;
 		case 4:
 			questTargetType = Material.FISHING_ROD.name();
@@ -605,7 +607,7 @@ public class QuestManager
 			questTargetType = Material.ANVIL.name();
 			break;
 		case 6:
-			questTargetType = Material.BOAT.name();
+			questTargetType = Material.OAK_BOAT.name();
 			break;
 		case 7:
 			questTargetType = Material.BOOK.name();
@@ -965,13 +967,13 @@ public class QuestManager
 		defaultspawnblocks.add(Material.GRASS);
 
 		List<Biome> biomeTypes = new ArrayList<Biome>();
-		biomeTypes.add(Biome.EXTREME_HILLS);
-		biomeTypes.add(Biome.ICE_MOUNTAINS);
+		biomeTypes.add(Biome.MOUNTAINS);
+		biomeTypes.add(Biome.ICE_SPIKES);
 		biomeTypes.add(Biome.DESERT_HILLS);
-		biomeTypes.add(Biome.FOREST_HILLS);
+		//biomeTypes.add(Biome.FOREST_HILLS);
 		biomeTypes.add(Biome.JUNGLE_HILLS);
 		biomeTypes.add(Biome.TAIGA_HILLS);
-		biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
+		//biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
 
 		World world = Gods.get().getServer().getWorld(worldName);
 
@@ -993,7 +995,9 @@ public class QuestManager
 				{
 					Location location = new Location(world, x, y, z);
 
-					canBuild = getWorldGuard().getRegionManager(world).getApplicableRegions(location).size() == 0;
+					//canBuild = getWorldGuard().getRegionManager(world).getApplicableRegions(location).size() == 0;
+					canBuild = getWorldGuard().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world)).getApplicableRegions(BukkitAdapter.asBlockVector(location)).size() == 0;
+					
 				}
 			}
 			while ((Math.abs(x - center.getBlockX()) < minDist) || (Math.abs(z - center.getBlockZ()) < minDist) || (y < minLevel) || !canBuild);
@@ -1004,7 +1008,7 @@ public class QuestManager
 			{
 				// target = world.getBlockAt(x, y - 1, z);
 
-				if ((target.getBiome() == Biome.EXTREME_HILLS) && (defaultspawnblocks.contains(target.getType())))
+				if ((target.getBiome() == Biome.MOUNTAINS) && (defaultspawnblocks.contains(target.getType())))
 				{
 					int flatBlocks = 0;
 					if ((defaultspawnblocks.contains(target.getRelative(BlockFace.NORTH).getType())) && (target.getRelative(BlockFace.NORTH).getRelative(BlockFace.UP).getType() == Material.AIR))
@@ -1054,11 +1058,11 @@ public class QuestManager
 		defaultspawnblocks.add(Material.GRASS);
 
 		List<Biome> biomeTypes = new ArrayList<Biome>();
-		biomeTypes.add(Biome.EXTREME_HILLS);
-		biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
-		biomeTypes.add(Biome.EXTREME_HILLS_WITH_TREES);
-		biomeTypes.add(Biome.MUTATED_EXTREME_HILLS);
-		biomeTypes.add(Biome.MUTATED_EXTREME_HILLS_WITH_TREES);
+		biomeTypes.add(Biome.MOUNTAINS);
+		//biomeTypes.add(Biome.SMALLER_EXTREME_HILLS);
+		//biomeTypes.add(Biome.EXTREME_HILLS_WITH_TREES);
+		//biomeTypes.add(Biome.MUTATED_EXTREME_HILLS);
+		//biomeTypes.add(Biome.MUTATED_EXTREME_HILLS_WITH_TREES);
 
 		World world = Gods.get().getServer().getWorld(worldName);
 		do
@@ -1124,7 +1128,7 @@ public class QuestManager
 		int run = 0;
 		Block target = null;
 		List<Material> defaultspawnblocks = new ArrayList<Material>();
-		defaultspawnblocks.add(Material.ENDER_PORTAL_FRAME);
+		defaultspawnblocks.add(Material.END_PORTAL_FRAME);
 		do
 		{
 			run++;
@@ -1344,7 +1348,7 @@ public class QuestManager
 		return this.rewardValues.get(rewardItem).intValue();
 	}
 
-	public WorldGuardPlugin getWorldGuard()
+	public WorldGuard getWorldGuard()
 	{
 		Plugin worldGuardPlugin = Gods.get().getServer().getPluginManager().getPlugin("WorldGuard");
 
@@ -1353,7 +1357,7 @@ public class QuestManager
 			return null;
 		}
 
-		return (WorldGuardPlugin) worldGuardPlugin;
+		return WorldGuard.getInstance();
 	}
 
 	public void godSayFailed(String godName)
@@ -2599,13 +2603,13 @@ public class QuestManager
 
 	public void resetItemRewardValues()
 	{
-		this.rewardValues.put(Material.NETHER_WARTS, 33);
+		this.rewardValues.put(Material.NETHER_WART, 33);
 		this.rewardValues.put(Material.GLOWSTONE, 50);
 		this.rewardValues.put(Material.COAL, 5);
 		this.rewardValues.put(Material.IRON_INGOT, 10);
 		this.rewardValues.put(Material.GOLD_INGOT, 50);
 		this.rewardValues.put(Material.DIAMOND, 100);
-		this.rewardValues.put(Material.SKULL_ITEM, 75);
+		//this.rewardValues.put(Material.SKULL_ITEM, 75);
 		this.rewardValues.put(Material.ENCHANTED_BOOK, 75);
 		this.rewardValues.put(Material.POTION, 75);
 		this.rewardValues.put(Material.COCOA, 30);
@@ -2616,9 +2620,9 @@ public class QuestManager
 		this.rewardValues.put(Material.SUGAR_CANE, 25);
 		this.rewardValues.put(Material.MELON_SEEDS, 5);
 		this.rewardValues.put(Material.PUMPKIN_SEEDS, 5);
-		this.rewardValues.put(Material.SEEDS, 1);
-		this.rewardValues.put(Material.RED_ROSE, 1);
-		this.rewardValues.put(Material.YELLOW_FLOWER, 1);
+		this.rewardValues.put(Material.WHEAT_SEEDS, 1);
+		this.rewardValues.put(Material.POPPY, 1);
+		this.rewardValues.put(Material.DANDELION, 1);
 	}
 
 	public void save()
@@ -2639,16 +2643,16 @@ public class QuestManager
 
 	public void setDominationColor(Block block, ChatColor color)
 	{
-		block.setType(Material.WOOL);
-		block.getRelative(BlockFace.UP).setType(Material.STONE_PLATE);
-		block.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setType(Material.WOOL);
-		block.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setType(Material.WOOL);
-		block.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setType(Material.WOOL);
-		block.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setType(Material.WOOL);
-		block.getRelative(BlockFace.NORTH).setType(Material.REDSTONE_LAMP_OFF);
-		block.getRelative(BlockFace.EAST).setType(Material.REDSTONE_LAMP_OFF);
-		block.getRelative(BlockFace.WEST).setType(Material.REDSTONE_LAMP_OFF);
-		block.getRelative(BlockFace.SOUTH).setType(Material.REDSTONE_LAMP_OFF);
+		block.setType(Material.WHITE_WOOL);
+		block.getRelative(BlockFace.UP).setType(Material.STONE_PRESSURE_PLATE);
+		block.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST).setType(Material.WHITE_WOOL);
+		block.getRelative(BlockFace.NORTH).getRelative(BlockFace.WEST).setType(Material.WHITE_WOOL);
+		block.getRelative(BlockFace.SOUTH).getRelative(BlockFace.EAST).setType(Material.WHITE_WOOL);
+		block.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST).setType(Material.WHITE_WOOL);
+		block.getRelative(BlockFace.NORTH).setType(Material.REDSTONE_LAMP);
+		block.getRelative(BlockFace.EAST).setType(Material.REDSTONE_LAMP);
+		block.getRelative(BlockFace.WEST).setType(Material.REDSTONE_LAMP);
+		block.getRelative(BlockFace.SOUTH).setType(Material.REDSTONE_LAMP);
 	}
 
 	public void setItemRewardValue(Material item, int value)

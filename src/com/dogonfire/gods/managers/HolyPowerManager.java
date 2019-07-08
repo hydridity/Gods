@@ -12,6 +12,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
@@ -244,7 +245,7 @@ public class HolyPowerManager
 						temp.setX(x + location.getBlockX());
 						temp.setZ(z + location.getBlockZ());
 						Block block = temp.getBlock();
-						temp.getWorld().playEffect(temp, Effect.STEP_SOUND, block.getTypeId());
+						temp.getWorld().playEffect(temp, Effect.STEP_SOUND, block.getType());
 					}
 				}
 				Entity[] near = HolyPowerManager.this.getNearbyEntities(location, 1.5D);
@@ -419,19 +420,19 @@ public class HolyPowerManager
 					{
 						if (location.getBlock().getRelative(BlockFace.WEST).getType() == Material.AIR)
 						{
-							location.getBlock().getRelative(BlockFace.WEST).setTypeIdAndData(Material.VINE.getId(), (byte) 1, false);
+							location.getBlock().getRelative(BlockFace.WEST).setType(Material.VINE);
 						}
 						if (location.getBlock().getRelative(BlockFace.EAST).getType() == Material.AIR)
 						{
-							location.getBlock().getRelative(BlockFace.EAST).setTypeIdAndData(Material.VINE.getId(), (byte) 1, false);
+							location.getBlock().getRelative(BlockFace.WEST).setType(Material.VINE);
 						}
 						if (location.getBlock().getRelative(BlockFace.NORTH).getType() == Material.AIR)
 						{
-							location.getBlock().getRelative(BlockFace.NORTH).setTypeIdAndData(Material.VINE.getId(), (byte) 1, false);
+							location.getBlock().getRelative(BlockFace.WEST).setType(Material.VINE);
 						}
 						if (location.getBlock().getRelative(BlockFace.SOUTH).getType() == Material.AIR)
 						{
-							location.getBlock().getRelative(BlockFace.SOUTH).setTypeIdAndData(Material.VINE.getId(), (byte) 1, false);
+							location.getBlock().getRelative(BlockFace.WEST).setType(Material.VINE);
 						}
 					}
 					if ((location.getBlock().getType() == Material.GRASS) && (location.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR))
@@ -439,13 +440,13 @@ public class HolyPowerManager
 						switch (this.random.nextInt(5))
 						{
 						case 0:
-							location.getBlock().getRelative(BlockFace.UP).setType(Material.RED_ROSE);
+							location.getBlock().getRelative(BlockFace.UP).setType(Material.POPPY);
 							break;
 						case 1:
-							location.getBlock().getRelative(BlockFace.UP).setType(Material.LONG_GRASS);
+							location.getBlock().getRelative(BlockFace.UP).setType(Material.TALL_GRASS);
 							break;
 						case 2:
-							location.getBlock().getRelative(BlockFace.UP).setType(Material.YELLOW_FLOWER);
+							location.getBlock().getRelative(BlockFace.UP).setType(Material.DANDELION);
 							break;
 						case 3:
 							location.getBlock().getRelative(BlockFace.UP).setType(Material.GRASS);
@@ -489,7 +490,7 @@ public class HolyPowerManager
 						for (int z = -1; z < 2; z++)
 						{
 							loc = block.getLocation().add(x, y, z);
-							if (world.getBlockTypeIdAt(loc) != Material.AIR.getId())
+							if (world.getBlockAt(loc).getType() != Material.AIR)
 							{
 								Block b = world.getBlockAt(loc);
 								if ((b.getType().isSolid()) && (HolyPowerManager.this.checkBlock(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 1.0D, 1.0D, 1.0D, bLoc.getX() - 0.5D, bLoc.getY() - 0.5D, bLoc.getZ() - 0.5D, 1.0D, 1.0D, 1.0D)))
@@ -523,7 +524,7 @@ public class HolyPowerManager
 
 					cancel();
 
-					final HashMap<Location, Long> changedBlocks = new HashMap<Location, Long>();
+					final HashMap<Location, BlockData> changedBlocks = new HashMap<Location, BlockData>();
 
 					for (int x = -1; x < 2; x++)
 					{
@@ -537,7 +538,7 @@ public class HolyPowerManager
 
 								if (!b.getType().isSolid())
 								{
-									changedBlocks.put(b.getLocation(), Long.valueOf(b.getTypeId() | b.getData() << 16));
+									changedBlocks.put(b.getLocation(), b.getBlockData().clone());
 									b.setType(Material.ICE);
 								}
 							}
@@ -560,13 +561,13 @@ public class HolyPowerManager
 								}
 
 								int index = this.random.nextInt(changedBlocks.size());
-								long data = ((Long) changedBlocks.values().toArray()[index]).longValue();
+								BlockData data = ((BlockData) changedBlocks.values().toArray()[index]);
 								Location position = (Location) changedBlocks.keySet().toArray()[index];
 								changedBlocks.remove(position);
 								Block c = position.getBlock();
-								position.getWorld().playEffect(position, Effect.STEP_SOUND, c.getTypeId());
-								c.setTypeId((int) (data & 0xFFFF));
-								c.setData((byte) (int) (data >> 16));
+								position.getWorld().playEffect(position, Effect.STEP_SOUND, c.getType());
+								c.setBlockData(data);
+								//c.setData((byte) (int) (data >> 16));
 							}
 						}
 					}.runTaskTimer(Gods.get(), 80 + new Random().nextInt(40), 3L);
@@ -597,7 +598,7 @@ public class HolyPowerManager
 
 	public void lightningStorm(Player player, int powerValue)
 	{
-		player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 1.0F, 0.1F);
+		player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0F, 0.1F);
 
 		player.getWorld().setStorm(true);
 
@@ -658,6 +659,6 @@ public class HolyPowerManager
 		newLoc.setYaw(start.getYaw());
 		player.teleport(newLoc);
 		world.playEffect(newLoc, Effect.ENDER_SIGNAL, 0);
-		world.playSound(newLoc, Sound.ENTITY_ENDERMEN_AMBIENT, 1.0F, 0.3F);
+		world.playSound(newLoc, Sound.ENTITY_ENDERMAN_AMBIENT, 1.0F, 0.3F);
 	}
 }

@@ -330,7 +330,7 @@ public class GodManager
 		}
 	}
 
-	public void believerAccept(UUID believerId)
+	public void believerAccept(UUID believerId) //neco kurwa špatne
 	{
 		String godName = BelieverManager.get().getGodForBeliever(believerId);
 
@@ -342,7 +342,7 @@ public class GodManager
 		}
 
 		LanguageManager.get().setPlayerName(player.getName());
-		if (GodsConfiguration.get().isMarriageEnabled())
+		if (GodsConfiguration.get().isMarriageEnabled()) //fix time parse null
 		{
 			UUID pendingMarriagePartner = MarriageManager.get().getProposal(believerId);
 
@@ -757,7 +757,7 @@ public class GodManager
 		{
 			return Material.STONE_AXE;
 		}
-		return Material.WOOD_AXE;
+		return Material.WOODEN_AXE;
 	}
 
 	public String getBlessedPlayerForGod(String godName)
@@ -931,7 +931,7 @@ public class GodManager
 				foodType = Material.BREAD;
 				break;
 			case 2:
-				foodType = Material.COOKED_FISH;
+				foodType = Material.COOKED_COD;
 				break;
 			case 3:
 				foodType = Material.MELON;
@@ -940,10 +940,10 @@ public class GodManager
 				foodType = Material.COOKED_BEEF;
 				break;
 			case 5:
-				foodType = Material.GRILLED_PORK;
+				foodType = Material.COOKED_PORKCHOP;
 				break;
 			case 6:
-				foodType = Material.CARROT_ITEM;
+				foodType = Material.CARROT;
 			}
 			foodTypeString = foodType.name();
 
@@ -1149,7 +1149,7 @@ public class GodManager
 		{
 			return Material.STONE_HOE;
 		}
-		return Material.WOOD_HOE;
+		return Material.WOODEN_HOE;
 	}
 
 	public EntityType getHolyMobTypeForGod(String godName)
@@ -1235,9 +1235,9 @@ public class GodManager
 		{
 			return new ItemStack(getSwordBlessing(godName));
 		}
-		if (!hasSpade(player))
+		if (!hasSHOVEL(player))
 		{
-			return new ItemStack(getSpadeBlessing(godName));
+			return new ItemStack(getSHOVELBlessing(godName));
 		}
 		if (!hasAxe(player))
 		{
@@ -1453,7 +1453,7 @@ public class GodManager
 					foodType = Material.BREAD;
 					break;
 				case 2:
-					foodType = Material.COOKED_FISH;
+					foodType = Material.COOKED_COD;
 					break;
 				case 3:
 					foodType = Material.MELON;
@@ -1462,10 +1462,10 @@ public class GodManager
 					foodType = Material.COOKED_BEEF;
 					break;
 				case 5:
-					foodType = Material.GRILLED_PORK;
+					foodType = Material.COOKED_PORKCHOP;
 					break;
 				case 6:
-					foodType = Material.CARROT_ITEM;
+					foodType = Material.CARROT;
 				}
 				foodTypeString = foodType.name();
 			}
@@ -1533,7 +1533,7 @@ public class GodManager
 		{
 			return Material.STONE_PICKAXE;
 		}
-		return Material.WOOD_PICKAXE;
+		return Material.WOODEN_PICKAXE;
 	}
 
 	public float getPleasedModifierForGod(String godName)
@@ -1656,10 +1656,10 @@ public class GodManager
 			switch (typeIndex)
 			{
 			case 0:
-				type = Material.RED_ROSE;
+				type = Material.POPPY;
 				break;
 			case 1:
-				type = Material.LEAVES;
+				type = Material.OAK_LEAVES;
 				break;
 			case 2:
 				type = getUnholyFoodTypeForGod(godName);
@@ -1677,7 +1677,7 @@ public class GodManager
 				type = Material.BREAD;
 				break;
 			case 7:
-				type = Material.CARROT_ITEM;
+				type = Material.CARROT;
 				break;
 			case 8:
 				type = Material.IRON_PICKAXE;
@@ -1719,7 +1719,7 @@ public class GodManager
 				type = Material.SPIDER_EYE;
 				break;
 			case 21:
-				type = Material.POTATO_ITEM;
+				type = Material.POTATO;
 				break;
 			case 22:
 				type = Material.BONE;
@@ -1785,21 +1785,21 @@ public class GodManager
 		return seed;
 	}
 
-	private Material getSpadeBlessing(String godName)
+	private Material getSHOVELBlessing(String godName)
 	{
 		if (getGodPower(godName) > GodsConfiguration.get().getGodPowerForLevel3Items())
 		{
-			return Material.DIAMOND_SPADE;
+			return Material.DIAMOND_SHOVEL;
 		}
 		if (getGodPower(godName) > GodsConfiguration.get().getGodPowerForLevel2Items())
 		{
-			return Material.IRON_SPADE;
+			return Material.IRON_SHOVEL;
 		}
 		if (getGodPower(godName) > GodsConfiguration.get().getGodPowerForLevel1Items())
 		{
-			return Material.STONE_SPADE;
+			return Material.STONE_SHOVEL;
 		}
-		return Material.WOOD_SPADE;
+		return Material.WOODEN_SHOVEL;
 	}
 
 	private Material getSwordBlessing(String godName)
@@ -1816,7 +1816,7 @@ public class GodManager
 		{
 			return Material.STONE_SWORD;
 		}
-		return Material.WOOD_SWORD;
+		return Material.WOODEN_SWORD;
 	}
 
 	public String getTitleForGod(String godName)
@@ -1935,7 +1935,7 @@ public class GodManager
 			return;
 		}
 
-		Gods.get().getServer().getScheduler().runTaskLater(Gods.get(), new TaskGodSpeak(godName, player.getUniqueId(), playerNameString, typeNameString, amount, message), delay);
+		Gods.get().getServer().getScheduler().runTaskLater(Gods.get(), new TaskGodSpeak(godName, player.getUniqueId(), playerNameString, typeNameString, 1, message), delay);//instead 1 is amount
 	}
 
 	private boolean godSayNeededSacrificeToBeliever(String godName, UUID believerId)
@@ -2369,7 +2369,7 @@ public class GodManager
 	private boolean hasAxe(Player player)
 	{
 		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.WOOD_AXE))
+		if (inventory.contains(Material.WOODEN_AXE))
 		{
 			return true;
 		}
@@ -2417,7 +2417,7 @@ public class GodManager
 	private boolean hasHoe(Player player)
 	{
 		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.WOOD_HOE))
+		if (inventory.contains(Material.WOODEN_HOE))
 		{
 			return true;
 		}
@@ -2439,7 +2439,7 @@ public class GodManager
 	private boolean hasPickAxe(Player player)
 	{
 		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.WOOD_PICKAXE))
+		if (inventory.contains(Material.WOODEN_PICKAXE))
 		{
 			return true;
 		}
@@ -2458,22 +2458,22 @@ public class GodManager
 		return false;
 	}
 
-	private boolean hasSpade(Player player)
+	private boolean hasSHOVEL(Player player)
 	{
 		PlayerInventory inventory = player.getInventory();
-		if (inventory.contains(Material.WOOD_SPADE))
+		if (inventory.contains(Material.WOODEN_SHOVEL))
 		{
 			return true;
 		}
-		if (inventory.contains(Material.STONE_SPADE))
+		if (inventory.contains(Material.STONE_SHOVEL))
 		{
 			return true;
 		}
-		if (inventory.contains(Material.IRON_SPADE))
+		if (inventory.contains(Material.IRON_SHOVEL))
 		{
 			return true;
 		}
-		if (inventory.contains(Material.DIAMOND_SPADE))
+		if (inventory.contains(Material.DIAMOND_SHOVEL))
 		{
 			return true;
 		}
@@ -2486,7 +2486,7 @@ public class GodManager
 		for (int i = 0; i < inventory.getSize(); i++)
 		{
 			ItemStack stack = inventory.getItem(i);
-			if ((stack != null) && ((stack.getType().equals(Material.WOOD_SWORD)) || (stack.getType().equals(Material.STONE_SWORD)) || (stack.getType().equals(Material.IRON_SWORD)) || (stack.getType().equals(Material.DIAMOND_SWORD))) && (stack.getAmount() != 0))
+			if ((stack != null) && ((stack.getType().equals(Material.WOODEN_SWORD)) || (stack.getType().equals(Material.STONE_SWORD)) || (stack.getType().equals(Material.IRON_SWORD)) || (stack.getType().equals(Material.DIAMOND_SWORD))) && (stack.getAmount() != 0))
 			{
 				return true;
 			}

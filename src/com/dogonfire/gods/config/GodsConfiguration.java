@@ -19,6 +19,7 @@ import com.dogonfire.gods.managers.GodManager.GodType;
 import com.dogonfire.gods.managers.HolyArtifactManager;
 import com.dogonfire.gods.managers.HolyBookManager;
 import com.dogonfire.gods.managers.HolyLandManager;
+import com.dogonfire.gods.managers.HolyLawManager;
 import com.dogonfire.gods.managers.HolyPowerManager;
 import com.dogonfire.gods.managers.MarriageManager;
 import com.dogonfire.gods.managers.QuestManager;
@@ -703,8 +704,8 @@ public class GodsConfiguration
 		else
 		{
 			Gods.get().log("No HolyLand.BreakableBlockTypes section found in config.");
-			Gods.get().log("Adding '" + Material.SMOOTH_BRICK.name() + "' to BreakableBlockTypes");
-			this.holylandBreakableBlockTypes.add(Material.SMOOTH_BRICK);
+			Gods.get().log("Adding '" + Material.STONE_BRICKS.name() + "' to BreakableBlockTypes");
+			this.holylandBreakableBlockTypes.add(Material.STONE_BRICKS);
 		}
 
 		this.sacrificesEnabled = config.getBoolean("Sacrifices.Enabled", true);
