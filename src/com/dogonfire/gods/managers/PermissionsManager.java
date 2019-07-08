@@ -53,7 +53,15 @@ public class PermissionsManager
 
 	public boolean hasPermission(Player player, String node)
 	{
-		return vaultPermission.has(player, node);
+		Gods.get().log("Finding provider");
+		if(vaultPermission == null) {
+			Gods.get().log("No permission provider");
+			return true;
+		}
+		else {
+			Gods.get().log("Permission provider found");
+			return vaultPermission.has(player, node);
+		}
 	}
 
 	public String getGroup(String playerName)
