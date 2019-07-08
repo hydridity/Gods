@@ -17,6 +17,7 @@ import com.dogonfire.gods.managers.BelieverManager;
 import com.dogonfire.gods.managers.GodManager;
 import com.dogonfire.gods.managers.HolyBookManager;
 import com.dogonfire.gods.managers.HolyLandManager;
+import com.dogonfire.gods.managers.HolyLawManager;
 import com.dogonfire.gods.managers.LanguageManager;
 import com.dogonfire.gods.managers.PermissionsManager;
 import com.dogonfire.gods.managers.QuestManager;
@@ -102,6 +103,7 @@ public class Gods extends JavaPlugin
 		QuestManager.get().load();
 		BelieverManager.get().load();
 		WhitelistManager.get().load();
+		HolyLawManager.get().load();
 		
 		getServer().getPluginManager().registerEvents(HolyLandManager.get(), this);
 		getServer().getPluginManager().registerEvents(new BlockListener(), this);
