@@ -60,7 +60,7 @@ public class CommandHelp extends GodsCommand
 		{
 			if (localCommand.hasPermission(sender))
 			{
-				sender.sendMessage(String.format("%g /gods %g %g %g - %g", ChatColor.AQUA.toString(), localCommand.name, localCommand.parameters == null ? "" : localCommand.parameters, ChatColor.WHITE.toString(), localCommand.description));
+				sender.sendMessage(String.format("%s /gods %s %s %s - %s", ChatColor.AQUA.toString(), localCommand.name, localCommand.parameters == null ? "" : localCommand.parameters, ChatColor.WHITE.toString(), localCommand.description));
 			}
 		}
 

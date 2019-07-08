@@ -504,10 +504,13 @@ public class BelieverManager {
 		return hunting;
 	}
 
-	public void load() {
-		if (this.believersConfigFile == null) {
+	public void load()
+	{
+		if (this.believersConfigFile == null)
+		{
 			this.believersConfigFile = new File(Gods.get().getDataFolder(), "believers.yml");
 		}
+		
 		this.believersConfig = YamlConfiguration.loadConfiguration(this.believersConfigFile);
 
 		Gods.get().log("Loaded " + this.believersConfig.getKeys(false).size() + " believers.");

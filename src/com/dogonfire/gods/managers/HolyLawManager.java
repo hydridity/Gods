@@ -102,11 +102,12 @@ public class HolyLawManager implements Listener
 	{
 		if (this.holyLawsConfigFile == null)
 		{
-			this.holyLawsConfigFile = new File(this.plugin.getDataFolder(), "holylaws.yml");
+			this.holyLawsConfigFile = new File(Gods.get().getDataFolder(), "holylaws.yml");
 		}
+		
 		this.holyLawsConfig = YamlConfiguration.loadConfiguration(this.holyLawsConfigFile);
 
-		this.plugin.log("Loaded " + this.holyLawsConfig.getKeys(false).size() + " holy laws.");
+		Gods.get().log("Loaded " + this.holyLawsConfig.getKeys(false).size() + " holy laws.");
 	}
 
 	public void save()
@@ -121,7 +122,7 @@ public class HolyLawManager implements Listener
 		}
 		catch (Exception ex)
 		{
-			this.plugin.log("Could not save config to " + this.holyLawsConfigFile.getName() + ": " + ex.getMessage());
+			Gods.get().log("Could not save config to " + this.holyLawsConfigFile.getName() + ": " + ex.getMessage());
 		}
 	}
 	

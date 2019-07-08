@@ -117,6 +117,10 @@ public class HolyLandManager implements Listener
 
 	public String getGodAtHolyLandLocation(Location location)
 	{
+		if (!GodsConfiguration.get().isHolyLandEnabled())
+		{
+			return null;
+		}
 		String godName = this.landConfig.getString(hashLocation(location) + ".GodName");
 		if (godName != null)
 		{
@@ -253,6 +257,10 @@ public class HolyLandManager implements Listener
 	public void OnBlockBreak(BlockBreakEvent event)
 	{
 		Player player = event.getPlayer();
+		if (!GodsConfiguration.get().isHolyLandEnabled())
+		{
+			return;
+		}
 		if (player != null)
 		{
 			if (!Gods.get().isEnabledInWorld(player.getWorld()))
@@ -312,6 +320,10 @@ public class HolyLandManager implements Listener
 		{
 			return;
 		}
+		if (!GodsConfiguration.get().isHolyLandEnabled())
+		{
+			return;
+		}
 		if (isNeutralLandLocation(event.getLocation()))
 		{
 			Gods.get().logDebug("Prevented " + event.getEntityType() + " from spawning in Neutral land");
@@ -344,6 +356,10 @@ public class HolyLandManager implements Listener
 	public void onPlayerDeath(PlayerDeathEvent event)
 	{
 		Player player = event.getEntity();
+		if (!GodsConfiguration.get().isHolyLandEnabled())
+		{
+			return;
+		}
 		if (!Gods.get().isEnabledInWorld(player.getWorld()))
 		{
 			return;
@@ -441,6 +457,10 @@ public class HolyLandManager implements Listener
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event)
 	{
+		if (!GodsConfiguration.get().isHolyLandEnabled())
+		{
+			return;
+		}
 		if (!Gods.get().isEnabledInWorld(event.getPlayer().getWorld()))
 		{
 			return;
