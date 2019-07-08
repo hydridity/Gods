@@ -11,14 +11,15 @@
     <repository>
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
-    </repository>    <repository>
+    </repository>    
+    <repository>
       <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <repository>
-	  <id>vault-repo</id>
-	  <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-    </repository>
+		<id>jitpack.io</id>
+		<url>https://jitpack.io</url>
+	</repository>
 	<repository>
 		<id>elmakers-repo</id>
 		<url>http://maven.elmakers.com/repository/</url>
@@ -27,27 +28,47 @@
   <dependencies>
     <dependency>
       <groupId>com.sk89q.worldguard</groupId>
-      <artifactId>worldguard-legacy</artifactId>
-      <version>6.2</version>
+      <artifactId>worldguard-bukkit</artifactId>
+      <version>7.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId> <!-- here you see it -->
-      <version>6.1.4-SNAPSHOT</version>
+      <version>7.0.0</version>
       <scope>provided</scope>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>bukkit</artifactId>
+      <version>1.14.2-R0.1-SNAPSHOT</version>
+      <type>jar</type>
+      <scope>compilation</scope>
+    </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.10.2-R0.1-SNAPSHOT</version>
+      <version>1.14.2-R0.1-SNAPSHOT</version>
+      <type>jar</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>net.milkbowl.vault</groupId>
-      <artifactId>VaultAPI</artifactId>
-      <version>1.6</version>
-      <scope>provided</scope>
+        <groupId>com.github.MilkBowl</groupId>
+        <artifactId>VaultAPI</artifactId>
+        <version>1.7</version>
+        <scope>provided</scope>
     </dependency>
+    <dependency>
+    	<groupId>commons-lang</groupId>
+	    <artifactId>commons-lang</artifactId>
+	    <version>2.6</version>
+	    <scope>provided</scope>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-lang3</artifactId>
+	    <version>3.8</version>
+	    <scope>provided</scope>
+	</dependency>
   </dependencies>
   <build>
     <defaultGoal>clean package</defaultGoal>
